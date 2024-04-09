@@ -9,7 +9,7 @@ import { initRenderer,
          createGroundPlaneXZ } from '../../libs/util/util.js';
 
 import { CreateTank, TankMove } from './Tank.js';
-import { CreateTankEnemy, TankEnemyMove } from './TankEnemy.js';
+import { CreateLevelOne } from './Level_one.js';
 
 let scene = new THREE.Scene();                                  // Criando a main scene.
 let renderer = initRenderer();                                  // Iniciando o renderer basico.
@@ -28,19 +28,26 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 let plane = createGroundPlaneXZ(30, 30)
 scene.add(plane);
 
+// Criando o chão
+let base = CreateLevelOne();
+scene.add(base);
+
 // Criando o player1
-let tank_player1 = CreateTank(2.0);
+let tank_player1 = CreateTank(0);
+tank_player1.position.set(6.0, 1.1, 8.0);
 scene.add(tank_player1);
 
 // Criando o player2
-let tank_player2 = CreateTankEnemy(2.0);
+let tank_player2 = CreateTank(1.0);
+tank_player2.position.set(-6.0, 1.1, -8.0);
+tank_player2.rotateY(THREE.MathUtils.degToRad(180))
 scene.add(tank_player2);
 
 render();
 function render()
 {
-    TankMove(tank_player1);
-    TankEnemyMove(tank_player2);
+    TankMove(tank_player1, 0);
+    TankMove(tank_player2, 1);
     requestAnimationFrame(render);
     renderer.render(scene, camera) // Render scene
 }
