@@ -1,11 +1,11 @@
 import * as THREE from  'three';
-import KeyboardState from '../libs/util/KeyboardState.js'
-import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
+import KeyboardState from '../../libs/util/KeyboardState.js';
+import { TeapotGeometry } from '../../build/jsm/geometries/TeapotGeometry.js';
 import {initRenderer, 
         initDefaultSpotlight,
         createGroundPlaneXZ,
         SecondaryBox, 
-        onWindowResize} from "../libs/util/util.js";
+        onWindowResize} from "../../libs/util/util.js";
 
 let scene, renderer, light, camera, keyboard;
 scene = new THREE.Scene();    // Create main scene
@@ -38,18 +38,31 @@ render();
 function updateCamera()
 {
    // DICA: Atualize a câmera aqui!
-
+   camera.position.copy(camPos);
+   camera.up.copy( camUp );
+   camera.lookAt(camLook);
 
    message.changeMessage("Pos: {" + camPos.x + ", " + camPos.y + ", " + camPos.z + "} " + 
                          "/ LookAt: {" + camLook.x + ", " + camLook.y + ", " + camLook.z + "}");
 }
 
 function keyboardUpdate() {
-
    keyboard.update();
    
    // DICA: Insira aqui seu código para mover a câmera
+   if( keyboard.pressed("right") )        camPos.set(camPos.x + 0.1, camPos.y, camPos.z);
+   if( keyboard.pressed("left") )         camPos.set(camPos.x - 0.1, camPos.y, camPos.z);
+   if( keyboard.pressed("up") )           camPos.set(camPos.x, camPos.y, camPos.z + 0.1);
+   if( keyboard.pressed("down") )         camPos.set(camPos.x, camPos.y, camPos.z - 0.1);
+   if( keyboard.pressed("pageup") )       camPos.set(camPos.x, camPos.y + 0.1, camPos.z);
+   if( keyboard.pressed("pagedown") )     camPos.set(camPos.x, camPos.y - 0.1, camPos.z);
 
+   if( keyboard.pressed("D") )        camLook.set(camLook.x + 0.1, camLook.y, camLook.z);
+   if( keyboard.pressed("A") )        camLook.set(camLook.x - 0.1, camLook.y, camLook.z);
+   if( keyboard.pressed("W") )        camLook.set(camLook.x, camLook.y, camLook.z + 0.1);
+   if( keyboard.pressed("S") )        camLook.set(camLook.x, camLook.y, camLook.z - 0.1);
+   if( keyboard.pressed("E") )        camLook.set(camLook.x, camLook.y + 0.1, camLook.z);
+   if( keyboard.pressed("Q") )        camLook.set(camLook.x, camLook.y - 0.1, camLook.z);
    
    updateCamera();
 }
