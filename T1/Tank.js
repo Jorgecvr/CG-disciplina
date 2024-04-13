@@ -55,10 +55,6 @@ export function CreateTank(type) {
   return base;
 };
 
-
-
-
-
 export function TankMove(tank, type) {
     var keyboard = new KeyboardState();
     keyboard.update();
