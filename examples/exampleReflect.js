@@ -12,7 +12,7 @@ class Ball {
    constructor() {
       this.speed = 0.1;
       this.moveOn = false;
-      this.direction = new THREE.Vector3(0.7, 0.0, 0.4).normalize();
+      this.direction = new THREE.Vector3(0.0, 0.0, 0.0).normalize();
       this.object = this.buildGeometry()
       scene.add( this.object );    
    }
@@ -35,7 +35,7 @@ class Ball {
    checkCollisions(){
       // Aqui pode-se incluir critérios de colisão mais sofisticados. 
       // Neste exemplo mais simples o controle é feito analisando as fronteiras do plano
-      let size = 4.5;
+      let size = 4;
       if(this.object.position.x >  size) this.changeDirection(new THREE.Vector3(-1.0,  0.0,  0.0));
       if(this.object.position.x < -size) this.changeDirection(new THREE.Vector3( 1.0,  0.0,  0.0));      
       if(this.object.position.z >  size) this.changeDirection(new THREE.Vector3( 0.0,  0.0, -1.0));
