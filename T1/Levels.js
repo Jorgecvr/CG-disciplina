@@ -7,22 +7,26 @@ export function CreateLevel(nivel) {
     let floorGeometry = new THREE.BoxGeometry(4, 0.1, 4);
 
     let wallMaterial = setDefaultMaterial('darkgreen');
-    let wallGeometry = new THREE.BoxGeometry( 4, 4, 4);
+    let wallGeometry = new THREE.BoxGeometry(4, 3, 4);
 
     for(let i = 0; i < nivel.length; i++) {
         for(let j = 0; j < nivel[i].length; j++) {
             if( j % 2 === 0 ) {
-                if( i % 2 === 0 ) floorMaterial = setDefaultMaterial('green');
+                if( i % 2 === 0 ) floorMaterial = setDefaultMaterial('white');
                 else floorMaterial = setDefaultMaterial('gray');
             }
             else {
-                if( i % 2 === 0 ) floorMaterial = setDefaultMaterial('gray');
-                else floorMaterial = setDefaultMaterial('green');
+                if( i % 2 === 0 ) floorMaterial = setDefaultMaterial('grey');
+                else floorMaterial = setDefaultMaterial('white');
             }
             let floor = new THREE.Mesh( floorGeometry, floorMaterial );
             base.add(floor);
-            floor.position.set((-4*i)+13, 0.0, (-4*j)+13);
-            console.log(nivel[i][j]);
+            floor.position.set((-4*i), 0.0, (-4*j));
+            if( nivel[i][j] === 1) {
+                let wall = new THREE.Mesh( wallGeometry, wallMaterial );
+                base.add(wall);
+                wall.position.set((-4*i), 1.55, (-4*j))
+            }
         }
     }
     return base;
