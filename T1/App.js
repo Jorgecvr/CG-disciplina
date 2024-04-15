@@ -7,10 +7,12 @@ import { initRenderer,
          createGroundPlaneXZ } from '../../libs/util/util.js';
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import KeyboardState from '../libs/util/KeyboardState.js';
+import { OBB } from '../build/jsm/math/OBB.js';
 
 // Importações de arquivos criados para o trabalho.
-import { CreateTank, TankMove } from './Tank.js';
+import { Tank, moveTank } from './Tank.js';
 import { CreateLevel } from './Levels.js';
+import { CheckCollisions } from './Collisions.js';
 
 // Declaração de variáveis úteis.
 let scene = new THREE.Scene();                                  // Criando a main scene.
@@ -26,23 +28,26 @@ orbitControls.enabled = false;
 // Função utilizada para redimensionar a tela do navegador caso haja alterações
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-var speed = 0;
 // Começando o jogo.
 function play() {
+    collisionWithWall();
+    //console.log(CheckCollisions(tank_player1.object, tank_player2.object, parede));
     swapOrbitControls();
     updateCamera();
+    moveTank(0, tank_player1.object, tank_player1.speed);
+    moveTank(1, tank_player2.object, tank_player2.speed);
 }
 
 // Criando o player1
-var tank_player1 = CreateTank(0);
-tank_player1.position.set(-8.0, 1.1, -8.0);
-scene.add(tank_player1);
+var tank_player1 = new Tank(0);
+tank_player1.object.position.set(-8.0, 1.1, -8.0);
+scene.add(tank_player1.object);
 
 // Criando o player2
-var tank_player2 = CreateTank(1.0);
-tank_player2.position.set(-8.0, 1.1, -56.0);
-tank_player2.rotateY(THREE.MathUtils.degToRad(180))
-scene.add(tank_player2);
+var tank_player2 = new Tank(1);
+tank_player2.object.position.set(-8.0, 1.1, -52.0);
+tank_player2.object.rotateY(THREE.MathUtils.degToRad(180))
+scene.add(tank_player2.object);
 
 // Criando as propriedades da câmera
 let position = midPosition(tank_player1, tank_player2);
@@ -56,7 +61,7 @@ camera.up.copy(camUpPosition);
 camera.lookAt(camLookPosition);
 
 // Criando o nível
-let nivel = [
+let nivel1 = [
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -70,8 +75,92 @@ let nivel = [
                 [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             ];
-let base = CreateLevel(nivel);
-scene.add(base);
+var [floor, wall] = CreateLevel(nivel1);
+scene.add(floor);
+
+// Dividindo a parede para testar colisões
+var paredeDireita = new THREE.Object3D();
+var paredeTras = new THREE.Object3D();
+var paredeEsquerda = new THREE.Object3D();
+for(let i = 0; i < 17; i++) {
+    paredeDireita.add(wall.children[0]);
+}
+for(let i = 0; i < 26; i++) {
+    paredeTras.add(wall.children[0]);
+}
+for(let i = 0; i < 17; i++) {
+    paredeEsquerda.add(wall.children[0]);
+}
+scene.add(paredeDireita);
+scene.add(paredeTras);
+scene.add(paredeEsquerda);
+
+// Definindo e testando as colisões com a parede
+function collisionWithWall() {
+    // Testando colisão com parede da direita:
+    let paredeD = {
+        obj: paredeDireita,
+        width: 4,
+        height: 4,
+        depth: 124,
+        children: 0,
+    }
+    if(CheckCollisions(tank_player1.object, tank_player2.object, paredeD) != 0) {
+        console.log(CheckCollisions(tank_player1.object, tank_player2.object, paredeD));
+    }
+    // Testando colisão com a parede da esquerda:
+    let paredeE = {
+        obj: paredeEsquerda,
+        width: 4,
+        height: 4,
+        depth: 124,
+        children: 0,
+    }
+    if(CheckCollisions(tank_player1.object, tank_player2.object, paredeE) != 0) {
+        console.log(CheckCollisions(tank_player1.object, tank_player2.object, paredeE));
+    }
+    // Testando colisão com paredes de tras:
+    let paredeT1 = {
+        obj: paredeTras,
+        width: 76,
+        height: 4,
+        depth: 4,
+        children: 0
+    }
+    if(CheckCollisions(tank_player1.object, tank_player2.object, paredeT1) != 0) {
+        console.log(CheckCollisions(tank_player1.object, tank_player2.object, paredeT1));
+    }
+    let paredeT2 = {
+        obj: paredeTras,
+        width: 76,
+        height: 4,
+        depth: 4,
+        children: 2
+    }
+    if(CheckCollisions(tank_player1.object, tank_player2.object, paredeT2) != 0) {
+        console.log(CheckCollisions(tank_player1.object, tank_player2.object, paredeT2));
+    }
+    let paredeT3 = {
+        obj: paredeTras,
+        width: 20,
+        height: 4,
+        depth: 4,
+        children: 1
+    }
+    if(CheckCollisions(tank_player1.object, tank_player2.object, paredeT3) != 0) {
+        console.log(CheckCollisions(tank_player1.object, tank_player2.object, paredeT3));
+    }
+    let paredeT4 = {
+        obj: paredeTras,
+        width: 20,
+        height: 4,
+        depth: 4,
+        children: 24
+    }
+    if(CheckCollisions(tank_player1.object, tank_player2.object, paredeT4) != 0) {
+        console.log(CheckCollisions(tank_player1.object, tank_player2.object, paredeT4));
+    }
+}
 
 // Habilitando e desabilitando o OrbitControls
 function swapOrbitControls() {
@@ -91,8 +180,8 @@ function swapOrbitControls() {
 function midPosition() {
     const position1 = new THREE.Vector3();
     const position2 = new THREE.Vector3();
-    tank_player1.getWorldPosition(position1);
-    tank_player2.getWorldPosition(position2);
+    tank_player1.object.getWorldPosition(position1);
+    tank_player2.object.getWorldPosition(position2);
     let midX = (position1.x + position2.x)/2;
     let midZ = (position1.z + position2.z)/2;
     let dist = Math.sqrt(
@@ -120,8 +209,6 @@ render();
 function render()
 {
     play();
-    TankMove(tank_player1, 0);
-    TankMove(tank_player2, 1);
     requestAnimationFrame(render);
     renderer.render(scene, camera) // Render scene
 }
