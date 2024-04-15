@@ -37,7 +37,7 @@ export class Tank {
     let cannon = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 3, 32));
     tower.add(cannon);
     cannon.rotateZ(THREE.MathUtils.degToRad(80));
-    cannon.position.set(-1.0, 0.55, -0.1);
+    cannon.position.set(-1.0, 0.55, 0.0);
 
     // Criando as rodas
     for(let i = 0; i < 2; i++) {
@@ -56,18 +56,39 @@ export function moveTank(type, tankBase, speed) {
   var keyboard = new KeyboardState();
   keyboard.update();
   if(type == 0) {
-    if( keyboard.pressed("up") )      tankBase.translateZ( -speed );
-    if( keyboard.pressed("down") )    tankBase.translateZ(  speed );
+    if( keyboard.pressed("up") )       tankBase.translateZ( -speed );
+    if( keyboard.pressed("down") )     tankBase.translateZ(  speed );  
 
     let angulo = THREE.MathUtils.degToRad(1);
     if( keyboard.pressed("left") )    tankBase.rotateY(  angulo );
     if( keyboard.pressed("right") )   tankBase.rotateY( -angulo );
   } else {
-    if( keyboard.pressed("W") )       tankBase.translateZ( -speed );
-    if( keyboard.pressed("S") )       tankBase.translateZ(  speed );
+    if( keyboard.pressed("W") )       tankBase.translateZ( -speed ); 
+    if( keyboard.pressed("S") )       tankBase.translateZ(  speed );  
 
     let angulo = THREE.MathUtils.degToRad(1);
     if( keyboard.pressed("A") )       tankBase.rotateY(  angulo );
     if( keyboard.pressed("D") )       tankBase.rotateY( -angulo );
+  }
+}
+
+export function moveTankWithCollision(type, tankBase, speed) {
+  var keyboard = new KeyboardState();
+  keyboard.update();
+  if(type == 0) {
+    if( keyboard.pressed("up") )      tankBase.position.z -= speed;
+    if( keyboard.pressed("down") )    tankBase.translateZ( speed );
+
+    let angulo = THREE.MathUtils.degToRad(1);
+    if( keyboard.pressed("left") )    tankBase.rotateY(  angulo );
+    if( keyboard.pressed("right") )   tankBase.rotateY( -angulo );
+  }
+  if(type == 1) {
+    if( keyboard.pressed("W") )      tankBase.position.z -= speed;
+    if( keyboard.pressed("S") )      tankBase.position.z += speed;
+
+    let angulo = THREE.MathUtils.degToRad(1);
+    if( keyboard.pressed("A") )      tankBase.rotateY(  angulo );
+    if( keyboard.pressed("D") )      tankBase.rotateY( -angulo );
   }
 }
