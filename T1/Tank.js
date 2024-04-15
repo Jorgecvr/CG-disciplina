@@ -8,7 +8,7 @@ export class Tank {
   constructor(type) {
     this.object = this.createTank(type);
     this.vida = 10;
-    this.speed = 0.12;
+    this.speed = 0.2;
   }
 
   // Função que cria o objeto tanque
