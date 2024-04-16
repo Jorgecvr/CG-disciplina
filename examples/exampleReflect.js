@@ -26,6 +26,7 @@ class Ball {
       this.moveOn = move;
    }
    move(){
+      console.log(this.direction);
       if(!this.moveOn) return;
       let step = this.direction.clone().multiplyScalar(this.speed);    
       this.object.position.add(step);

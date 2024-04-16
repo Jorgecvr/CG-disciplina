@@ -63,24 +63,6 @@ function collisionWithWall() {
             children: 24
     }
     let collisionsPT4 = CheckCollisions(tank_player1.object, tank_player2.object, paredeT4);
-
-    // Mudando a movimentação baseado na colisão
-    if(collisionsPD == 0 && collisionsPE == 0 && collisionsPT1 == 0 && collisionsPT2 == 0 && collisionsPT3 == 0 && collisionsPT4 == 0) {
-        moveTank(0, tank_player1.object, tank_player1.speed);
-        moveTank(1, tank_player2.object, tank_player2.speed);
-    }
-    else if(collisionsPD == 1 || collisionsPE == 1 || collisionsPT1 == 1 || collisionsPT2 == 1 || collisionsPT3 == 1 || collisionsPT4 == 1) {
-        moveTankWithCollision(0, tank_player1.object, tank_player1.speed, tank_player1.speed);
-        moveTank(1, tank_player2.object, tank_player2.speed);
-    }
-    else if(collisionsPD == 2 || collisionsPE == 2 || collisionsPT2 == 2 || collisionsPT2 == 2 || collisionsPT3 == 2 || collisionsPT4 == 2) {
-        moveTankWithCollision(1, tank_player2.object, tank_player2.speed, tank_player2.speed);
-        moveTank(0, tank_player1.object, tank_player1.speed);
-    }
-    else {
-        moveTankWithCollision(0, tank_player1.object, tank_player1.speed, tank_player1.speed);
-        moveTankWithCollision(1, tank_player2.object, tank_player2.speed, tank_player2.speed);
-    }
 }
 
 // Função utilizada para mover o tanque com base na colisão e na rotação do tanque
@@ -182,3 +164,20 @@ function collisionWithWall() {
 //         }
 //     }
 // }
+
+// Dividindo a parede para testar colisões
+var paredeDireita = new THREE.Object3D();
+var paredeTras = new THREE.Object3D();
+var paredeEsquerda = new THREE.Object3D();
+for(let i = 0; i < 17; i++) {
+    paredeDireita.add(wall.children[0]);
+}
+for(let i = 0; i < 26; i++) {
+    paredeTras.add(wall.children[0]);
+}
+for(let i = 0; i < 17; i++) {
+    paredeEsquerda.add(wall.children[0]);
+}
+scene.add(paredeDireita);
+scene.add(paredeTras);
+scene.add(paredeEsquerda);

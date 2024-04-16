@@ -10,9 +10,10 @@ import KeyboardState from '../libs/util/KeyboardState.js';
 import { OBB } from '../build/jsm/math/OBB.js';
 
 // Importações de arquivos criados para o trabalho.
-import { Tank, moveTank, moveTankWithCollision } from './Tank.js';
+import { Tank } from './Tank.js';
 import { CreateLevel } from './Levels.js';
-import { CheckCollisions } from './Collisions.js';
+import { moveTankWithCollision } from './Collisions.js';
+import { CriaBala, balaAnda } from './Bullet.js';
 
 // Declaração de variáveis úteis.
 let scene = new THREE.Scene();                                  // Criando a main scene.
@@ -30,11 +31,46 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 
 // Começando o jogo.
 function play() {
+    //console.log(tank_player1.getDirection());
     swapOrbitControls();
-    collisionWithWall();
-    moveTank(0, tank_player1.object, tank_player1.speed);
-    moveTank(1, tank_player2.object, tank_player2.speed);
+    collisions();
+    InitBullet();
+    BulletControl(Bullet);
+    tank_player1.moveTank(0);
+    tank_player2.moveTank(1);
+    // moveTank(0, tank_player1.object, tank_player1.speed);
+    // moveTank(1, tank_player2.object, tank_player2.speed);
     updateCamera();
+}
+
+function collisions() {
+    moveTankWithCollision(tank_player1, tank_player2, wall);
+}
+
+function InitBullet(){
+    var keyboard = new KeyboardState();
+    if(keyboard.down('space') || keyboard.down('Q')){
+    Bullet.push(CriaBala(tank_player1.object, tank_player2.object));
+    scene.add(Bullet[Bullet.length-1].obj);
+    BulletControl(Bullet);
+    }
+    if(keyboard.down("/") || keyboard.down(",")){
+        Bullet.push(CriaBala(tank_player2.object, tank_player1.object));
+        scene.add(Bullet[Bullet.length-1].obj);
+        BulletControl(Bullet);
+    }
+}
+
+function BulletControl(Bullet) {
+    if (Bullet.length === 0){
+        return 0;
+    }
+    else{
+        Bullet.forEach((bullet) => {
+            let remove = balaAnda(bullet);
+            if(remove) { scene.remove(bullet.obj)};
+        });
+    }
 }
 
 // Criando o player1
@@ -48,6 +84,13 @@ var tank_player2 = new Tank(1);
 tank_player2.object.position.set(-8.0, 1.1, -52.0);
 tank_player2.object.rotateY(THREE.MathUtils.degToRad(90));
 scene.add(tank_player2.object);
+
+// Criando o vetor de projéteis
+var Bullet = [];
+
+///////////////////////////////////////////////////
+
+///////////////////////////////////////////////////
 
 // Criando as propriedades da câmera
 var camPosition = new THREE.Vector3(0, 0, 0);
@@ -81,90 +124,7 @@ let nivel1 = [
             ];
 var [floor, wall] = CreateLevel(nivel1);
 scene.add(floor);
-
-// Dividindo a parede para testar colisões
-var paredeDireita = new THREE.Object3D();
-var paredeTras = new THREE.Object3D();
-var paredeEsquerda = new THREE.Object3D();
-for(let i = 0; i < 17; i++) {
-    paredeDireita.add(wall.children[0]);
-}
-for(let i = 0; i < 26; i++) {
-    paredeTras.add(wall.children[0]);
-}
-for(let i = 0; i < 17; i++) {
-    paredeEsquerda.add(wall.children[0]);
-}
-scene.add(paredeDireita);
-scene.add(paredeTras);
-scene.add(paredeEsquerda);
-
-// Definindo e testando as colisões com a parede
-function collisionWithWall() {
-    // //Pegando a rotação dos tanques em relação ao mundo
-    // const tankRotationQuaternion1 = new THREE.Quaternion();
-    // tank_player1.object.getWorldQuaternion(tankRotationQuaternion1);
-
-    // const tankRotationQuaternion2 = new THREE.Quaternion();
-    // tank_player2.object.getWorldQuaternion(tankRotationQuaternion2);
-
-    // Testando colisão com parede da direita:
-    let paredeD = {
-        obj: paredeDireita,
-        width: 4,
-        height: 4,
-        depth: 124,
-        children: 0,
-    }
-    let collisionsPD = CheckCollisions(tank_player1.object, tank_player2.object, paredeD);
-
-    // Testando colisão com a parede da esquerda:
-    let paredeE = {
-        obj: paredeEsquerda,
-        width: 4,
-        height: 4,
-        depth: 124,
-        children: 0,
-    }
-    let collisionsPE = CheckCollisions(tank_player1.object, tank_player2.object, paredeE);
-
-    // Testando colisão com paredes de tras:
-    let paredeT1 = {
-        obj: paredeTras,
-        width: 76,
-        height: 4,
-        depth: 4,
-        children: 0
-    }
-    let collisionsPT1 = CheckCollisions(tank_player1.object, tank_player2.object, paredeT1);
-
-    let paredeT2 = {
-        obj: paredeTras,
-        width: 76,
-        height: 4,
-        depth: 4,
-        children: 2
-    }
-    let collisionsPT2 = CheckCollisions(tank_player1.object, tank_player2.object, paredeT2);
-
-    let paredeT3 = {
-        obj: paredeTras,
-        width: 20,
-        height: 4,
-        depth: 4,
-        children: 1
-    }
-    let collisionsPT3 = CheckCollisions(tank_player1.object, tank_player2.object, paredeT3);
-
-    let paredeT4 = {
-            obj: paredeTras,
-            width: 20,
-            height: 4,
-            depth: 4,
-            children: 24
-    }
-    let collisionsPT4 = CheckCollisions(tank_player1.object, tank_player2.object, paredeT4);
-}
+scene.add(wall);
 
 // Habilitando e desabilitando o OrbitControls
 function swapOrbitControls() {

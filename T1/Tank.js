@@ -7,8 +7,55 @@ export class Tank {
   // Construtor da classe Tank
   constructor(type) {
     this.object = this.createTank(type);
+
     this.vida = 10;
-    this.speed = 0.2;
+    this.speed = -0.5;
+
+    this.width = 3;
+    this.height = 0.85;
+    this.depth = 5;
+
+    this.direction = new THREE.Vector3(0, 0, 0).normalize();
+    this.setDirection(this.object.getWorldDirection(new THREE.Vector3()).normalize());
+  }
+
+  // Funções de get e set para a direção do tanque
+  getDirection() {
+    return this.direction.normalize().clone();
+  }
+  setDirection(direction) {
+    this.direction = direction.normalize();
+  }
+
+  // Funções de get e set para velocidade
+  getSpeed() {
+    return this.speed;
+  }
+  setSpeed(speed) {
+    this.speed = speed;
+  }
+
+  moveTank(type) {
+    var keyboard = new KeyboardState();
+    keyboard.update();
+
+    if(type == 0) {
+      if(keyboard.pressed("up"))          this.object.translateZ(this.speed);
+      if( keyboard.pressed("down") )      this.object.translateZ(-this.speed);
+
+      let angulo = THREE.MathUtils.degToRad(1);
+      if( keyboard.pressed("left") )      this.object.rotateY(  angulo );
+      if( keyboard.pressed("right") )     this.object.rotateY( -angulo );
+    } 
+    else {
+      if( keyboard.pressed("W") )         this.object.translateZ(this.speed ); 
+      if( keyboard.pressed("S") )         this.object.translateZ(-this.speed );  
+  
+      let angulo = THREE.MathUtils.degToRad(1);
+      if( keyboard.pressed("A") )         this.object.rotateY(  angulo );
+      if( keyboard.pressed("D") )         this.object.rotateY( -angulo );
+    }
+    this.setDirection(this.object.getWorldDirection(new THREE.Vector3()).normalize());
   }
 
   // Função que cria o objeto tanque
@@ -49,46 +96,5 @@ export class Tank {
       }
     }
     return tankBase;
-  }
-}
-
-export function moveTank(type, tankBase, speed) {
-  var keyboard = new KeyboardState();
-  keyboard.update();
-  if(type == 0) {
-    if( keyboard.pressed("up") )       tankBase.translateZ( -speed );
-    if( keyboard.pressed("down") )     tankBase.translateZ(  speed );  
-
-    let angulo = THREE.MathUtils.degToRad(1);
-    if( keyboard.pressed("left") )    tankBase.rotateY(  angulo );
-    if( keyboard.pressed("right") )   tankBase.rotateY( -angulo );
-  } else {
-    if( keyboard.pressed("W") )       tankBase.translateZ( -speed ); 
-    if( keyboard.pressed("S") )       tankBase.translateZ(  speed );  
-
-    let angulo = THREE.MathUtils.degToRad(1);
-    if( keyboard.pressed("A") )       tankBase.rotateY(  angulo );
-    if( keyboard.pressed("D") )       tankBase.rotateY( -angulo );
-  }
-}
-
-export function moveTankWithCollision(type, tankBase, speed) {
-  var keyboard = new KeyboardState();
-  keyboard.update();
-  if(type == 0) {
-    if( keyboard.pressed("up") )      tankBase.position.z -= speed;
-    if( keyboard.pressed("down") )    tankBase.translateZ( speed );
-
-    let angulo = THREE.MathUtils.degToRad(1);
-    if( keyboard.pressed("left") )    tankBase.rotateY(  angulo );
-    if( keyboard.pressed("right") )   tankBase.rotateY( -angulo );
-  }
-  if(type == 1) {
-    if( keyboard.pressed("W") )      tankBase.position.z -= speed;
-    if( keyboard.pressed("S") )      tankBase.position.z += speed;
-
-    let angulo = THREE.MathUtils.degToRad(1);
-    if( keyboard.pressed("A") )      tankBase.rotateY(  angulo );
-    if( keyboard.pressed("D") )      tankBase.rotateY( -angulo );
   }
 }
