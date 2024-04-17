@@ -59,28 +59,52 @@ export function directionTankWithCollision(tank, wall) {
         // Parede Esquerda
         if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).z == 0) {
             normal = new THREE.Vector3(1, 0, 0);
-            tank.setSpeedCollision(-0.1);
+            
+            // Calcula o ângulo entre o vetor de direção do tanque e a normal da parede
+            const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(normal));
+            console.log(angle);
+            if(angle >= 89 && angle <= 91) tank.setSpeedCollision(0);
+            else tank.setSpeedCollision(-0.15);
+
             direction = tank.getDirection().clone().reflect(normal);
         }
 
         // Parede Direita
         else if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).z == -64) {
             normal = new THREE.Vector3(1, 0, 0);
-            tank.setSpeedCollision(0.1);
+
+            // Calcula o ângulo entre o vetor de direção do tanque e a normal da parede
+            const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(normal));
+            console.log(angle);
+            if(angle >= 89 && angle <= 91) tank.setSpeedCollision(0);
+            else tank.setSpeedCollision(0.15);
+
             direction = tank.getDirection().clone().reflect(normal);
         }
 
         // Parede Frente
         else if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).x == -44) {
             let normal = new THREE.Vector3(1, 0, 1);
-            tank.setSpeedCollision(-0.1);
+
+            // Calcula o ângulo entre o vetor de direção do tanque e a normal da parede
+            const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(0, 0, 1)));
+            console.log(angle);
+            if(angle >= 84 && angle <= 94) tank.setSpeedCollision(0);
+            else tank.setSpeedCollision(-0.15);
+
             direction = tank.getDirection().clone().reflect(normal);
         }
 
         // Parede Trás
         else if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).x == 0) {
             let normal = new THREE.Vector3(1, 0, 1);
-            tank.setSpeedCollision(0.1);
+
+            // Calcula o ângulo entre o vetor de direção do tanque e a normal da parede
+            const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(0, 0, 1)));
+            console.log(angle);
+            if(angle >= 84 && angle <= 94) tank.setSpeedCollision(0);
+            else tank.setSpeedCollision(0.15);
+
             direction = tank.getDirection().clone().reflect(normal);
         }
 
@@ -89,24 +113,48 @@ export function directionTankWithCollision(tank, wall) {
             // Muro pelos lados
             if (tank.object.getWorldPosition(new THREE.Vector3()).x <= -12 && tank.object.getWorldPosition(new THREE.Vector3()).x > -26) {
                 let normal = new THREE.Vector3(1, 0, 1);
-                tank.setSpeedCollision(0.1);
+
+                // Calcula o ângulo entre o vetor de direção do tanque e a normal da parede
+                const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(0, 0, 1)));
+                console.log(angle);
+                if(angle >= 84 && angle <= 94) tank.setSpeedCollision(0);
+                else tank.setSpeedCollision(0.15);
+
                 direction = tank.getDirection().clone().reflect(normal);
             }
             else if(tank.object.getWorldPosition(new THREE.Vector3()).x <= -26 && tank.object.getWorldPosition(new THREE.Vector3()).x >= -32) {
                 let normal = new THREE.Vector3(1, 0, 1);
-                tank.setSpeedCollision(-0.1);
+
+                // Calcula o ângulo entre o vetor de direção do tanque e a normal da parede
+                const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(0, 0, 1)));
+                console.log(angle);
+                if(angle >= 84 && angle <= 94) tank.setSpeedCollision(0);
+                else tank.setSpeedCollision(-0.15);
+
                 direction = tank.getDirection().clone().reflect(normal);
             }
             // Muro pela frente
             else if(tank.object.getWorldPosition(new THREE.Vector3()).z >= -32) {
                 normal = new THREE.Vector3(1, 0, 0);
-                tank.setSpeedCollision(0.1);
+
+                // Calcula o ângulo entre o vetor de direção do tanque e a normal da parede
+                const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(1, 0, 0)));
+                console.log(angle);
+                if(angle >= 89 && angle <= 91) tank.setSpeedCollision(0);
+                else tank.setSpeedCollision(0.15);
+
                 direction = tank.getDirection().clone().reflect(normal);
             }
             // Muro por trás
             else if(tank.object.getWorldPosition(new THREE.Vector3()).z < -32) {
                 normal = new THREE.Vector3(1, 0, 0);
-                tank.setSpeedCollision(-0.1);
+
+                // Calcula o ângulo entre o vetor de direção do tanque e a normal da parede
+                const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(1, 0, 0)));
+                console.log(angle);
+                if(angle >= 89 && angle <= 91) tank.setSpeedCollision(0);   
+                else tank.setSpeedCollision(-0.15);
+
                 direction = tank.getDirection().clone().reflect(normal);
             }
         }

@@ -2,21 +2,22 @@ import * as THREE from 'three';
 import { setDefaultMaterial } from '../../libs/util/util.js';
 import { Tank } from './Tank.js';
 
-
+// Criação da geometria e material da bala
 export function CriaBala(tank, tankInimigo){
     let WallCollision = 0;
     let AcertouInimigo = 0;
     const materialBullet = setDefaultMaterial('white')
-    const geometryBullet = new THREE.SphereGeometry( 0.5, 32, 32, 50 );  
+    const geometryBullet = new THREE.SphereGeometry( 0.3, 32, 32, 50 );  
     const bullet = new THREE.Mesh( geometryBullet, materialBullet );
-    var p = new THREE.Vector3();
+    // Define a posição inicial da bala na posição do tanque
+    var p = new THREE.Vector3(); 
     let speed = -0.3;
-    tank.getWorldPosition(p);
+    tank.children[0].children[0].children[0].getWorldPosition(p);
     bullet.position.copy(p);
+    bullet.position.y = 2.15;
 
-    var direction = new THREE.Vector3();
-    // AtiraBala();
-
+    // Cálculo da direção inicial da bala com base na rotação do tanque
+    var direction = new THREE.Vector3(); 
     var tankRotationMatrix = new THREE.Matrix4();
     tank.matrixWorld.decompose(new THREE.Vector3(), tank.quaternion, new THREE.Vector3());
     tankRotationMatrix.makeRotationFromQuaternion(tank.quaternion);
@@ -27,6 +28,7 @@ export function CriaBala(tank, tankInimigo){
     // Define a direção da bala como a direção global
     direction.copy(globalDirection);
 
+    // Objeto que representa a bala
     const Bullet = {
         obj: bullet,
         direction: direction,
@@ -40,21 +42,23 @@ export function CriaBala(tank, tankInimigo){
     return Bullet;
 }
 
-export function balaAnda(Bullet){
+// Esta função faz a bala se mover e verifica colisões
+export function balaAnda(Bullet){ 
     if (Bullet.removed) return 0;
 
-    let step = Bullet.direction.clone().multiplyScalar(Bullet.speed);    
+     // Move a bala na direção definida pela sua velocidade
+    let step = Bullet.direction.clone().multiplyScalar(Bullet.speed);   
     Bullet.obj.position.add(step);
     checkCollisions(Bullet);
 
-    if( Bullet.AcertouInimigo == 1){
-        Bullet.inimigo.setVida(Bullet.inimigo.getVida()-1);
-        console.log("Bateu Inimigo");
+     // Verifica se a bala acertou um inimigo ou uma parede
+    if( Bullet.AcertouInimigo == 1){ 
+        Bullet.inimigo.setLife(Bullet.inimigo.getLife()-1);
         Bullet.removed = true;
         return 1;
     } else {
-        if( Bullet.WallCollision == 3){
-            console.log("Bateu 3 vezes parede");
+        // Verifica se a bala colidiu com uma parede e remove-a se necessário
+        if( Bullet.WallCollision == 3){ 
             Bullet.removed = true;
             return 1;
         }
@@ -64,8 +68,8 @@ export function balaAnda(Bullet){
     }
     
 }
-
-function checkCollisions(Bullet){
+// Esta função verifica colisões da bala com paredes e inimigos
+function checkCollisions(Bullet){ 
     var bulletPosition = Bullet.obj.getWorldPosition(Bullet.p);
     var collisionPlane = null;
     
@@ -85,30 +89,24 @@ function checkCollisions(Bullet){
         collisionPlane = new THREE.Vector3(1, 0, 0);
     }
     else if(bulletPosition.x > -2.5) {
-        console.log("Bateu Parede Direita");
         collisionPlane = new THREE.Vector3(-1, 0, 0);
     }
     else if(bulletPosition.x < -42) {
-        console.log("Bateu Parede Esquerda");
         collisionPlane = new THREE.Vector3(1, 0, 0);
     }
     else if(bulletPosition.z > -2.2) {
-        console.log("Bateu Parede Baixo");
         collisionPlane = new THREE.Vector3(0, 0, -1);
     }
     else if(bulletPosition.z < -62) {
-        console.log("Bateu Parede Cima");
         collisionPlane = new THREE.Vector3(0, 0, 1); // Parede cima
     }
     else if(bulletPosition.z <= -29.5 && bulletPosition.z >= -34.5 && (bulletPosition.x >= -14.0)) {
-        console.log("Piruzinho1");
         collisionPlane = new THREE.Vector3(0, 0, 1);
     }
     else if(bulletPosition.z <= -29.5 && bulletPosition.z >= -34.5 && (bulletPosition.x <= -30.0)) {
-        console.log("Piruzinho2");
         collisionPlane = new THREE.Vector3(0, 0, 1);
     }
-
+    // Se houver colisão com uma parede, reflete a direção da bala
     if(collisionPlane != null){
         Bullet.direction.reflect(collisionPlane).normalize();
         Bullet.WallCollision++;
