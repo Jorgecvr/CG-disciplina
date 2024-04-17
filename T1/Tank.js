@@ -9,16 +9,23 @@ export class Tank {
     this.object = this.createTank(type);
 
     this.vida = 10;
-    this.speed = -0.5;
+    this.speed = -0.2;
+    this.speedCollsion = -0.1;
 
     this.width = 3;
     this.height = 0.85;
     this.depth = 5;
 
     this.direction = new THREE.Vector3(0, 0, 0).normalize();
-    this.setDirection(this.object.getWorldDirection(new THREE.Vector3()).normalize());
   }
 
+  getVida(){
+    return this.vida;
+  }
+
+  setVida(vida){
+    this.vida = vida;
+  }
   // Funções de get e set para a direção do tanque
   getDirection() {
     return this.direction.normalize().clone();
@@ -27,12 +34,9 @@ export class Tank {
     this.direction = direction.normalize();
   }
 
-  // Funções de get e set para velocidade
-  getSpeed() {
-    return this.speed;
-  }
-  setSpeed(speed) {
-    this.speed = speed;
+  // Funções de set para velocidade
+  setSpeedCollision(speed) {
+    this.speedCollsion = speed;
   }
 
   moveTank(type) {
@@ -41,21 +45,78 @@ export class Tank {
 
     if(type == 0) {
       if(keyboard.pressed("up"))          this.object.translateZ(this.speed);
-      if( keyboard.pressed("down") )      this.object.translateZ(-this.speed);
+      if(keyboard.pressed("down"))        this.object.translateZ(-this.speed);
 
       let angulo = THREE.MathUtils.degToRad(1);
-      if( keyboard.pressed("left") )      this.object.rotateY(  angulo );
-      if( keyboard.pressed("right") )     this.object.rotateY( -angulo );
+      if(keyboard.pressed("left")) {
+        this.object.rotateY(angulo);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3()));
+      }      
+      if(keyboard.pressed("right")) {
+        this.object.rotateY(-angulo);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3()));
+      }
     } 
     else {
-      if( keyboard.pressed("W") )         this.object.translateZ(this.speed ); 
-      if( keyboard.pressed("S") )         this.object.translateZ(-this.speed );  
+      if(keyboard.pressed("W"))         this.object.translateZ(this.speed); 
+      if(keyboard.pressed("S"))         this.object.translateZ(-this.speed);  
   
       let angulo = THREE.MathUtils.degToRad(1);
-      if( keyboard.pressed("A") )         this.object.rotateY(  angulo );
-      if( keyboard.pressed("D") )         this.object.rotateY( -angulo );
+      if(keyboard.pressed("A")) {
+        this.object.rotateY(angulo);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3()));
+      }      
+      if(keyboard.pressed("D")) {
+        this.object.rotateY(-angulo);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3()));
+      }
     }
-    this.setDirection(this.object.getWorldDirection(new THREE.Vector3()).normalize());
+  }
+
+  moveTankWithCollision(type, direction) {
+    var keyboard = new KeyboardState();
+    keyboard.update();
+
+    if(type == 0) {
+      if(keyboard.pressed("up")) {
+        this.object.translateOnAxis(direction, this.speedCollsion);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3()));
+      }
+      if(keyboard.pressed("down")) {
+        this.object.translateOnAxis(direction, this.speedCollsion);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3()));
+      }
+
+      let angulo = THREE.MathUtils.degToRad(1);
+      if(keyboard.pressed("left")) {
+        this.object.rotateY(angulo);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3()));
+      }      
+      if(keyboard.pressed("right")) {
+        this.object.rotateY(-angulo);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3()));
+      }
+    } 
+    else {
+      if(keyboard.pressed("W")) {
+        this.object.translateOnAxis(direction, this.speedCollsion);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3()));
+      }
+      if(keyboard.pressed("S")) {
+        this.object.translateOnAxis(direction, this.speedCollsion);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3()));
+      }  
+  
+      let angulo = THREE.MathUtils.degToRad(1);
+      if(keyboard.pressed("A")) {
+        this.object.rotateY(angulo);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3().normalize()));
+      }      
+      if(keyboard.pressed("D")) {
+        this.object.rotateY(-angulo);
+        this.setDirection(this.object.getWorldDirection(new THREE.Vector3().normalize()));
+      }
+    }
   }
 
   // Função que cria o objeto tanque

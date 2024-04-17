@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { setDefaultMaterial } from '../../libs/util/util.js';
+import { Tank } from './Tank.js';
 
 
 export function CriaBala(tank, tankInimigo){
@@ -47,6 +48,7 @@ export function balaAnda(Bullet){
     checkCollisions(Bullet);
 
     if( Bullet.AcertouInimigo == 1){
+        Bullet.inimigo.setVida(Bullet.inimigo.getVida()-1);
         console.log("Bateu Inimigo");
         Bullet.removed = true;
         return 1;
@@ -69,7 +71,7 @@ function checkCollisions(Bullet){
     
     // Calculando Colisão Tank
     const bbBullet = new THREE.Box3().setFromObject(Bullet.obj);
-    const bbTankInimigo = new THREE.Box3().setFromObject(Bullet.inimigo);
+    const bbTankInimigo = new THREE.Box3().setFromObject(Bullet.inimigo.object);
     const tankInimigoColiision = bbBullet.intersectsBox(bbTankInimigo);
     if(tankInimigoColiision == 1){
         Bullet.AcertouInimigo = 1;

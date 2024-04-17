@@ -43,64 +43,74 @@ export function CheckCollisionsWithWall(tank, wall) {
 
 
 // Função que impede o tanque de se mover além das paredes
-export function moveTankWithCollision(tank_player1, tank_player2, wall) {
-    let blockCollisionWithTank1 = CheckCollisionsWithWall(tank_player1, wall);
-    if( blockCollisionWithTank1 != null ) {
+export function directionTankWithCollision(tank, wall) {
+    let blockCollisionWithTank1 = CheckCollisionsWithWall(tank, wall);
+    if(blockCollisionWithTank1 == null) {
+        return null;
+    }
+    else {
         console.log(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()));
 
-        // Normais calculadas com base na posição do bloco que indica qual é a parede
+        // Pegando a normal e a direção de deslocamento com base na posição do bloco e do tanque
+        // É necessário mudar a velocidade do tanque dependendo da direção de colisão
         let normal;
-        let speed;
+        let direction;
 
-        // Calcula as normais com base na posição do bloco
+        // Parede Esquerda
         if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).z == 0) {
-            normal = new THREE.Vector3(1, 0, 0).normalize();
-            speed = tank_player1.speed;
-        }
-        if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).z == -64) {
-            normal = new THREE.Vector3(1, 0, 0).normalize();
-            speed = -tank_player1.speed;
-        }
-        if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).x == -44) {
-            normal = new THREE.Vector3(1, 0, 0).normalize();
-            speed = tank_player1.speed;
+            normal = new THREE.Vector3(1, 0, 0);
+            tank.setSpeedCollision(-0.1);
+            direction = tank.getDirection().clone().reflect(normal);
         }
 
+        // Parede Direita
+        else if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).z == -64) {
+            normal = new THREE.Vector3(1, 0, 0);
+            tank.setSpeedCollision(0.1);
+            direction = tank.getDirection().clone().reflect(normal);
+        }
 
-        // if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).x == 0) {
-        //     normal = new THREE.Vector3(0, 0, -1).normalize();
-        //     slideNormal = new THREE.Vector3(1, 0, 0).normalize();
-        //     speed = tank_player1.speed;
-        // }
-    
-        // Calcula a direção de deslizamento do tanque
-        const slideDirection = tank_player1.getDirection().clone().reflect(normal.clone().normalize());
-        tank_player1.object.translateOnAxis(slideDirection, speed);
-        tank_player1.setDirection(tank_player1.object.getWorldDirection(new THREE.Vector3())); 
+        // Parede Frente
+        else if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).x == -44) {
+            let normal = new THREE.Vector3(1, 0, 1);
+            tank.setSpeedCollision(-0.1);
+            direction = tank.getDirection().clone().reflect(normal);
+        }
+
+        // Parede Trás
+        else if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).x == 0) {
+            let normal = new THREE.Vector3(1, 0, 1);
+            tank.setSpeedCollision(0.1);
+            direction = tank.getDirection().clone().reflect(normal);
+        }
+
+        // Muros  
+        else if(blockCollisionWithTank1.object.getWorldPosition(new THREE.Vector3()).z == -32) {
+            // Muro pelos lados
+            if (tank.object.getWorldPosition(new THREE.Vector3()).x <= -12 && tank.object.getWorldPosition(new THREE.Vector3()).x > -26) {
+                let normal = new THREE.Vector3(1, 0, 1);
+                tank.setSpeedCollision(0.1);
+                direction = tank.getDirection().clone().reflect(normal);
+            }
+            else if(tank.object.getWorldPosition(new THREE.Vector3()).x <= -26 && tank.object.getWorldPosition(new THREE.Vector3()).x >= -32) {
+                let normal = new THREE.Vector3(1, 0, 1);
+                tank.setSpeedCollision(-0.1);
+                direction = tank.getDirection().clone().reflect(normal);
+            }
+            // Muro pela frente
+            else if(tank.object.getWorldPosition(new THREE.Vector3()).z >= -32) {
+                normal = new THREE.Vector3(1, 0, 0);
+                tank.setSpeedCollision(0.1);
+                direction = tank.getDirection().clone().reflect(normal);
+            }
+            // Muro por trás
+            else if(tank.object.getWorldPosition(new THREE.Vector3()).z < -32) {
+                normal = new THREE.Vector3(1, 0, 0);
+                tank.setSpeedCollision(-0.1);
+                direction = tank.getDirection().clone().reflect(normal);
+            }
+        }
+
+        return direction;
     }
 }
-
-// export function CheckCollisions(tank1, tank2, objeto) {
-//     // Obtendo a matrix de rotação dos tanques e do objeto
-//     tank1.updateMatrixWorld();
-//     const tank1RotationMatrix3 = new THREE.Matrix3().setFromMatrix4(tank1.matrixWorld);
-//     tank2.updateMatrixWorld();
-//     const tank2RotationMatrix3 = new THREE.Matrix3().setFromMatrix4(tank2.matrixWorld);
-//     objeto.obj.updateMatrixWorld();
-//     const objetoRotationMatrix3 = new THREE.Matrix3().setFromMatrix4(objeto.obj.matrixWorld);
-
-//     // Criando a OBB para os objetos
-//     const tank1OBB = new OBB(tank1.getWorldPosition(new THREE.Vector3()), new THREE.Vector3(1.5, 0.425, 2.5), tank1RotationMatrix3);
-//     const tank2OBB = new OBB(tank2.getWorldPosition(new THREE.Vector3()), new THREE.Vector3(1.5, 0.425, 2.5), tank2RotationMatrix3);
-//     // Objeto deve ser uma estrutura que contenha o objeto 3d e seus parâmetros de largura, altura e profundidade
-//     // Esses parâmetros para os tanques já são conhecidos
-//     const objetoOBB = new OBB(objeto.obj.children[objeto.children].getWorldPosition(new THREE.Vector3()), 
-//                               new THREE.Vector3(objeto.width / 2, objeto.height / 2, objeto.depth / 2),
-//                               objetoRotationMatrix3);
-    
-//     // Verifica se há colisão entre os tanques e o objeto
-//     if(tank1OBB.intersectsOBB(objetoOBB) && tank2OBB.intersectsOBB(objetoOBB)) return 3;
-//     else if(tank2OBB.intersectsOBB(objetoOBB)) return 2;
-//     else if(tank1OBB.intersectsOBB(objetoOBB)) return 1;
-//     else return 0;
-// }
