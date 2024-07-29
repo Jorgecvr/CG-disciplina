@@ -26,13 +26,18 @@ var keyboard = new KeyboardState();                             // Criando o Key
 var orbitControls = new OrbitControls(camera, renderer.domElement);
 orbitControls.enabled = false;
 
-// Função utilizada para redimensionar a tela do navegador caso haja alterações
-window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
+// Função utilizada para redimensionar a tela do navegador caso haja alterações.
+window.addEventListener('resize', function() {
+    camera.aspect = this.window.innerWidth / this.window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(this.window.innerWidth, this.window.innerHeight);
+}, false);
 
 // Começando o jogo.
-// Função play chamada na render atualiza toda a lógica do jogo
+// Função play chamada na render atualiza toda a lógica do jogo.
 function play(end) {
     if(!end) {
+        message.changeMessage("Camera Position: " + position[0]+ " " + position[1]);
         swapOrbitControls();
         InitBullet();
         BulletControl(Bullet);
@@ -41,7 +46,7 @@ function play(end) {
     }
 }
 
-// Função que constrola a lógica de gameover
+// Função que constrola a lógica de gameover.
 function end() {
     let end = true;
     if(tank_player1.getLife() != 0 && tank_player2.getLife() != 0) {
@@ -69,7 +74,7 @@ function end() {
     return end;
 }
 
-// Criando o player1
+// Criando o player1.
 var tank_player1;
 var tank_player2;
 
@@ -80,7 +85,7 @@ function createTanks() {
     tank_player1.setDirection(tank_player1.object.getWorldDirection(new THREE.Vector3()));
     scene.add(tank_player1.object);
 
-    // Criando o player2
+    // Criando o player2.
     tank_player2 = new Tank(1);
     tank_player2.object.position.set(-8.0, 1.1, -56.0);
     tank_player2.object.rotateY(THREE.MathUtils.degToRad(90));
@@ -90,7 +95,7 @@ function createTanks() {
 createTanks();
 
 
-// Função que constrola o movimento dos tanques baseado em se há ou não colisões
+// Função que constrola o movimento dos tanques baseado em se há ou não colisões.
 function movement() {
     let direction1 = directionTankWithCollision(tank_player1, wall);
     if(direction1 == null) tank_player1.moveTank(0);
@@ -101,10 +106,10 @@ function movement() {
     else tank_player2.moveTankWithCollision(1, direction2);
 }
 
-// Criando o vetor de projéteis
+// Criando o vetor de projéteis.
 var Bullet = [];
 
-// Função que chama a criação de bala
+// Função que chama a criação de bala.
 function InitBullet(){
     var keyboard = new KeyboardState();
     if(keyboard.down("space") || keyboard.down('Q')){
@@ -119,7 +124,7 @@ function InitBullet(){
     }
 }
 
-// Função que controla a existência da bala
+// Função que controla a existência da bala.
 function BulletControl(Bullet) {
     if (Bullet.length === 0){
         return 0;
@@ -135,7 +140,7 @@ function BulletControl(Bullet) {
     }
 }
 
-// Criando o nível 1
+// Criando o nível 1.
 let nivel1 = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -153,18 +158,18 @@ var [floor, wall] = CreateLevel(nivel1);
 scene.add(floor);
 scene.add(wall);
 
-// Criando as propriedades da câmera
+// Criando as propriedades da câmera.
 let position = midPosition();
 var camPosition = new THREE.Vector3(15, 40, -32);
 var camUpPosition = new THREE.Vector3(0.0, 1.0, 0.0);
 var camLookPosition = new THREE.Vector3(position[0], 5, position[1]);
 
-// Setando a posição da câmera principal
+// Setando a posição da câmera principal.
 camera.position.copy(camPosition);
 camera.up.copy(camUpPosition);
 camera.lookAt(camLookPosition);
 
-// Habilitando e desabilitando o OrbitControls
+// Habilitando e desabilitando o OrbitControls.
 function swapOrbitControls() {
     keyboard.update();
     if( keyboard.down("O") ) {
@@ -180,7 +185,7 @@ function swapOrbitControls() {
     }
 }
 
-// Calculando a posição média entre os tanques e a distância entre eles
+// Calculando a posição média entre os tanques e a distância entre eles.
 function midPosition() {
     let position1 = new THREE.Vector3();
     let position2 = new THREE.Vector3();
@@ -195,22 +200,22 @@ function midPosition() {
     return [midX, midZ, dist];
 }
 
-// Função de atualização da câmera
+// Função de atualização da câmera.
 function updateCamera() {
+    let initView = window.innerWidth / window.innerHeight;
     if(!orbitControls.enabled) {
         let position = midPosition();
         camLookPosition.set(position[0], 5, position[1]);
-        camPosition.set(position[2]/2 -10, position[2]/2 + 10, -32);
+        camPosition.set(position[0] + (63 / initView), position[2]/3 + (21 / initView), position[1]);
 
         camera.position.copy(camPosition);
         camera.lookAt(camLookPosition);
     }
-}
+};
 
 render();
-function render()
-{
+function render() {
     play(end());
     requestAnimationFrame(render);
-    renderer.render(scene, camera) // Render scene
-}
+    renderer.render(scene, camera);
+};

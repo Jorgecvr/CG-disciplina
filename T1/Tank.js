@@ -10,7 +10,7 @@ export class Tank {
 
     this.life = 10;
     this.speed = -0.2;
-    this.speedCollsion = -0.15;
+    this.speedCollsion = -0.2;
 
     this.width = 3;
     this.height = 0.85;
@@ -21,23 +21,23 @@ export class Tank {
 
   getLife(){
     return this.life;
-  }
-
+  };
   setLife(life){
     this.life = life;
-  }
+  };
+
   // Funções de get e set para a direção do tanque
   getDirection() {
     return this.direction.normalize().clone();
-  }
+  };
   setDirection(direction) {
     this.direction = direction.normalize();
-  }
+  };
 
   // Funções de set para velocidade
   setSpeedCollision(speed) {
     this.speedCollsion = speed;
-  }
+  };
 
   moveTank(type) {
     var keyboard = new KeyboardState();
@@ -45,7 +45,7 @@ export class Tank {
 
     if(type == 0) {
       if(keyboard.pressed("W"))          this.object.translateZ(this.speed);
-      if(keyboard.pressed("S"))        this.object.translateZ(-this.speed);
+      if(keyboard.pressed("S"))          this.object.translateZ(-this.speed);
 
       let angulo = THREE.MathUtils.degToRad(1);
       if(keyboard.pressed("A")) {
@@ -59,7 +59,7 @@ export class Tank {
     } 
     else {
       if(keyboard.pressed("up"))         this.object.translateZ(this.speed); 
-      if(keyboard.pressed("down"))         this.object.translateZ(-this.speed);  
+      if(keyboard.pressed("down"))       this.object.translateZ(-this.speed);  
   
       let angulo = THREE.MathUtils.degToRad(1);
       if(keyboard.pressed("left")) {

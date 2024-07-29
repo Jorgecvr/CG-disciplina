@@ -64,7 +64,7 @@ export function directionTankWithCollision(tank, wall) {
             const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(normal));
             console.log(angle);
             if(angle >= 89 && angle <= 91) tank.setSpeedCollision(0);
-            else tank.setSpeedCollision(-0.15);
+            else tank.setSpeedCollision(-0.2);
 
             direction = tank.getDirection().clone().reflect(normal);
         }
@@ -77,7 +77,7 @@ export function directionTankWithCollision(tank, wall) {
             const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(normal));
             console.log(angle);
             if(angle >= 89 && angle <= 91) tank.setSpeedCollision(0);
-            else tank.setSpeedCollision(0.15);
+            else tank.setSpeedCollision(0.2);
 
             direction = tank.getDirection().clone().reflect(normal);
         }
@@ -90,7 +90,7 @@ export function directionTankWithCollision(tank, wall) {
             const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(0, 0, 1)));
             console.log(angle);
             if(angle >= 84 && angle <= 94) tank.setSpeedCollision(0);
-            else tank.setSpeedCollision(-0.15);
+            else tank.setSpeedCollision(-0.2);
 
             direction = tank.getDirection().clone().reflect(normal);
         }
@@ -103,7 +103,7 @@ export function directionTankWithCollision(tank, wall) {
             const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(0, 0, 1)));
             console.log(angle);
             if(angle >= 84 && angle <= 94) tank.setSpeedCollision(0);
-            else tank.setSpeedCollision(0.15);
+            else tank.setSpeedCollision(0.2);
 
             direction = tank.getDirection().clone().reflect(normal);
         }
@@ -118,7 +118,7 @@ export function directionTankWithCollision(tank, wall) {
                 const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(0, 0, 1)));
                 console.log(angle);
                 if(angle >= 84 && angle <= 94) tank.setSpeedCollision(0);
-                else tank.setSpeedCollision(0.15);
+                else tank.setSpeedCollision(0.2);
 
                 direction = tank.getDirection().clone().reflect(normal);
             }
@@ -129,7 +129,7 @@ export function directionTankWithCollision(tank, wall) {
                 const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(0, 0, 1)));
                 console.log(angle);
                 if(angle >= 84 && angle <= 94) tank.setSpeedCollision(0);
-                else tank.setSpeedCollision(-0.15);
+                else tank.setSpeedCollision(-0.2);
 
                 direction = tank.getDirection().clone().reflect(normal);
             }
@@ -141,7 +141,7 @@ export function directionTankWithCollision(tank, wall) {
                 const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(1, 0, 0)));
                 console.log(angle);
                 if(angle >= 89 && angle <= 91) tank.setSpeedCollision(0);
-                else tank.setSpeedCollision(0.15);
+                else tank.setSpeedCollision(0.2);
 
                 direction = tank.getDirection().clone().reflect(normal);
             }
@@ -153,7 +153,7 @@ export function directionTankWithCollision(tank, wall) {
                 const angle = THREE.MathUtils.radToDeg(tank.getDirection().angleTo(new THREE.Vector3(1, 0, 0)));
                 console.log(angle);
                 if(angle >= 89 && angle <= 91) tank.setSpeedCollision(0);   
-                else tank.setSpeedCollision(-0.15);
+                else tank.setSpeedCollision(-0.2);
 
                 direction = tank.getDirection().clone().reflect(normal);
             }
