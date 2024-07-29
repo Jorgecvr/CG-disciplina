@@ -13,6 +13,7 @@ import { GLTFLoader } from '../build/jsm/loaders/GLTFLoader.js';
 import { Tank } from './src/Tank.js';
 import { CreateLevel } from './src/Levels.js';
 import { Camera } from './src/Camera.js';
+import { CheckCollisionsWithWall } from './src/Collisions.js';
 // import { directionTankWithCollision } from './Collisions.js';
 // import { CriaBala, balaAnda } from './Bullet.js';
 
@@ -25,7 +26,8 @@ var keyboard = new KeyboardState();                             // Criando o Key
 
 // Renderizando o primeiro nível nível.
 let level = CreateLevel(1);
-scene.add(level);
+scene.add(level.wall);
+scene.add(level.floor);
 
 // Inserindo os tanques em cena.
 let tank1 = new Tank(1);
@@ -43,24 +45,36 @@ var orbitControls = new OrbitControls(camera.camera, renderer.domElement);
 orbitControls.enabled = true;
 
 // Função utilizada para redimensionar a tela do navegador caso haja alterações.
-window.addEventListener('resize', function(){onWindowResize(camera.camera, renderer)}, false);
+let zoomWidth = window.innerWidth;
+window.addEventListener('resize', function(){
+    camera.camera.aspect = this.window.innerWidth / this.window.innerHeight;
+    camera.camera.updateProjectionMatrix();
+    renderer.setSize(this.window.innerWidth, this.window.innerHeight);
+
+    // Adicionar ou remover zoom da camera para o redimensionamento.
+    camera.holder.translateZ((this.window.innerWidth-zoomWidth)/15)
+    zoomWidth = this.window.innerWidth;
+}, false);
 
 // Começando o jogo.
 // Função play chamada na render atualiza toda a lógica do jogo.
 function play(end) {
-    tank1.move(1);
-    tank2.move(2);
-    camera.update(tank1.mesh.getWorldPosition(new THREE.Vector3()), tank2.mesh.getWorldPosition(new THREE.Vector3));
+    if(!end) {
+        tank1.move(1);
+        CheckCollisionsWithWall(tank1, level);
+        tank2.move(2);
+        camera.update(tank1.mesh.getWorldPosition(new THREE.Vector3()), tank2.mesh.getWorldPosition(new THREE.Vector3));
+    }
 };
 
 // Função que constrola a lógica de gameover.
 function end() {
-    message.changeMessage("To do!");
-    return true;
+    message.changeMessage("To Do");
+    return false;
 };
 
 // Criando as propriedades da câmera.
-var camPosition = new THREE.Vector3(32, 30, -30);
+var camPosition = new THREE.Vector3(32, 40, -30);
 var camUpPosition = new THREE.Vector3(0.0, 0.1, 0.0);
 
 // Setando a posição da câmera principal.
