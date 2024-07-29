@@ -60,7 +60,7 @@ function end() {
 };
 
 // Criando as propriedades da câmera.
-var camPosition = new THREE.Vector3(32, 30, -20);
+var camPosition = new THREE.Vector3(32, 30, -30);
 var camUpPosition = new THREE.Vector3(0.0, 0.1, 0.0);
 
 // Setando a posição da câmera principal.

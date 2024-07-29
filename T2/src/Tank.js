@@ -16,7 +16,7 @@ export class Tank {
         let mesh = new THREE.Object3D();
         loader.load('assets/tankModel.glb', function(glb) {
             let obj = glb.scene;
-            obj.scale.set(1.3, 1.3, 1.3);
+            obj.scale.set(1.2, 1.3, 1.3);
             obj.traverse((child) => {
                 child.material = new THREE.MeshPhongMaterial({
                     color: type === 1 ? 'rgb(205, 50, 50)' : 'rgb(50, 50, 205)',
@@ -31,6 +31,8 @@ export class Tank {
 
     // Método que controla a movimentação do tanque.
     move(type) {
+        // this.mesh.translateX(-0.1);
+
         let keyboard = new KeyboardState();
         keyboard.update();
         let angle = THREE.MathUtils.degToRad(1);
