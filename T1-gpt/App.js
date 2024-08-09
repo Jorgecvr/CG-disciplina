@@ -1,218 +1,117 @@
+// Importe as bibliotecas necessárias
 import * as THREE from 'three';
-import { initRenderer, initDefaultBasicLight, setDefaultMaterial, onWindowResize } from '../../libs/util/util.js';
-import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
-import KeyboardState from '../libs/util/KeyboardState.js';
-import { OBB } from '../build/jsm/math/OBB.js';
 
-let scene, renderer, camera, controls, clock;
-let tank1, tank2;
-let keyboard = new KeyboardState();
-let bullets = [];
-let bulletSpeed = 0.5;
-let bulletLimit = 2;
-let walls = [];
-let tankSize = { width: 2, height: 1, depth: 3 };
+// Configuração inicial
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-init();
+// Criando o tanque personalizado como um objeto 3D
+const tank = new THREE.Object3D();
 
-function init() {
-  scene = new THREE.Scene();
-  renderer = initRenderer();
-  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 15, 25);
-  camera.lookAt(0, 0, 0);
+// Base do tanque (quadrado)
+const tankBaseGeometry = new THREE.BoxGeometry(1, 0.5, 1);
+const tankBaseMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const tankBaseMesh = new THREE.Mesh(tankBaseGeometry, tankBaseMaterial);
+tankBaseMesh.position.set(0, 0.25, 0); // Posição da base
+tank.add(tankBaseMesh); // Adicione à hierarquia do tanque
 
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.enabled = false;
-  
-  clock = new THREE.Clock();
+// Topo do tanque (meia lua)
+const tankTopGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.5, 32);
+const tankTopMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const tankTopMesh = new THREE.Mesh(tankTopGeometry, tankTopMaterial);
+tankTopMesh.position.set(0, 0.75, 0); // Posição do topo
+tank.add(tankTopMesh); // Adicione à hierarquia do tanque
 
-  window.addEventListener('resize', () => onWindowResize(camera, renderer), false);
-  document.addEventListener('keydown', (event) => keyboard.onKeyDown(event), false);
-  document.addEventListener('keyup', (event) => keyboard.onKeyUp(event), false);
+// Cano do tanque
+const tankBarrelGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1, 16);
+const tankBarrelMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+const tankBarrelMesh = new THREE.Mesh(tankBarrelGeometry, tankBarrelMaterial);
+tankBarrelMesh.position.set(0, 1.25, 0); // Posição do cano
+tank.add(tankBarrelMesh); // Adicione à hierarquia do tanque
 
-  initDefaultBasicLight(scene);
+// Posicione o tanque na cena
+scene.add(tank);
 
-  createTanks();
-  createWalls();
+// Matriz representando o quarto
+const roomMatrix = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+  [1, 0, 0, 1, 0, 0, 0, 1, 0, 1],
+  [1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+];
 
-  animate();
-}
+const tileSize = 1; // Tamanho de cada célula da matriz
 
-function createTanks() {
-  tank1 = createTank(0xff0000);
-  tank1.position.set(-10, 0.5, 0);
-  tank2 = createTank(0x0000ff);
-  tank2.position.set(10, 0.5, 0);
-  scene.add(tank1);
-  scene.add(tank2);
-}
-
-function createTank(color) {
-  let tank = new THREE.Group();
-
-  let baseMaterial = setDefaultMaterial(color);
-  let baseGeometry = new THREE.BoxGeometry(tankSize.width, tankSize.height, tankSize.depth);
-  let base = new THREE.Mesh(baseGeometry, baseMaterial);
-  tank.add(base);
-
-  let wheelMaterial = setDefaultMaterial(0x333333);
-  for (let i = 0; i < 4; i++) {
-    let wheelGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.5, 32);
-    let wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-    wheel.rotation.z = Math.PI / 2;
-    let x = (i < 2 ? -1 : 1) * (tankSize.width / 2 + 0.5);
-    let z = (i % 2 === 0 ? -1 : 1) * (tankSize.depth / 3);
-    wheel.position.set(x, -0.5, z);
-    tank.add(wheel);
+// Criando o nível com base na matriz
+for (let row = 0; row < roomMatrix.length; row++) {
+  for (let col = 0; col < roomMatrix[row].length; col++) {
+    if (roomMatrix[row][col] === 1) {
+      // Célula de parede
+      const wallGeometry = new THREE.BoxGeometry(tileSize, tileSize, tileSize);
+      const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
+      const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+      wall.position.set(col * tileSize, tileSize / 2, row * tileSize);
+      scene.add(wall);
+    } else {
+      // Célula de chão
+      const floorGeometry = new THREE.PlaneGeometry(tileSize, tileSize);
+      const floorMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+      const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+      floor.rotation.x = Math.PI / 2;
+      floor.position.set(col * tileSize, 0, row * tileSize);
+      scene.add(floor);
+    }
   }
-
-  let cannonBaseGeometry = new THREE.SphereGeometry(0.7, 32, 32, 0, Math.PI);
-  let cannonBase = new THREE.Mesh(cannonBaseGeometry, baseMaterial);
-  cannonBase.position.set(0, tankSize.height / 2, 0);
-  tank.add(cannonBase);
-
-  let cannonGeometry = new THREE.CylinderGeometry(0.2, 0.2, 3, 32);
-  let cannon = new THREE.Mesh(cannonGeometry, baseMaterial);
-  cannon.position.set(0, tankSize.height / 2, -1.5);
-  cannon.rotation.x = Math.PI / 2;
-  tank.add(cannon);
-
-  tank.userData = { shotsReceived: 0, OBB: new OBB(new THREE.Vector3(), new THREE.Vector3(1, 1, 1)) };
-
-  return tank;
 }
 
-function createWalls() {
-  let wallMaterial = setDefaultMaterial(0x00ff00);
+// Restrições de movimento
+const roomLimits = {
+  minX: -4.5,
+  maxX: 4.5,
+  minZ: -4.5,
+  maxZ: 4.5,
+};
 
-  // Create outer walls
-  createWall(wallMaterial, 0, 0.5, -15, 30, 1, 1);  // Top wall
-  createWall(wallMaterial, 0, 0.5, 15, 30, 1, 1);   // Bottom wall
-  createWall(wallMaterial, -15, 0.5, 0, 1, 1, 30);  // Left wall
-  createWall(wallMaterial, 15, 0.5, 0, 1, 1, 30);   // Right wall
-  
-  // Create inner walls for obstacles
-  createWall(wallMaterial, -5, 0.5, 0, 1, 1, 10);   // Vertical wall in the middle-left
-  createWall(wallMaterial, 5, 0.5, 0, 1, 1, 10);    // Vertical wall in the middle-right
-  createWall(wallMaterial, 0, 0.5, -5, 10, 1, 1);   // Horizontal wall in the middle-top
-  createWall(wallMaterial, 0, 0.5, 5, 10, 1, 1);    // Horizontal wall in the middle-bottom
+// Controles de movimento (use as teclas W, A, S, D)
+const movementSpeed = 0.1;
+const rotationSpeed = 0.02;
+const keyboardState = {};
+
+document.addEventListener('keydown', (event) => {
+  keyboardState[event.key] = true;
+});
+
+document.addEventListener('keyup', (event) => {
+  keyboardState[event.key] = false;
+});
+
+function updateTankPosition() {
+  const forwardVector = new THREE.Vector3(0, 0, -1);
+  const backwardVector = new THREE.Vector3(0, 0, 1);
+
+  if (keyboardState['w']) tank.position.add(forwardVector.clone().applyQuaternion(tank.quaternion).multiplyScalar(movementSpeed));
+  if (keyboardState['s']) tank.position.add(backwardVector.clone().applyQuaternion(tank.quaternion).multiplyScalar(movementSpeed));
+  if (keyboardState['a']) tank.rotation.y += rotationSpeed;
+  if (keyboardState['d']) tank.rotation.y -= rotationSpeed;
+
+  // Verifique os limites do quarto
+  tank.position.x = THREE.MathUtils.clamp(tank.position.x, roomLimits.minX, roomLimits.maxX);
+  tank.position.z = THREE.MathUtils.clamp(tank.position.z, roomLimits.minZ, roomLimits.maxZ);
 }
 
-function createWall(material, x, y, z, width, height, depth) {
-  let wallGeometry = new THREE.BoxGeometry(width, height, depth);
-  let wall = new THREE.Mesh(wallGeometry, material);
-  wall.position.set(x, y, z);
-  scene.add(wall);
-  walls.push(wall);
-}
-
-function onDocumentKeyDown(event) {
-  keyboard.onKeyDown(event);
-}
-
-function onDocumentKeyUp(event) {
-  keyboard.onKeyUp(event);
-}
-
+// Renderização e atualização
 function animate() {
   requestAnimationFrame(animate);
+  updateTankPosition();
   renderer.render(scene, camera);
-  update();
 }
 
-function update() {
-  let delta = clock.getDelta();
-  updateTanks(delta);
-  updateBullets(delta);
-  controls.update();
-  keyboard.update();
-}
-
-function updateTanks(delta) {
-  moveTank(tank1, delta, 'W', 'S', 'A', 'D', ' ');
-  moveTank(tank2, delta, 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Slash');
-}
-
-function moveTank(tank, delta, forwardKey, backwardKey, leftKey, rightKey, shootKey) {
-  let speed = 5 * delta;
-  let rotateAngle = Math.PI / 2 * delta;
-
-  if (keyboard.pressed(forwardKey)) tank.translateZ(-speed);
-  if (keyboard.pressed(backwardKey)) tank.translateZ(speed);
-  if (keyboard.pressed(leftKey)) tank.rotateY(rotateAngle);
-  if (keyboard.pressed(rightKey)) tank.rotateY(-rotateAngle);
-  
-  if (keyboard.down(shootKey)) shootBullet(tank);
-  
-  tank.userData.OBB.set(new THREE.Vector3(), new THREE.Vector3(1, 1, 1), tank.matrixWorld);
-}
-
-function shootBullet(tank) {
-  let bulletMaterial = setDefaultMaterial(0xffffff);
-  let bulletGeometry = new THREE.SphereGeometry(0.2, 32, 32);
-  let bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
-  
-  bullet.position.copy(tank.position);
-  bullet.quaternion.copy(tank.quaternion);
-  
-  bullet.userData = { ricochetCount: 0, direction: new THREE.Vector3() };
-  bullet.userData.direction.setFromMatrixPosition(tank.matrixWorld);
-  bullet.userData.direction.sub(tank.position).normalize();
-  
-  bullets.push(bullet);
-  scene.add(bullet);
-}
-
-function updateBullets(delta) {
-  bullets.forEach((bullet, index) => {
-    bullet.position.add(bullet.userData.direction.clone().multiplyScalar(bulletSpeed));
-
-    if (bullet.userData.ricochetCount >= bulletLimit) {
-      scene.remove(bullet);
-      bullets.splice(index, 1);
-    } else {
-      checkBulletCollisions(bullet, index);
-    }
-  });
-}
-
-function checkBulletCollisions(bullet, bulletIndex) {
-  let bulletBox = new THREE.Box3().setFromObject(bullet);
-
-  walls.forEach(wall => {
-    let wallBox = new THREE.Box3().setFromObject(wall);
-
-    if (bulletBox.intersectsBox(wallBox)) {
-      bullet.userData.ricochetCount++;
-      bullet.position.copy(bulletBox.getCenter(new THREE.Vector3()));
-      bullet.userData.direction.reflect(wallBox.getNormal(bullet.userData.direction));
-    }
-  });
-
-  [tank1, tank2].forEach(tank => {
-    if (bulletBox.intersectsBox(new THREE.Box3().setFromObject(tank))) {
-      tank.userData.shotsReceived++;
-      scene.remove(bullet);
-      bullets.splice(bulletIndex, 1);
-
-      if (tank.userData.shotsReceived >= 10) {
-        alert(`${tank === tank1 ? 'Tank 2' : 'Tank 1'} wins!`);
-        resetGame();
-      }
-    }
-  });
-}
-
-function resetGame() {
-  tank1.position.set(-10, 0.5, 0);
-  tank1.userData.shotsReceived = 0;
-
-  tank2.position.set(10, 0.5, 0);
-  tank2.userData.shotsReceived = 0;
-
-  bullets.forEach(bullet => scene.remove(bullet));
-  bullets = [];
-}
+// Configurações da câmera (ajuste conforme necessário)
+camera.position.set(0, 3, 5);
+camera.lookAt(tank.position);
 
 animate();
