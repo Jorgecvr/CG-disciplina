@@ -44,9 +44,6 @@ export class Camera {
     setCamPosition(position) {
         this.camPosition = new THREE.Vector3().copy(position);
     };
-    setHolderPosition(position) {
-        this.holderPosition = new THREE.Vector3().copy(position)
-    };
 
     // Método para alterar o OrbitControls.
     swapOrbitControls() {
@@ -60,19 +57,18 @@ export class Camera {
         if(keyboard.down("O")) {
             // Atualização do OrbitControls.
             this.swapOrbitControls();
-            // Retira a câmera do holder para evitar vibrações.
             if(this.orbitControls.enabled) {
-                // Salva as posições da camera e do holder.
+                // Salva as posições da camera e retira a câmera do holder para evitar vibrações.
                 this.setCamPosition(this.camera.position.clone());
-                this.setHolderPosition(this.holder.position.clone());
                 this.holder.remove(this.camera);
             }
             else {
                 this.camera.position.copy(this.camPosition);
-                this.holder.position.copy(this.holderPosition);
                 this.holder.add(this.camera);
             }
-            
+        }
+        if(keyboard.down("space")) {
+            console.log(position_tank1);
         }
 
         // Câmera atualiza apenas quando orbitControls está desligado.
