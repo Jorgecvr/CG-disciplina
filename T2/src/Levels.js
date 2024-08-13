@@ -7,7 +7,7 @@ function createBlock(x, z, type, level) {
     const material = level === 1 ? // Se o nível é 1 utiliza BasicMaterial.
                      type === 1 ? new THREE.MeshBasicMaterial({color: 0x3D3D3D}) : new THREE.MeshBasicMaterial({color: 0x808080})
                      : // Se o nível é 2 utiliza LambertMaterial.
-                     type === 1 ? new THREE.MeshLambertMaterial({color: 0x00122D}) : new THREE.MeshLambertMaterial({color: 0x001F4F});
+                     type === 1 ? new THREE.MeshLambertMaterial({color: 0x328f62}) : new THREE.MeshLambertMaterial({color: 0xbfbfbf});
     const block = new THREE.Mesh(geometry, material);
 
     block.position.set(x*4, type === 1 ? 1.55 : 0.0, z*4);
