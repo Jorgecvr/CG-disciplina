@@ -47,30 +47,19 @@ export class Camera {
 
     // Método para alterar o OrbitControls.
     swapOrbitControls() {
+        if(!this.orbitControls.enabled) {
+            // Salva as posições da camera e retira a câmera do holder para evitar vibrações.
+            // this.setCamPosition(this.camera.position.clone());
+            this.holder.remove(this.camera);
+        } else {
+            // this.camera.position.copy(this.camPosition);
+            this.holder.add(this.camera);
+        }
         this.orbitControls.enabled = !this.orbitControls.enabled;
     };
 
     // Método para atualizar a câmera.
     update(position_tank1, position_tank2) {
-        let keyboard = new KeyboardState();
-        keyboard.update();
-        if(keyboard.down("O")) {
-            // Atualização do OrbitControls.
-            this.swapOrbitControls();
-            if(this.orbitControls.enabled) {
-                // Salva as posições da camera e retira a câmera do holder para evitar vibrações.
-                this.setCamPosition(this.camera.position.clone());
-                this.holder.remove(this.camera);
-            }
-            else {
-                this.camera.position.copy(this.camPosition);
-                this.holder.add(this.camera);
-            }
-        }
-        if(keyboard.down("space")) {
-            console.log(position_tank1);
-        }
-
         // Câmera atualiza apenas quando orbitControls está desligado.
         if(!this.orbitControls.enabled) {
             // Calculando a posição média entre os tanques e a distância entre eles.
