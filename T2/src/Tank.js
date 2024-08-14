@@ -33,6 +33,7 @@ export class Tank {
                     shininess: "200",
                     specular: "rgb(255, 255, 255)"
                 });
+                child.castShadow = true;
             });
             obj.scale.set(1.3, 1.3, 1.3);
             object.add(obj);

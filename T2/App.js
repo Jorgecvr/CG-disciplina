@@ -16,12 +16,13 @@ import { Light } from './src/Light.js';
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                                  // Criando a main scene.
 var renderer = initRenderer();                                  // Iniciando o renderer basico.
+    renderer.setClearColor("rgb(30, 30, 42)");
 // var light = initDefaultBasicLight(scene);                       // Criando luz básica para iluminar a scene.
 
-// // Adição da luz ambiente.
-// let ambientColor = "rgb(80, 80, 80)";
-// let ambientLight = new THREE.AmbientLight(ambientColor);
-// scene.add(ambientLight);
+// Adição da luz ambiente.
+let ambientColor = "rgb(50, 50, 50)";
+let ambientLight = new THREE.AmbientLight(ambientColor);
+scene.add(ambientLight);
 
 var level;                                                      // Criando o nível.
 var tank1;                                                      // Criando o primeiro tanque.
@@ -82,31 +83,48 @@ function init() {
         // Inserindo os spotLights.
         // Luminária 1.
         let spotLight1 = new Light();
-        spotLight1.object.position.set(67, 0.2, 43);
+        spotLight1.object.position.set(66, 0.2, 42);
         spotLight1.object.rotateY(THREE.MathUtils.degToRad(135));
+        spotLight1.spotLight.position.set(63.3, 21.8, 39.3);
+        spotLight1.spotLight.target.position.set(57, 0.2, 32);
+        spotLight1.spotLight.target.updateMatrixWorld();
         scene.add(spotLight1.object);
         scene.add(spotLight1.spotLight);
         spotLights.push(spotLight1);
 
         // Luminária 2.
         let spotLight2 = new Light();
-        spotLight2.object.position.set(1, 0.2, 1);
+        spotLight2.object.position.set(2, 0.2, 2);
         spotLight2.object.rotateY(THREE.MathUtils.degToRad(-45));
+        spotLight2.spotLight.position.set(4.8, 21.8, 4.8);
+        spotLight2.spotLight.target.position.set(11, 0.2, 11);
+        spotLight2.spotLight.target.updateMatrixWorld();
         scene.add(spotLight2.object);
+        scene.add(spotLight2.spotLight);
         spotLights.push(spotLight2);
 
         // Luminária 3.
         let spotLight3 = new Light();
-        spotLight3.object.position.set(34, 0.2, 43);
+        spotLight3.object.position.set(34, 0.2, 42.7);
         spotLight3.object.rotateY(THREE.MathUtils.degToRad(90));
+        spotLight3.spotLight.position.set(34, 21.8, 38.9);
+        spotLight3.spotLight.target.position.set(34, 0.2, 34.5);
+        spotLight3.spotLight.target.updateMatrixWorld();
+        spotLight3.spotLight.angle = THREE.MathUtils.degToRad(24);
         scene.add(spotLight3.object);
+        scene.add(spotLight3.spotLight);
         spotLights.push(spotLight3);
 
         // Luminária 4.
         let spotLight4 = new Light();
-        spotLight4.object.position.set(34, 0.2, 1);
+        spotLight4.object.position.set(34, 0.2, 1.3);
         spotLight4.object.rotateY(THREE.MathUtils.degToRad(-90));
+        spotLight4.spotLight.position.set(34, 21.8, 5.2);
+        spotLight4.spotLight.target.position.set(34, 0.2, 9.5)
+        spotLight4.spotLight.target.updateMatrixWorld();
+        spotLight4.spotLight.angle = THREE.MathUtils.degToRad(24);
         scene.add(spotLight4.object);
+        scene.add(spotLight4.spotLight);
         spotLights.push(spotLight4);
     }
     
@@ -157,6 +175,7 @@ function swapLevel() {
 
             spotLights.forEach((spotLight) => {
                 scene.remove(spotLight.object);
+                scene.remove(spotLight.spotLight);
             });
     
             // Chamando a função que inicia o jogo com o tipo do nível 1.
@@ -181,7 +200,6 @@ function swapLevel() {
     }
     // Mudaça do OrbitControls da Câmera.
     if(keyboard.down("O")) {
-        console.log("AQUI");
         camera.swapOrbitControls();
     }
     if(keyboard.down("space")) {

@@ -33,12 +33,14 @@ scene.add( axesHelper );
 // Adição da luz ambiente.
 let ambientColor = "rgb(80, 80, 80)";
 let ambientLight = new THREE.AmbientLight(ambientColor);
+ambientLight.visible = false;
 scene.add(ambientLight);
 
 // Adição da luz direcional.
 const directionalLight = new THREE.DirectionalLight('white', 0.2);
 directionalLight.position.set(2, 2, 4);
 directionalLight.castShadow = true;
+directionalLight.visible = false;
 scene.add(directionalLight);
 
 // Adição do spotlight.
@@ -84,9 +86,9 @@ render();
 function buildInterface()
 {
   let controls = new function() {
-    this.ambientLight = true;
+    this.ambientLight = false;
     this.spotLight = true;
-    this.directionalLight = true;
+    this.directionalLight = false;
   
     this.onEnableAmbientLight = function() {
       ambientLight.visible = this.ambientLight;
