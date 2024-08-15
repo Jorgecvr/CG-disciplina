@@ -1,7 +1,6 @@
 // Importações básicas.
 import * as THREE from 'three';
-import { initRenderer,
-         initDefaultBasicLight } from '../../libs/util/util.js';
+import { initRenderer } from '../../libs/util/util.js';
 import { SecondaryBox } from '../libs/util/util.js';
 import KeyboardState from '../libs/util/KeyboardState.js';
 
@@ -17,12 +16,9 @@ import { Light } from './src/Light.js';
 var scene = new THREE.Scene();                                  // Criando a main scene.
 var renderer = initRenderer();                                  // Iniciando o renderer basico.
     renderer.setClearColor("rgb(30, 30, 42)");
-// var light = initDefaultBasicLight(scene);                       // Criando luz básica para iluminar a scene.
 
-// Adição da luz ambiente.
-let ambientColor = "rgb(50, 50, 50)";
-let ambientLight = new THREE.AmbientLight(ambientColor);
-scene.add(ambientLight);
+var ambientLight;                                               // Iniciando o controle da luz ambiente.
+var directionalLight;                                           // Iniciando o controle da luz direcional.
 
 var level;                                                      // Criando o nível.
 var tank1;                                                      // Criando o primeiro tanque.
@@ -33,17 +29,22 @@ var message = new SecondaryBox();                               // Criando as me
 var levelType = 2;                                              // Armazena o tipo do nível atual (começa em 1).
 var spotLights = [];                                            // Array para as luminárias.
 
-// Função utilizada para redimensionar a tela do navegador caso haja alterações.
-let zoomWidth = window.innerWidth;
-window.addEventListener('resize', function(){
-    camera.camera.aspect = this.window.innerWidth / this.window.innerHeight;
+var zoom = window.innerWidth / 1300;
+var lastWidth = window.innerWidth;
+window.addEventListener('resize', function() {
+    let aspect = window.innerWidth / window.innerHeight;
+    camera.camera.zoom = zoom;
+    camera.camera.aspect = aspect;
     camera.camera.updateProjectionMatrix();
-    renderer.setSize(this.window.innerWidth, this.window.innerHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // Adicionar ou remover zoom da camera para o redimensionamento.
-    camera.holder.translateZ((this.window.innerWidth-zoomWidth)/15)
-    zoomWidth = this.window.innerWidth;
-}, false);
+    if(lastWidth < window.innerWidth) {
+        zoom += (window.innerWidth - lastWidth)*0.0007;
+    } else if(lastWidth > window.innerWidth) {
+        zoom -= (lastWidth - window.innerWidth)*0.0007;
+    }
+    lastWidth = window.innerWidth;
+});
 
 // Começando o jogo.
 function init() {
@@ -52,7 +53,7 @@ function init() {
         level = CreateLevel(1);
         scene.add(level.wall);
         scene.add(level.floor);
-
+        
         // Inserindo os tanques em cena.
         tank1 = new Tank(1, 1);
         tank1.object.position.set(54, 0, 10);
@@ -60,6 +61,19 @@ function init() {
         tank2 = new Tank(2, 1);
         tank2.object.position.set(10, 0, 10);
         scene.add(tank2.object);
+
+        // Criando luz básica para iluminar a cena do nível 1.
+        let power = 3.141592653589793;
+        ambientLight = new THREE.HemisphereLight(
+            'white',
+            'darkslategrey',
+            0.5 * power,
+        );
+        scene.add(ambientLight);
+        directionalLight = new THREE.DirectionalLight('white', 0.7 * power);
+        directionalLight.position.copy(new THREE.Vector3(2, 1, 1));
+        directionalLight.castShadow = false;
+        scene.add(directionalLight);
     } 
     else if(levelType == 2) {
         // Renderizando o nível 2.
@@ -68,10 +82,15 @@ function init() {
         scene.add(level.floor);
 
         // Inserindo os tanques em cena.
+        // Tanque 1.
         tank1 = new Tank(1, 2);
         tank1.object.position.set(60, 0, 36);
         tank1.object.rotateY(THREE.MathUtils.degToRad(180));
+        tank1.object.add(tank1.lifeBar);
+        tank1.lifeBar.position.y += 5;
+        tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
         scene.add(tank1.object);
+
         tank2 = new Tank(1, 1);
         tank2.object.position.set(8, 0, 10);
         scene.add(tank2.object);
@@ -79,6 +98,17 @@ function init() {
         tank3.object.position.set(8, 0, 36);
         tank3.object.rotateY(THREE.MathUtils.degToRad(90));
         scene.add(tank3.object);
+
+        // Inseriando a luz ambiente.
+        ambientLight = new THREE.AmbientLight("rgb(40, 40, 40)");
+        ambientLight.castShadow = false;
+        scene.add(ambientLight);
+
+        // Inserindo a luz direcional
+        directionalLight = new THREE.DirectionalLight("rgb(70, 70, 70)", 3);
+        directionalLight.position.copy(new THREE.Vector3(2, 1, 1));
+        directionalLight.castShadow = false;
+        scene.add(directionalLight);
 
         // Inserindo os spotLights.
         // Luminária 1.
@@ -147,7 +177,10 @@ function play(end, camera) {
     if(!end) {
         camera.update(tank1.object.getWorldPosition(new THREE.Vector3()), tank2.object.getWorldPosition(new THREE.Vector3));
         tank1.move(1, level, levelType);
-        tank2.move(2, level, levelType);
+
+        tank1.life -= 10;
+        console.log(tank1.life);
+        if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
     }
 };
 
@@ -177,6 +210,9 @@ function swapLevel() {
                 scene.remove(spotLight.object);
                 scene.remove(spotLight.spotLight);
             });
+
+            scene.remove(ambientLight);
+            scene.remove(directionalLight);
     
             // Chamando a função que inicia o jogo com o tipo do nível 1.
             levelType = 1;
@@ -192,6 +228,9 @@ function swapLevel() {
             scene.remove(level.floor);
             scene.remove(tank1.object);
             scene.remove(tank2.object);
+
+            scene.remove(ambientLight);
+            scene.remove(directionalLight);
     
             // Chamando a função que inicia o jogo com o tipo do nível 2.
             levelType = 2;

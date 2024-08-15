@@ -14,6 +14,10 @@ export class Tank {
         this.object = this.create(type, levelType);
         // Salva a última direção do tanque (0 para frente e 1 para ré);
         this.lastDirection = 0;
+
+        // Criando a vida de cada tanque.
+        this.life = 1000;
+        this.lifeBar = this.createLifeBar();
     };
 
     // Método que importa o modelo e cria o tanque.
@@ -28,17 +32,25 @@ export class Tank {
             let obj = glb.scene;
 
             obj.traverse((child) => {
-                child.material = new THREE.MeshPhongMaterial({
-                    color: levelType === 1 ? type === 1 ? 'rgb(205, 50, 50)' : 'rgb(50, 50, 205)' : 'rgb(54, 54, 54)',
-                    shininess: "200",
-                    specular: "rgb(255, 255, 255)"
-                });
+                if(levelType === 1) {
+                    child.material = new THREE.MeshPhongMaterial({
+                        color: type === 1 ? 'rgb(205, 50, 50)' : 'rgb(50, 50, 205)',
+                        shininess: "200",
+                        specular: "rgb(255, 255, 255)"
+                    });
+                } 
                 child.castShadow = true;
             });
             obj.scale.set(1.3, 1.3, 1.3);
             object.add(obj);
         });
         return object;
+    };
+
+    // Cria a geometria da vida do tanque.
+    createLifeBar() {
+        let lifeBar = new THREE.Mesh(new THREE.BoxGeometry(4, 0.3, 0.3), new THREE.MeshBasicMaterial({color: "rgb(205, 50, 50)"}));
+        return lifeBar;
     };
 
     // Método que controla a movimentação do tanque.
@@ -48,29 +60,32 @@ export class Tank {
 
         const movementSpeed = 0.25;
         const rotationSpeed = 0.025;
-        const forwardVector = new THREE.Vector3(0, 0, 1);
-        const backwardVector = new THREE.Vector3(0, 0, -1);
 
-        if(type == 1) {
-            if(keyboard.pressed("W")) {
-                this.object.position.add(forwardVector.clone().applyQuaternion(this.object.quaternion).multiplyScalar(movementSpeed));
-                if(this.lastDirection != 0) this.lastDirection = 0;
-            } 
-            if(keyboard.pressed("S")) {
-                this.object.position.add(backwardVector.clone().applyQuaternion(this.object.quaternion).multiplyScalar(movementSpeed));
-                if(this.lastDirection != 1) this.lastDirection = 1;
-            }
-            if(keyboard.pressed("A")) this.object.rotation.y += rotationSpeed;
-            if(keyboard.pressed("D")) this.object.rotation.y -= rotationSpeed;
-        } else {
-            if(keyboard.pressed("up")) this.object.translateZ(0.25);
-            if(keyboard.pressed("down")) this.object.translateZ(-0.25);
-
-            if(keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
-            if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
-        }
-
+        
         if(levelType === 1) {
+            if(type == 1) {
+                if(keyboard.pressed("W")) {
+                    this.object.translateZ(movementSpeed);
+                    if(this.lastDirection != 0) this.lastDirection = 0;
+                } 
+                if(keyboard.pressed("S")) {
+                    this.object.translateZ(-movementSpeed);
+                    if(this.lastDirection != 1) this.lastDirection = 1;
+                }
+                if(keyboard.pressed("A")) this.object.rotation.y += rotationSpeed;
+                if(keyboard.pressed("D")) this.object.rotation.y -= rotationSpeed;
+            
+                if(keyboard.pressed("up")) {
+                    this.object.translateZ(movementSpeed);
+                    if(this.lastDirection != 0) this.lastDirection = 0;
+                } 
+                if(keyboard.pressed("down")) {
+                    this.object.translateZ(-movementSpeed);
+                    if(this.lastDirection != 1) this.lastDirection = 1;
+                } 
+                if(keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
+                if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
+            }
             // Define os limites iniciais do nível.
             const levelLimits = {
                 minX: 4.5,
@@ -124,6 +139,30 @@ export class Tank {
             // Aplica a restrição com base nos limites do nível (método clamp restrige o valor da posição).
             this.object.position.x = THREE.MathUtils.clamp(x, levelLimits.minX, levelLimits.maxX);
             this.object.position.z = THREE.MathUtils.clamp(z, levelLimits.minZ, levelLimits.maxZ);
+        } else {
+            if(type == 1) {
+                if(keyboard.pressed("W")) {
+                    this.object.translateZ(movementSpeed);
+                    if(this.lastDirection != 0) this.lastDirection = 0;
+                } 
+                if(keyboard.pressed("S")) {
+                    this.object.translateZ(-movementSpeed);
+                    if(this.lastDirection != 1) this.lastDirection = 1;
+                }
+                if(keyboard.pressed("D")) this.object.rotation.y += rotationSpeed;
+                if(keyboard.pressed("A")) this.object.rotation.y -= rotationSpeed;
+            
+                if(keyboard.pressed("up")) {
+                    this.object.translateZ(movementSpeed);
+                    if(this.lastDirection != 0) this.lastDirection = 0;
+                } 
+                if(keyboard.pressed("down")) {
+                    this.object.translateZ(-movementSpeed);
+                    if(this.lastDirection != 1) this.lastDirection = 1;
+                } 
+                if(keyboard.pressed("right")) this.object.rotateY(rotationSpeed);
+                if(keyboard.pressed("left")) this.object.rotateY(-rotationSpeed);
+            }
         }
     };
 };

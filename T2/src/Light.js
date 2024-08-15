@@ -33,7 +33,7 @@ export class Light {
         let spotLight = new THREE.SpotLight("rgb(255,255,255)", 1.0);
             spotLight.angle = THREE.MathUtils.degToRad(21);
             spotLight.castShadow = true;
-            spotLight.intensity = 200;
+            spotLight.intensity = 300;
             spotLight.penumbra = 0.2;
         return spotLight;
     };

@@ -7,6 +7,8 @@ export class Camera {
     constructor(position_tank1, position_tank2, renderer) {
         // Iniciando a câmera perspectiva.
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
+            this.camera.zoom = window.innerWidth / 1300;
+            this.camera.updateProjectionMatrix();
 
         // Iniciando o cameraHolder.
         this.holder = new THREE.Object3D();
