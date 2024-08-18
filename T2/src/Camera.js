@@ -7,7 +7,7 @@ export class Camera {
     constructor(renderer) {
         // Iniciando a câmera perspectiva.
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
-            this.camera.zoom = window.innerWidth / 1300;
+            this.camera.zoom = 1;
             this.camera.updateProjectionMatrix();
 
         // Iniciando e configurando o OrbitControls.

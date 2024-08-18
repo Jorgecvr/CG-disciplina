@@ -120,7 +120,6 @@ export class Tank {
                 } else {
                     if(collisionBlock.position.x == 32) {
                         if(x >= 27.4 && x <= 36.2) {
-                            console.log("AQUU");
                             levelLimits.minZ = 16.5;
                             levelLimits.maxZ = 27.5;
                         }

@@ -1,13 +1,15 @@
 import * as THREE from 'three';
 
 // Método que checa colisões do tanque com algum objeto.
-function checkTankCollisions(tank, block) {
+export function checkTankCollisions(tank, block) {
 
     // Criando a Box3 do bloco.
     let bbBlock = new THREE.Box3().setFromObject(block);
 
     // Criando a Box3 do tanque.
     let bbTank = new THREE.Box3().setFromObject(tank.object);
+    let tankSize = new THREE.Vector3; 
+    bbTank.getSize(tankSize);
 
     return bbBlock.intersectsBox(bbTank);
 };
