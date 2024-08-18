@@ -3,9 +3,10 @@ import * as THREE from 'three';
 // Função para criar blocos com base nos níveis.
 function createBlock(x, z, type, level) {
     // Tipo 1 é bloco e tipo 2 é piso.
+
     const geometry = new THREE.BoxGeometry(4, type === 1 ? 4 : 0.1, 4);
     const material = level === 1 ? // Se o nível é 1 utiliza BasicMaterial.
-                     type === 1 ? new THREE.MeshBasicMaterial({color: 0x3D3D3D}) : new THREE.MeshBasicMaterial({color: 0x808080})
+                     type === 1 ? new THREE.MeshLambertMaterial({color: 0x3D3D3D}) : new THREE.MeshLambertMaterial({color: 0x808080})
                      : // Se o nível é 2 utiliza LambertMaterial.
                      type === 1 ? new THREE.MeshLambertMaterial({color: 0x328f62}) : new THREE.MeshLambertMaterial({color: 0x808080});
     const block = new THREE.Mesh(geometry, material);

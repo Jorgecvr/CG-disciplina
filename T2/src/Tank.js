@@ -61,7 +61,7 @@ export class Tank {
         const movementSpeed = 0.25;
         const rotationSpeed = 0.025;
 
-        
+        // Define as condições de movimento para o primeiro nível.
         if(levelType === 1) {
             if(type == 1) {
                 if(keyboard.pressed("W")) {
@@ -72,8 +72,8 @@ export class Tank {
                     this.object.translateZ(-movementSpeed);
                     if(this.lastDirection != 1) this.lastDirection = 1;
                 }
-                if(keyboard.pressed("A")) this.object.rotation.y += rotationSpeed;
-                if(keyboard.pressed("D")) this.object.rotation.y -= rotationSpeed;
+                if(keyboard.pressed("A")) this.object.rotateY(rotationSpeed);
+                if(keyboard.pressed("D")) this.object.rotateY(-rotationSpeed);
             
                 if(keyboard.pressed("up")) {
                     this.object.translateZ(movementSpeed);
@@ -83,7 +83,7 @@ export class Tank {
                     this.object.translateZ(-movementSpeed);
                     if(this.lastDirection != 1) this.lastDirection = 1;
                 } 
-                if(keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
+                if(keyboard.pressed("left"))  this.object.rotateY(rotationSpeed);
                 if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
             }
             // Define os limites iniciais do nível.
@@ -139,7 +139,9 @@ export class Tank {
             // Aplica a restrição com base nos limites do nível (método clamp restrige o valor da posição).
             this.object.position.x = THREE.MathUtils.clamp(x, levelLimits.minX, levelLimits.maxX);
             this.object.position.z = THREE.MathUtils.clamp(z, levelLimits.minZ, levelLimits.maxZ);
-        } else {
+        } 
+        // Define as condições de movimento do segundo nível.
+        else {
             if(type == 1) {
                 if(keyboard.pressed("W")) {
                     this.object.translateZ(movementSpeed);
@@ -149,8 +151,8 @@ export class Tank {
                     this.object.translateZ(-movementSpeed);
                     if(this.lastDirection != 1) this.lastDirection = 1;
                 }
-                if(keyboard.pressed("D")) this.object.rotation.y += rotationSpeed;
-                if(keyboard.pressed("A")) this.object.rotation.y -= rotationSpeed;
+                if(keyboard.pressed("A")) this.object.rotateY(rotationSpeed);
+                if(keyboard.pressed("D")) this.object.rotateY(-rotationSpeed);
             
                 if(keyboard.pressed("up")) {
                     this.object.translateZ(movementSpeed);
@@ -160,8 +162,8 @@ export class Tank {
                     this.object.translateZ(-movementSpeed);
                     if(this.lastDirection != 1) this.lastDirection = 1;
                 } 
-                if(keyboard.pressed("right")) this.object.rotateY(rotationSpeed);
-                if(keyboard.pressed("left")) this.object.rotateY(-rotationSpeed);
+                if(keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
+                if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
             }
         }
     };

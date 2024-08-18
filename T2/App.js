@@ -1,7 +1,7 @@
 // Importações básicas.
 import * as THREE from 'three';
 import { initRenderer } from '../../libs/util/util.js';
-import { SecondaryBox } from '../libs/util/util.js';
+import { initDefaultBasicLight, SecondaryBox } from '../libs/util/util.js';
 import KeyboardState from '../libs/util/KeyboardState.js';
 
 // Importações de arquivos criados para o trabalho.
@@ -14,8 +14,7 @@ import { Light } from './src/Light.js';
 
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                                  // Criando a main scene.
-var renderer = initRenderer();                                  // Iniciando o renderer basico.
-    renderer.setClearColor("rgb(30, 30, 42)");
+var renderer = initRenderer("rgb(30, 30, 42)");                 // Iniciando o renderer basico.
 
 var ambientLight;                                               // Iniciando o controle da luz ambiente.
 var directionalLight;                                           // Iniciando o controle da luz direcional.
@@ -24,7 +23,9 @@ var level;                                                      // Criando o ní
 var tank1;                                                      // Criando o primeiro tanque.
 var tank2;                                                      // Criando o segundo tanque.    
 var tank3;                                                      // Criando o terceiro tanque.
-var camera;                                                     // Criando a câmera.
+var camera = new Camera(renderer);                              // Criando a câmera.
+    scene.add(camera.holder);                                   // Adicionando o câmera holder.
+    camera.holder.add(camera.camera);
 var message = new SecondaryBox();                               // Criando as mensagens de vida.
 var levelType = 2;                                              // Armazena o tipo do nível atual (começa em 1).
 var spotLights = [];                                            // Array para as luminárias.
@@ -33,16 +34,16 @@ var zoom = window.innerWidth / 1300;
 var lastWidth = window.innerWidth;
 window.addEventListener('resize', function() {
     let aspect = window.innerWidth / window.innerHeight;
-    camera.camera.zoom = zoom;
     camera.camera.aspect = aspect;
-    camera.camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-
+    
     if(lastWidth < window.innerWidth) {
         zoom += (window.innerWidth - lastWidth)*0.0007;
     } else if(lastWidth > window.innerWidth) {
         zoom -= (lastWidth - window.innerWidth)*0.0007;
     }
+    camera.camera.zoom = zoom;
+    camera.camera.updateProjectionMatrix();
     lastWidth = window.innerWidth;
 });
 
@@ -53,14 +54,19 @@ function init() {
         level = CreateLevel(1);
         scene.add(level.wall);
         scene.add(level.floor);
-        
+
         // Inserindo os tanques em cena.
         tank1 = new Tank(1, 1);
-        tank1.object.position.set(54, 0, 10);
+        tank1.object.rotateY(THREE.MathUtils.degToRad(180));
+        tank1.object.position.set(10, 0, 36);
         scene.add(tank1.object);
         tank2 = new Tank(2, 1);
-        tank2.object.position.set(10, 0, 10);
+        tank2.object.rotateY(THREE.MathUtils.degToRad(180));
+        tank2.object.position.set(54, 0, 36);
         scene.add(tank2.object);
+        
+        // Iniciando a câmera do nível 1.
+        camera.initCamera(1, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
 
         // Criando luz básica para iluminar a cena do nível 1.
         let power = 3.141592653589793;
@@ -74,6 +80,7 @@ function init() {
         directionalLight.position.copy(new THREE.Vector3(2, 1, 1));
         directionalLight.castShadow = false;
         scene.add(directionalLight);
+
     } 
     else if(levelType == 2) {
         // Renderizando o nível 2.
@@ -84,20 +91,23 @@ function init() {
         // Inserindo os tanques em cena.
         // Tanque 1.
         tank1 = new Tank(1, 2);
-        tank1.object.position.set(60, 0, 36);
-        tank1.object.rotateY(THREE.MathUtils.degToRad(180));
+        tank1.object.position.set(8, 0, 10);
         tank1.object.add(tank1.lifeBar);
         tank1.lifeBar.position.y += 5;
         tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
         scene.add(tank1.object);
 
         tank2 = new Tank(1, 1);
-        tank2.object.position.set(8, 0, 10);
+        tank2.object.position.set(60, 0, 36);
+        tank2.object.rotateY(THREE.MathUtils.degToRad(180));
         scene.add(tank2.object);
         tank3 = new Tank(2, 1);
-        tank3.object.position.set(8, 0, 36);
-        tank3.object.rotateY(THREE.MathUtils.degToRad(90));
+        tank3.object.position.set(60, 0, 10);
+        tank3.object.rotateY(THREE.MathUtils.degToRad(270));
         scene.add(tank3.object);
+
+        // Iniciando a câmera do nível2.
+        camera.initCamera(2, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
 
         // Inseriando a luz ambiente.
         ambientLight = new THREE.AmbientLight("rgb(40, 40, 40)");
@@ -105,7 +115,7 @@ function init() {
         scene.add(ambientLight);
 
         // Inserindo a luz direcional
-        directionalLight = new THREE.DirectionalLight("rgb(70, 70, 70)", 3);
+        directionalLight = new THREE.DirectionalLight("rgb(150, 150, 150)", 3);
         directionalLight.position.copy(new THREE.Vector3(2, 1, 1));
         directionalLight.castShadow = false;
         scene.add(directionalLight);
@@ -157,37 +167,6 @@ function init() {
         scene.add(spotLight4.spotLight);
         spotLights.push(spotLight4);
     }
-    
-
-    // Criando a câmera.
-    camera = new Camera(tank1.object.getWorldPosition(new THREE.Vector3()), tank2.object.getWorldPosition(new THREE.Vector3), renderer);
-
-    // Criando as propriedades da câmera.
-    var camPosition = new THREE.Vector3(32, 40, -30);
-    var camUpPosition = new THREE.Vector3(0.0, 0.1, 0.0);
-    
-    // Setando a posição da câmera principal.
-    camera.setPosition(camPosition);
-    camera.setUpPosition(camUpPosition);
-};
-
-
-// Função play chamada na render atualiza toda a lógica do jogo.
-function play(end, camera) {
-    if(!end) {
-        camera.update(tank1.object.getWorldPosition(new THREE.Vector3()), tank2.object.getWorldPosition(new THREE.Vector3));
-        tank1.move(1, level, levelType);
-
-        tank1.life -= 10;
-        console.log(tank1.life);
-        if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
-    }
-};
-
-// Função que constrola a lógica de gameover.
-function end() {
-    message.changeMessage("To Do");
-    return false;
 };
 
 // Função que altera o nível e reseta o jogo.
@@ -242,16 +221,38 @@ function swapLevel() {
         camera.swapOrbitControls();
     }
     if(keyboard.down("space")) {
-        console.log(tank1.object.getWorldPosition(new THREE.Vector3()));
-        console.log(spotLights[0].object.getWorldPosition(new THREE.Vector3()));
+        console.log(tank1.object.getWorldPosition(new THREE.Vector3));
+        console.log(spotLights[0].object.getWorldPosition(new THREE.Vector3));
     }
 };
+
+// Função play chamada na render atualiza toda a lógica do jogo.
+function play(end) {
+    if(!end) {
+        if(levelType == 1) {
+            camera.update1(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
+        } else {
+            camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
+        }
+        tank1.move(1, level, levelType);
+
+        // tank1.life -= 5;
+        // if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
+    }
+};
+
+// Função que constrola a lógica de gameover.
+function end() {
+    message.changeMessage("To Do");
+    return false;
+};
+
 
 init();
 render();
 function render() {
     swapLevel();
-    play(end(), camera);
+    play(end());
     requestAnimationFrame(render);
     renderer.render(scene, camera.camera);
 };
