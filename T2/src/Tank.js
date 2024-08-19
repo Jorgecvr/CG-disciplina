@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import KeyboardState from '../../libs/util/KeyboardState.js';
+import { UpdateTankPosition } from './Enemies.js';
 
 // Importação do Loader para o utilizar o modelo do tank.
 import { GLTFLoader } from '../../build/jsm/loaders/GLTFLoader.js';
@@ -63,7 +64,7 @@ export class Tank {
     };
 
     // Método que controla a movimentação do tanque.
-    move(type, level, levelType) {
+    move(type, level, levelType, player = null) {
         let keyboard = new KeyboardState();
         keyboard.update();
 
@@ -95,6 +96,7 @@ export class Tank {
                 if(keyboard.pressed("left"))  this.object.rotateY(rotationSpeed);
                 if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
             }
+
             // Pega as coordenadas x e z do tanque em relação ao mundo.
             let x = this.object.getWorldPosition(new THREE.Vector3()).x;
             let z = this.object.getWorldPosition(new THREE.Vector3()).z;
@@ -192,9 +194,14 @@ export class Tank {
                     this.object.translateZ(-movementSpeed);
                     if(this.lastDirection != 1) this.lastDirection = 1;
                 }
-                if(keyboard.pressed("A")) this.object.rotateY(rotationSpeed);
-                if(keyboard.pressed("D")) this.object.rotateY(-rotationSpeed);
-            
+                if(keyboard.pressed("A")) {
+                    this.object.rotateY(rotationSpeed);
+                    this.lifeBar.rotateY(-rotationSpeed);
+                }
+                if(keyboard.pressed("D")) {
+                    this.object.rotateY(-rotationSpeed);
+                    this.lifeBar.rotateY(rotationSpeed);
+                }
                 if(keyboard.pressed("up")) {
                     this.object.translateZ(movementSpeed);
                     if(this.lastDirection != 0) this.lastDirection = 0;
@@ -205,6 +212,9 @@ export class Tank {
                 } 
                 if(keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
                 if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
+            }
+            else if(type == 2) {
+                UpdateTankPosition(player, this.object);
             }
 
             // Pega as coordenadas x e z do tanque em relação ao mundo.

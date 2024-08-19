@@ -79,10 +79,10 @@ export class Cannon {
         let pe1CSG = CSG.fromMesh(peMesh);
         let ptSuperiorCSG = pe1CSG.union(cilindroPe1CSG);
         let ptSuperiorMesh = CSG.toMesh(ptSuperiorCSG, new THREE.Matrix4());
-        ptSuperiorMesh.material = new THREE.MeshPhongMaterial({ color: 0x303003 });
+        ptSuperiorMesh.material = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
 
         // Criando a primeira base quadrada do canhão
-        let baseQuadrada = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 5), new THREE.MeshBasicMaterial({ color: 0x808080 }));
+        let baseQuadrada = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 5), new THREE.MeshBasicMaterial({ color: 0xFFFFFF }));
         baseQuadrada.matrixAutoUpdate = false;
         baseQuadrada.updateMatrix();
         let baseQuadradaCSG = CSG.fromMesh(baseQuadrada);
@@ -110,7 +110,7 @@ export class Cannon {
         baseCortadaMesh.updateMatrix();
 
         // Criando a segunda base maior
-        let baseMaior = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 6), new THREE.MeshBasicMaterial({ color: 0x808080 }));
+        let baseMaior = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 6), new THREE.MeshBasicMaterial({ color: 0xFFFFFF }));
         baseMaior.matrixAutoUpdate = false;
         baseMaior.updateMatrix();
         let baseMaiorCSG = CSG.fromMesh(baseMaior);
@@ -133,7 +133,7 @@ export class Cannon {
         let baseCortada1CSG = CSG.fromMesh(baseCortadaMesh);
         let ptInferiorCSG = baseMaior1CSG.union(baseCortada1CSG);
         let ptInferiorMesh = CSG.toMesh(ptInferiorCSG, new THREE.Matrix4());
-        ptInferiorMesh.material = new THREE.MeshPhongMaterial({ color: 0x303003 });
+        ptInferiorMesh.material = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
 
         // Criando o grupo final do canhão
         let canhaoCompleto = new THREE.Group();

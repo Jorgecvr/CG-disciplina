@@ -31,7 +31,8 @@ var camera = new Camera(renderer);                              // Criando a câ
 var message = new SecondaryBox();                               // Criando as mensagens de vida.
 var levelType = 2;                                              // Armazena o tipo do nível atual (começa em 1).
 var spotLights = [];                                            // Array para as luminárias.
-// var cannonControl;                                              // Iniciador do controle do canhão.
+var cannon;                                                     // Criando o canhão.
+var cannonControl;                                              // Iniciando o controle do canhão.
 
 var zoom = 1;
 var lastWidth = window.innerWidth;
@@ -67,6 +68,14 @@ function init() {
         tank2.object.rotateY(THREE.MathUtils.degToRad(180));
         tank2.object.position.set(54, 0, 36);
         scene.add(tank2.object);
+
+        // Inserindo Canhão em cena.
+        cannon = new Cannon();
+        cannon.object.position.set(30, 10, 25);
+        scene.add(cannon.object);
+
+        // Inicializando o controle do canhão após a definição do canhão.
+        cannonControl = new CannonControl(cannon, [tank1, tank2]);
         
         // Iniciando a câmera do nível 1.
         camera.initCamera(1, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
@@ -83,15 +92,6 @@ function init() {
         directionalLight.position.copy(new THREE.Vector3(2, 1, 1));
         directionalLight.castShadow = false;
         scene.add(directionalLight);
-
-        // // Inserindo Canhão em cena.
-        // let canhão = new Cannon();
-        // canhão.object.position.set(30, 10, 25);
-        // scene.add(canhão.object);
-
-        // // Inicializando o controle do canhão após a definição do canhão
-        // cannonControl = new CannonControl(canhão, [tank1, tank2]);
-
     } 
     else if(levelType == 2) {
         // Renderizando o nível 2.
@@ -117,6 +117,14 @@ function init() {
         tank3.object.rotateY(THREE.MathUtils.degToRad(270));
         scene.add(tank3.object);
 
+        // Inserindo Canhão em cena.
+        cannon = new Cannon();
+        cannon.object.position.set(30, 10, 25);
+        scene.add(cannon.object);
+
+        // Inicializando o controle do canhão após a definição do canhão.
+        cannonControl = new CannonControl(cannon, [tank1, tank2, tank3]);
+
         // Iniciando a câmera do nível2.
         camera.initCamera(2, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
 
@@ -126,7 +134,7 @@ function init() {
         scene.add(ambientLight);
 
         // Inserindo a luz direcional
-        directionalLight = new THREE.DirectionalLight("rgb(80, 80, 80)", 3);
+        directionalLight = new THREE.DirectionalLight("rgb(255, 255, 255)", 3);
         directionalLight.position.copy(new THREE.Vector3(2, 1, 1));
         directionalLight.castShadow = false;
         scene.add(directionalLight);
@@ -203,6 +211,8 @@ function swapLevel() {
 
             scene.remove(ambientLight);
             scene.remove(directionalLight);
+
+            scene.remove(cannon.object);
     
             // Chamando a função que inicia o jogo com o tipo do nível 1.
             levelType = 1;
@@ -221,6 +231,8 @@ function swapLevel() {
 
             scene.remove(ambientLight);
             scene.remove(directionalLight);
+
+            scene.remove(cannon.object);
     
             // Chamando a função que inicia o jogo com o tipo do nível 2.
             levelType = 2;
@@ -246,7 +258,8 @@ function play(end) {
             camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
         }
         tank1.move(1, level, levelType);
-        // cannonControl.updateCannonRotation();  // Atualizando a rotação do canhão
+        // tank2.move(2, level, levelType, tank1.object);
+        cannonControl.updateCannonRotation();  // Atualizando a rotação do canhão.
         // tank1.life -= 5;
         // if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
     }

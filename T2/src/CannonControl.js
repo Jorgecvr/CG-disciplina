@@ -30,8 +30,7 @@ export class CannonControl {
         if (angleDifference > Math.PI) angleDifference -= 2 * Math.PI;
         if (angleDifference < -Math.PI) angleDifference += 2 * Math.PI;
     
-        // Aplica a rotação suave ao canhão
-        // this.cannon.object.children[0].rotation.y += angleDifference * rotationSpeed;
+        // Aplica a rotação suave ao canhão.
         this.cannon.object.children[0].rotation.y += angleDifference * rotationSpeed;
     }
     
