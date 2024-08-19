@@ -1,27 +1,63 @@
 import * as THREE from 'three';
+import { OBB } from '../../build/jsm/math/OBB.js';
 
 // Método que checa colisões do tanque com algum objeto.
-export function checkTankCollisions(tank, block) {
+function checkTankCollisions(tank, block) {
 
-    // Criando a Box3 do bloco.
-    let bbBlock = new THREE.Box3().setFromObject(block);
+    // // Criando a Box3 do bloco.
+    // let bbBlock = new THREE.Box3().setFromObject(block);
 
-    // Criando a Box3 do tanque.
-    let bbTank = new THREE.Box3().setFromObject(tank.object);
-    let tankSize = new THREE.Vector3; 
-    bbTank.getSize(tankSize);
+    // // Criando a Box3 para os objetos de apoio.
+    // let bbBase = new THREE.Box3().setFromObject(tank.base);
+    // let bbCannon = new THREE.Box3().setFromObject(tank.cannon);
 
-    return bbBlock.intersectsBox(bbTank);
+    // return (bbBlock.intersectsBox(bbBase) || bbBlock.intersectsBox(bbCannon));
+
+    // Obtendo a matriz de rotação do tanque e do bloco.
+    tank.object.updateMatrixWorld();
+    const tankRotationMatrix3 = new THREE.Matrix3().setFromMatrix4(tank.object.matrixWorld);
+    block.updateMatrixWorld();
+    const blockRotationMatrix3 = new THREE.Matrix3().setFromMatrix4(block.matrixWorld);
+    
+    // Criando as OBBs para os objetos de apoio.
+    const baseOBB = new OBB(
+        tank.base.getWorldPosition(new THREE.Vector3),
+        new THREE.Vector3(4.7 / 2, 2 / 2, 4.2 / 2),
+        tankRotationMatrix3
+    );
+    const cannonOBB = new OBB(
+        tank.cannon.getWorldPosition(new THREE.Vector3),
+        new THREE.Vector3(0.5 / 2, 0.5 / 2, 2 / 2),
+        tankRotationMatrix3,
+    );
+
+    // Criando a OBB do bloco.
+    const blockOBB = new OBB(
+        block.getWorldPosition(new THREE.Vector3),
+        new THREE.Vector3(2, 2, 2),
+        blockRotationMatrix3,
+    );
+
+    // Verifica se há colisão entre os objetos de apoio e o bloco.
+    if(blockOBB.intersectsOBB(baseOBB)) {
+        return 0;
+    } 
+    if(blockOBB.intersectsOBB(cannonOBB)) {
+        return 1;
+    }
+    else return -1;
 };
 
 // Método que verifica a colisão do tanque com os blocos da parede.
 export function CheckCollisionsWithWall(tank, level) {
     let collisionBlock = null;
+    let collisionType = -1;
     level.wall.children.forEach((block, index) => {
         let collision = checkTankCollisions(tank, block);
-        if(collision) {
+        if(collision != -1) {
             collisionBlock = block;
+            collisionType = collision;
         }
     });
-    return collisionBlock;
+    return (collisionBlock, collisionType);
 };

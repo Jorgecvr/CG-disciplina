@@ -27,7 +27,7 @@ var camera = new Camera(renderer);                              // Criando a câ
     scene.add(camera.holder);                                   // Adicionando o câmera holder.
     camera.holder.add(camera.camera);
 var message = new SecondaryBox();                               // Criando as mensagens de vida.
-var levelType = 1;                                              // Armazena o tipo do nível atual (começa em 1).
+var levelType = 2;                                              // Armazena o tipo do nível atual (começa em 1).
 var spotLights = [];                                            // Array para as luminárias.
 
 var zoom = 1;
@@ -222,7 +222,7 @@ function swapLevel() {
     }
     if(keyboard.down("space")) {
         console.log(tank1.object.getWorldPosition(new THREE.Vector3));
-        console.log(spotLights[0].object.getWorldPosition(new THREE.Vector3));
+        // console.log(spotLights[0].object.getWorldPosition(new THREE.Vector3));
     }
 };
 
