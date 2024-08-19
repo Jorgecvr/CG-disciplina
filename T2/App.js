@@ -11,6 +11,8 @@ import { Camera } from './src/Camera.js';
 import { Light } from './src/Light.js';
 // import { directionTankWithCollision } from './Collisions.js';
 // import { CriaBala, balaAnda } from './Bullet.js';
+import { Cannon } from './src/Cannon.js';
+import { CannonControl } from './src/CannonControl.js';
 
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                                  // Criando a main scene.
@@ -29,6 +31,7 @@ var camera = new Camera(renderer);                              // Criando a câ
 var message = new SecondaryBox();                               // Criando as mensagens de vida.
 var levelType = 2;                                              // Armazena o tipo do nível atual (começa em 1).
 var spotLights = [];                                            // Array para as luminárias.
+// var cannonControl;                                              // Iniciador do controle do canhão.
 
 var zoom = 1;
 var lastWidth = window.innerWidth;
@@ -81,6 +84,14 @@ function init() {
         directionalLight.castShadow = false;
         scene.add(directionalLight);
 
+        // // Inserindo Canhão em cena.
+        // let canhão = new Cannon();
+        // canhão.object.position.set(30, 10, 25);
+        // scene.add(canhão.object);
+
+        // // Inicializando o controle do canhão após a definição do canhão
+        // cannonControl = new CannonControl(canhão, [tank1, tank2]);
+
     } 
     else if(levelType == 2) {
         // Renderizando o nível 2.
@@ -115,7 +126,7 @@ function init() {
         scene.add(ambientLight);
 
         // Inserindo a luz direcional
-        directionalLight = new THREE.DirectionalLight("rgb(150, 150, 150)", 3);
+        directionalLight = new THREE.DirectionalLight("rgb(80, 80, 80)", 3);
         directionalLight.position.copy(new THREE.Vector3(2, 1, 1));
         directionalLight.castShadow = false;
         scene.add(directionalLight);
@@ -235,7 +246,7 @@ function play(end) {
             camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
         }
         tank1.move(1, level, levelType);
-
+        // cannonControl.updateCannonRotation();  // Atualizando a rotação do canhão
         // tank1.life -= 5;
         // if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
     }

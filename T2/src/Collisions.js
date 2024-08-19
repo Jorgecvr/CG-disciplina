@@ -59,5 +59,5 @@ export function CheckCollisionsWithWall(tank, level) {
             collisionType = collision;
         }
     });
-    return (collisionBlock, collisionType);
+    return {collisionBlock, collisionType};
 };

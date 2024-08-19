@@ -16,16 +16,16 @@ export class Tank {
         this.lastDirection = 0;
 
         // Objetos de apoio à colisão.
-        this.base = new THREE.Mesh(new THREE.BoxGeometry(4.7, 2, 4.2));
+        this.base = new THREE.Mesh(new THREE.BoxGeometry(4.7, 2, 4.3));
             this.object.add(this.base);
             this.base.position.y += 1;
-            this.base.position.z -= 0.25;
-            // this.base.visible = false;
+            this.base.position.z -= 0.24;
+            this.base.visible = false;
         this.cannon = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 2));
             this.object.add(this.cannon);
             this.cannon.position.y += 2.7;
             this.cannon.position.z += 2.5;
-            // this.cannon.visible = false;
+            this.cannon.visible = false;
 
         // Criando a vida de cada tanque.
         this.life = 1000;
@@ -48,6 +48,7 @@ export class Tank {
                     });
                 } 
                 child.castShadow = true;
+                child.receiveShadow = true;
             });
             obj.scale.set(1.3, 1.3, 1.3);
             object.add(obj);
@@ -94,51 +95,83 @@ export class Tank {
                 if(keyboard.pressed("left"))  this.object.rotateY(rotationSpeed);
                 if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
             }
-            // Define os limites iniciais do nível.
-            const levelLimits = {
-                minX: 4.5,
-                maxX: 59.5,
-                minZ: 4.5,
-                maxZ: 39.5,
-            };
             // Pega as coordenadas x e z do tanque em relação ao mundo.
             let x = this.object.getWorldPosition(new THREE.Vector3()).x;
             let z = this.object.getWorldPosition(new THREE.Vector3()).z;
-    
-            // Verifica se há colisões.
-            let collisionBlock = CheckCollisionsWithWall(this, level);
-            // Se há colisão as restrições de movimento são alteradas.
-            if(collisionBlock != null) {
-                console.log(collisionBlock.position.x, collisionBlock.position.z);
-                if(this.lastDirection === 0) {
-                    if(collisionBlock.position.x == 32) {
-                        if(x >= 27.4 && x <= 36.4) {
-                            levelLimits.minZ = 16;
-                            levelLimits.maxZ = 27;
+            
+            // Tratamento de colisões.
+            const levelLimits = { // Definição dos limites inicias do primeiro nível.
+                minX: 5,
+                maxX: 59,
+                minZ: 5,
+                maxZ: 39,
+            };
+            let {collisionBlock, collisionType} = CheckCollisionsWithWall(this, level);
+            if(this.lastDirection == 0) {
+                if(collisionBlock) {
+                    console.log(collisionBlock.position);
+
+                    if(collisionBlock.position.x == 32 && collisionBlock.position.z == 12) {
+                        if(z <= 15.5) {
+                            if(collisionType == 1) {
+                                levelLimits.minX = x <= 32 ? 5 : 37;
+                                levelLimits.maxX = x <= 32 ? 27 : 39;
+                            } else {
+                                levelLimits.minX = x <= 32 ? 5 : 36;
+                                levelLimits.maxX = x <= 32 ? 28 : 39;
+                            }
+                        } else {
+                            if(collisionType == 1) {
+                                levelLimits.minZ = 17;
+                            } else {
+                                levelLimits.minZ = 16;
+                            }
                         }
-                        else {
+                    }
+                    else if(collisionBlock.position.x == 32 && collisionBlock.position.z == 32) {
+                        if(z >= 28.5) {
+                            if(collisionType == 1) {
+                                levelLimits.minX = x <= 32 ? 5 : 37;
+                                levelLimits.maxX = x <= 32 ? 27 : 39;
+                            } else {
+                                levelLimits.minX = x <= 32 ? 5 : 36;
+                                levelLimits.maxX = x <= 32 ? 28 : 39;
+                            }
+                        } else {
+                            if(collisionType == 1) {
+                                levelLimits.maxZ = 27;
+                            } else {
+                                levelLimits.maxZ = 28;
+                            }
+                        }
+                    }
+                    else if(collisionBlock.position.x == 32 || collisionBlock.position.x == 28 || collisionBlock.position.x == 36) {
+                        if(z <= 15.5) {
                             levelLimits.minX = x <= 32 ? 5 : 37;
-                            levelLimits.maxX = x <= 32 ? 27 : 59; 
+                            levelLimits.maxX = x <= 32 ? 27 : 39;
+                        }
+                        else if(z >= 28.5) {
+                            levelLimits.minX = x <= 32 ? 5 : 37;
+                            levelLimits.maxX = x <= 32 ? 27 : 39;
                         }
                     }
-                    else if(collisionBlock.position.z == 44 || collisionBlock.position.z == 0) {
-                        levelLimits.minX = x <= 32 ? 5 : 37;
-                        levelLimits.maxX = x <= 32 ? 27 : 59;
-                    }
-                } else {
-                    if(collisionBlock.position.x == 32) {
-                        if(x >= 27.4 && x <= 36.2) {
+                }
+            } else {
+                levelLimits.minX -= 0.5
+                levelLimits.maxX += 0.5
+                levelLimits.minZ -= 0.5
+                levelLimits.maxZ += 0.5
+
+                if(collisionBlock) {
+                    console.log(collisionBlock.position);
+                    if(collisionBlock.position.x == 32 || collisionBlock.position.x == 28 || collisionBlock.position.x == 36) {
+                        if(z <= 15.5 || z >= 28.5) {
+                            levelLimits.minX = x <= 32 ? 5 : 36.5;
+                            levelLimits.maxX = x <= 32 ? 27.5 : 39;
+                        } else {
                             levelLimits.minZ = 16.5;
                             levelLimits.maxZ = 27.5;
                         }
-                        else {
-                            levelLimits.maxX = x <= 32 ? 27.5 : 59; 
-                            levelLimits.minX = x <= 32 ? 5 : 36.5;
-                        }
-                    }
-                    else if(collisionBlock.position.z == 44) {
-                        levelLimits.maxX = x <= 32 ? 27.5 : 59; 
-                        levelLimits.minX = x <= 32 ? 5 : 36.5;
                     }
                 }
             }
@@ -146,7 +179,8 @@ export class Tank {
             // Aplica a restrição com base nos limites do nível (método clamp restrige o valor da posição).
             this.object.position.x = THREE.MathUtils.clamp(x, levelLimits.minX, levelLimits.maxX);
             this.object.position.z = THREE.MathUtils.clamp(z, levelLimits.minZ, levelLimits.maxZ);
-        } 
+        }
+
         // Define as condições de movimento do segundo nível.
         else {
             if(type == 1) {
@@ -173,77 +207,95 @@ export class Tank {
                 if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
             }
 
-            // Define os limites iniciais do nível.
-            const levelLimits = {
+            // Pega as coordenadas x e z do tanque em relação ao mundo.
+            let x = this.object.getWorldPosition(new THREE.Vector3()).x;
+            let z = this.object.getWorldPosition(new THREE.Vector3()).z;
+    
+            // Tratamento de colisões para o segundo nível..
+            let levelLimits = { // Definição dos limites inicias do segundo nível.
                 minX: 5,
                 maxX: 63,
                 minZ: 5,
                 maxZ: 39,
             };
-            // Pega as coordenadas x e z do tanque em relação ao mundo.
-            let x = this.object.getWorldPosition(new THREE.Vector3()).x;
-            let z = this.object.getWorldPosition(new THREE.Vector3()).z;
-            if(this.lastDirection === 1) {
+            let {collisionBlock, collisionType} = CheckCollisionsWithWall(this, level);
+            if(this.lastDirection == 0) {
+                // Se há colisão.
+                if(collisionBlock) {
+                    if(collisionBlock.position.x == 16 && collisionBlock.position.z == 16) {
+                        if(z <= 19.5) {
+                            if(collisionType == 1) {
+                                levelLimits.minX = x <= 16 ? 4.6 : 21;
+                                levelLimits.maxX = x <= 16 ? 11 : 63.4;
+                            } else {
+                                levelLimits.minX = x <= 16 ? 4.6 : 20;
+                                levelLimits.maxX = x <= 16 ? 12 : 63.4;
+                            }
+                        } else {
+                            if(collisionType == 1) {
+                                levelLimits.minZ = 21;
+                            } else {
+                                levelLimits.minZ = 20;
+                            }
+                        }
+                    }
+                    else if(collisionBlock.position.x == 16) {
+                        if(z <= 19.5) {
+                            levelLimits.minX = x <= 16 ? 5 : 21;
+                            levelLimits.maxX = x <= 16 ? 11 : 63;
+                        }
+                    }
+                    else if(collisionBlock.position.x == 52 && collisionBlock.position.z == 28) {
+                        if(z >= 24.5) {
+                            if(collisionType == 1) {
+                                levelLimits.minX = x <= 52 ? 4.6 : 57;
+                                levelLimits.maxX = x <= 52 ? 47 : 63.4;
+                            } else {
+                                levelLimits.minX = x <= 52 ? 4.6 : 56;
+                                levelLimits.maxX = x <= 52 ? 48 : 63.4;
+                            }
+                        } else {
+                            if(collisionType == 1) {
+                                levelLimits.maxZ = 23;
+                            } else {
+                                levelLimits.maxZ = 24;
+                            }
+                        }
+                    }
+                    else if(collisionBlock.position.x == 52) {
+                        if(z >= 24.5) {
+                            levelLimits.minX = x <= 52 ? 5 : 57;
+                            levelLimits.maxX = x <= 52 ? 47 : 63;
+                        }
+                    }
+                    
+                }
+            } else {
                 levelLimits.minX -= 0.5;
-                levelLimits.maxX += 0.5;
+                levelLimits.maxX +- 0.5;
                 levelLimits.minZ -= 0.5;
                 levelLimits.maxZ += 0.5;
+
+                if(collisionBlock) {
+                    if(collisionBlock.position.x == 16) {
+                        if(z <= 19.5) {
+                            levelLimits.minX = x <= 16 ? 5 : 20.5;
+                            levelLimits.maxX = x <= 16 ? 11.5 : 63;
+                        } else {
+                            levelLimits.minZ = 20.5;
+                        }
+                    }
+                    else if(collisionBlock.position.x == 52 || collisionBlock.position.x == 48 || collisionBlock.position.x == 56) {
+                        if(z >= 24.5) {
+                            levelLimits.minX = x <= 52 ? 5 : 56.5;
+                            levelLimits.maxX = x <= 52 ? 47.5 : 63;
+                        } else {
+                            levelLimits.maxZ = 23.5;
+                        }
+                    }
+                }
             }
-    
-            // Tratamento de colisões.
-            let collisionBlock, collisionType = CheckCollisionsWithWall(this, level);
             
-            console.log(collisionBlock, collisionType);
-
-            // Se há colisão.
-            if(collisionType != -1) {
-                console.log(collisionBlock.position.x, collisionBlock.position.z);
-            }
-
-            // Se há colisão as restrições de movimento são alteradas.
-            // if(collisionBlock) {
-            //     if(this.lastDirection === 0) {
-            //         if(collisionBlock.position.x == 16) {
-            //             if(z <= 20) {
-            //                 levelLimits.minX = x <= 16 ? 5 : 21;
-            //                 levelLimits.maxX = x <= 16 ? 11 : 63;
-            //             } else if(z > 21) {
-            //                 // levelLimits.minZ = 21.5;
-            //             }
-            //         } 
-                //     if(collisionBlock.position.x == 32) {
-                //         if(x >= 27.4 && x <= 36.4) {
-                //             levelLimits.minZ = 16;
-                //             levelLimits.maxZ = 27;
-                //         }
-                //         else {
-                //             levelLimits.minX = x <= 32 ? 5 : 37;
-                //             levelLimits.maxX = x <= 32 ? 27 : 59; 
-                //         }
-                //     }
-                //     else if(collisionBlock.position.z == 44 || collisionBlock.position.z == 0) {
-                //         levelLimits.minX = x <= 32 ? 5 : 37;
-                //         levelLimits.maxX = x <= 32 ? 27 : 59;
-                //    }
-                // } else {
-                    // levelLimits.mixX -= 2;
-                //     if(collisionBlock.position.x == 32) {
-                //         if(x >= 27.4 && x <= 36.2) {
-                //             levelLimits.minZ = 16.5;
-                //             levelLimits.maxZ = 27.5;
-                //         }
-                //         else {
-                //             levelLimits.maxX = x <= 32 ? 27.5 : 59; 
-                //             levelLimits.minX = x <= 32 ? 5 : 36.5;
-                //         }
-                //     }
-                //     else if(collisionBlock.position.z == 44) {
-                //         levelLimits.maxX = x <= 32 ? 27.5 : 59; 
-                //         levelLimits.minX = x <= 32 ? 5 : 36.5;
-                //     }
-            //     }
-            // }
-    
             // Aplica a restrição com base nos limites do nível (método clamp restrige o valor da posição).
             this.object.position.x = THREE.MathUtils.clamp(x, levelLimits.minX, levelLimits.maxX);
             this.object.position.z = THREE.MathUtils.clamp(z, levelLimits.minZ, levelLimits.maxZ);
