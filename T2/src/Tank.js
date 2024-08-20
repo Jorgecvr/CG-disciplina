@@ -215,6 +215,7 @@ export class Tank {
             }
             else if(type == 2) {
                 UpdateTankPosition(player, this.object);
+                this.object.updateMatrixWorld();
             }
 
             // Pega as coordenadas x e z do tanque em relação ao mundo.

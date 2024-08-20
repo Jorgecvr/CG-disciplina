@@ -81,13 +81,7 @@ function init() {
         camera.initCamera(1, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
 
         // Criando luz básica para iluminar a cena do nível 1.
-        let power = 3.141592653589793;
-        ambientLight = new THREE.HemisphereLight(
-            'white',
-            'darkslategrey',
-            0.5 * power,
-        );
-        scene.add(ambientLight);
+        let power = 5; 
         directionalLight = new THREE.DirectionalLight('white', 0.7 * power);
         directionalLight.position.copy(new THREE.Vector3(2, 1, 1));
         directionalLight.castShadow = false;
@@ -117,13 +111,13 @@ function init() {
         tank3.object.rotateY(THREE.MathUtils.degToRad(270));
         scene.add(tank3.object);
 
-        // Inserindo Canhão em cena.
-        cannon = new Cannon();
-        cannon.object.position.set(30, 10, 25);
-        scene.add(cannon.object);
+        // // Inserindo Canhão em cena.
+        // cannon = new Cannon();
+        // cannon.object.position.set(30, 10, 25);
+        // scene.add(cannon.object);
 
-        // Inicializando o controle do canhão após a definição do canhão.
-        cannonControl = new CannonControl(cannon, [tank1, tank2, tank3]);
+        // // Inicializando o controle do canhão após a definição do canhão.
+        // cannonControl = new CannonControl(cannon, [tank1, tank2, tank3]);
 
         // Iniciando a câmera do nível2.
         camera.initCamera(2, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
@@ -212,7 +206,7 @@ function swapLevel() {
             scene.remove(ambientLight);
             scene.remove(directionalLight);
 
-            scene.remove(cannon.object);
+            // scene.remove(cannon.object);
     
             // Chamando a função que inicia o jogo com o tipo do nível 1.
             levelType = 1;
@@ -229,7 +223,6 @@ function swapLevel() {
             scene.remove(tank1.object);
             scene.remove(tank2.object);
 
-            scene.remove(ambientLight);
             scene.remove(directionalLight);
 
             scene.remove(cannon.object);
@@ -258,8 +251,8 @@ function play(end) {
             camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
         }
         tank1.move(1, level, levelType);
-        // tank2.move(2, level, levelType, tank1.object);
-        cannonControl.updateCannonRotation();  // Atualizando a rotação do canhão.
+        tank2.move(2, level, levelType, tank1.object);
+        // cannonControl.updateCannonRotation();  // Atualizando a rotação do canhão.
         // tank1.life -= 5;
         // if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
     }
@@ -271,6 +264,10 @@ function end() {
     return false;
 };
 
+
+// let sphere = new THREE.Mesh(new THREE.SphereGeometry(1, 32));
+// sphere.position.set(64, 4, 8);
+// scene.add(sphere);
 
 init();
 render();
