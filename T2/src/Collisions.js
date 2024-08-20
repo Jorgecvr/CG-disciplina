@@ -3,16 +3,6 @@ import { OBB } from '../../build/jsm/math/OBB.js';
 
 // Método que checa colisões do tanque com algum objeto.
 function checkTankCollisions(tank, block) {
-
-    // // Criando a Box3 do bloco.
-    // let bbBlock = new THREE.Box3().setFromObject(block);
-
-    // // Criando a Box3 para os objetos de apoio.
-    // let bbBase = new THREE.Box3().setFromObject(tank.base);
-    // let bbCannon = new THREE.Box3().setFromObject(tank.cannon);
-
-    // return (bbBlock.intersectsBox(bbBase) || bbBlock.intersectsBox(bbCannon));
-
     // Obtendo a matriz de rotação do tanque e do bloco.
     tank.object.updateMatrixWorld();
     const tankRotationMatrix3 = new THREE.Matrix3().setFromMatrix4(tank.object.matrixWorld);

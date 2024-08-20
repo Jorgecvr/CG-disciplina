@@ -64,7 +64,7 @@ export class Tank {
     };
 
     // Método que controla a movimentação do tanque.
-    move(type, level, levelType, player = null) {
+    move(type, level, levelType, player = null, shoot = false) {
         let keyboard = new KeyboardState();
         keyboard.update();
 
@@ -111,8 +111,6 @@ export class Tank {
             let {collisionBlock, collisionType} = CheckCollisionsWithWall(this, level);
             if(this.lastDirection == 0) {
                 if(collisionBlock) {
-                    console.log(collisionBlock.position);
-
                     if(collisionBlock.position.x == 32 && collisionBlock.position.z == 12) {
                         if(z <= 15.5) {
                             if(collisionType == 1) {
@@ -165,7 +163,6 @@ export class Tank {
                 levelLimits.maxZ += 0.5
 
                 if(collisionBlock) {
-                    console.log(collisionBlock.position);
                     if(collisionBlock.position.x == 32 || collisionBlock.position.x == 28 || collisionBlock.position.x == 36) {
                         if(z <= 15.5 || z >= 28.5) {
                             levelLimits.minX = x <= 32 ? 5 : 36.5;
@@ -212,10 +209,8 @@ export class Tank {
                 } 
                 if(keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
                 if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
-            }
-            else if(type == 2) {
-                UpdateTankPosition(player, this.object);
-                this.object.updateMatrixWorld();
+            } else if(type == 2) {
+                UpdateTankPosition(player, this, shoot, level);
             }
 
             // Pega as coordenadas x e z do tanque em relação ao mundo.
@@ -230,9 +225,14 @@ export class Tank {
                 maxZ: 39,
             };
             let {collisionBlock, collisionType} = CheckCollisionsWithWall(this, level);
+
             if(this.lastDirection == 0) {
                 // Se há colisão.
                 if(collisionBlock) {
+                    // Altera a velocidade do tanque.
+                    // console.log("AQUII");
+                    // if(this.speed > 0) this.speed = -this.speed;
+
                     if(collisionBlock.position.x == 16 && collisionBlock.position.z == 16) {
                         if(z <= 19.5) {
                             if(collisionType == 1) {
@@ -273,7 +273,7 @@ export class Tank {
                             }
                         }
                     }
-                    else if(collisionBlock.position.x == 52) {
+                    else if(collisionBlock.position.x == 52 || collisionBlock.position.x == 48 || collisionBlock.position.x == 56) {
                         if(z >= 24.5) {
                             levelLimits.minX = x <= 52 ? 5 : 57;
                             levelLimits.maxX = x <= 52 ? 47 : 63;

@@ -34,6 +34,10 @@ var spotLights = [];                                            // Array para as
 var cannon;                                                     // Criando o canhão.
 var cannonControl;                                              // Iniciando o controle do canhão.
 
+// Variáveis para controle do tempo.
+var lastTime = 0;
+const interval = 3000; // 3 segundos.
+
 var zoom = 1;
 var lastWidth = window.innerWidth;
 window.addEventListener('resize', function() {
@@ -104,7 +108,7 @@ function init() {
 
         tank2 = new Tank(1, 1);
         tank2.object.position.set(60, 0, 36);
-        tank2.object.rotateY(THREE.MathUtils.degToRad(180));
+        tank2.object.rotation.set(0, THREE.MathUtils.degToRad(-180), 0);
         scene.add(tank2.object);
         tank3 = new Tank(2, 1);
         tank3.object.position.set(60, 0, 10);
@@ -244,6 +248,14 @@ function swapLevel() {
 
 // Função play chamada na render atualiza toda a lógica do jogo.
 function play(end) {
+    const currentTime = performance.now();  // Obtém o tempo atual.
+    let shoot = false;
+    // Verifica se já se passaram 3 segundos.
+    if(currentTime - lastTime >= interval) {
+        shoot = true;
+        lastTime = currentTime;
+    }
+
     if(!end) {
         if(levelType == 1) {
             camera.update1(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
@@ -251,7 +263,8 @@ function play(end) {
             camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
         }
         tank1.move(1, level, levelType);
-        tank2.move(2, level, levelType, tank1.object);
+        // tank2.move(2, level, levelType, tank1.object, shoot);
+        // tank3.move(2, level, levelType, tank1.object, shoot);
         // cannonControl.updateCannonRotation();  // Atualizando a rotação do canhão.
         // tank1.life -= 5;
         // if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
@@ -265,9 +278,9 @@ function end() {
 };
 
 
-// let sphere = new THREE.Mesh(new THREE.SphereGeometry(1, 32));
-// sphere.position.set(64, 4, 8);
-// scene.add(sphere);
+let sphere = new THREE.Mesh(new THREE.SphereGeometry(1, 32));
+sphere.position.set(64, 4, 8);
+scene.add(sphere);
 
 init();
 render();
