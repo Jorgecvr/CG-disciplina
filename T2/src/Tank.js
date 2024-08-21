@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import KeyboardState from '../../libs/util/KeyboardState.js';
-import { UpdateTankPosition } from './Enemies.js';
+import { UpdateTankPositionLevel1, UpdateTankPositionLevel2 } from './Enemies.js';
 
 // Importação do Loader para o utilizar o modelo do tank.
 import { GLTFLoader } from '../../build/jsm/loaders/GLTFLoader.js';
@@ -64,7 +64,7 @@ export class Tank {
     };
 
     // Método que controla a movimentação do tanque.
-    move(type, level, levelType, player = null, shoot = false) {
+    move(type, level, levelType, player = null, shoot = false, scene = null) {
         let keyboard = new KeyboardState();
         keyboard.update();
 
@@ -82,8 +82,14 @@ export class Tank {
                     this.object.translateZ(-movementSpeed);
                     if(this.lastDirection != 1) this.lastDirection = 1;
                 }
-                if(keyboard.pressed("A")) this.object.rotateY(rotationSpeed);
-                if(keyboard.pressed("D")) this.object.rotateY(-rotationSpeed);
+                if(keyboard.pressed("A")) {
+                    this.object.rotateY(rotationSpeed);
+                    this.lifeBar.rotateY(-rotationSpeed);
+                } 
+                if(keyboard.pressed("D")) {
+                    this.object.rotateY(-rotationSpeed);
+                    this.lifeBar.rotateY(rotationSpeed);
+                }
             
                 if(keyboard.pressed("up")) {
                     this.object.translateZ(movementSpeed);
@@ -93,8 +99,16 @@ export class Tank {
                     this.object.translateZ(-movementSpeed);
                     if(this.lastDirection != 1) this.lastDirection = 1;
                 } 
-                if(keyboard.pressed("left"))  this.object.rotateY(rotationSpeed);
-                if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
+                if(keyboard.pressed("left"))  {
+                    this.object.rotateY(rotationSpeed);
+                    this.lifeBar.rotateY(-rotationSpeed);
+                }
+                if(keyboard.pressed("right")) {
+                    this.object.rotateY(-rotationSpeed);
+                    this.lifeBar.rotateY(rotationSpeed);
+                }
+            } else if(type == 2) {
+                UpdateTankPositionLevel1(player, this, shoot, type, level, scene);
             }
 
             // Pega as coordenadas x e z do tanque em relação ao mundo.
@@ -111,6 +125,7 @@ export class Tank {
             let {collisionBlock, collisionType} = CheckCollisionsWithWall(this, level);
             if(this.lastDirection == 0) {
                 if(collisionBlock) {
+                    console.log(collisionBlock.position);
                     if(collisionBlock.position.x == 32 && collisionBlock.position.z == 12) {
                         if(z <= 15.5) {
                             if(collisionType == 1) {
@@ -210,7 +225,7 @@ export class Tank {
                 if(keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
                 if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
             } else if(type == 2 || type == 3) {
-                UpdateTankPosition(player, this, shoot, levelType, type);
+                UpdateTankPositionLevel2(player, this, shoot, type, level, scene);
             }
 
             // Pega as coordenadas x e z do tanque em relação ao mundo.
@@ -229,10 +244,6 @@ export class Tank {
             if(this.lastDirection == 0) {
                 // Se há colisão.
                 if(collisionBlock) {
-                    // Altera a velocidade do tanque.
-                    // console.log("AQUII");
-                    // if(this.speed > 0) this.speed = -this.speed;
-
                     if(collisionBlock.position.x == 16 && collisionBlock.position.z == 16) {
                         if(z <= 19.5) {
                             if(collisionType == 1) {

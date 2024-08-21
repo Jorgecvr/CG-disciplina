@@ -13,6 +13,7 @@ import { Light } from './src/Light.js';
 // import { CriaBala, balaAnda } from './Bullet.js';
 import { Cannon } from './src/Cannon.js';
 import { CannonControl } from './src/CannonControl.js';
+import { UpdateEnemies } from './src/Enemies.js';
 
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                                  // Criando a main scene.
@@ -34,9 +35,10 @@ var spotLights = [];                                            // Array para as
 var cannon;                                                     // Criando o canhão.
 var cannonControl;                                              // Iniciando o controle do canhão.
 
-// Variáveis para controle do tempo.
+// Variáveis para controle do tempo de tiro.
+var shoot = false;
 var lastTime = 0;
-const interval = 3000; // 3 segundos.
+const interval = 10000; // 10 segundos.
 
 var zoom = 1;
 var lastWidth = window.innerWidth;
@@ -64,13 +66,22 @@ function init() {
         scene.add(level.floor);
 
         // Inserindo os tanques em cena.
+        // Tanque 1.
         tank1 = new Tank(1, 1);
         tank1.object.rotateY(THREE.MathUtils.degToRad(180));
         tank1.object.position.set(10, 0, 36);
+        tank1.object.add(tank1.lifeBar);
+        tank1.lifeBar.position.y += 5;
+        tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
         scene.add(tank1.object);
+        
+        // Tanque 2.
         tank2 = new Tank(2, 1);
         tank2.object.rotateY(THREE.MathUtils.degToRad(180));
         tank2.object.position.set(54, 0, 36);
+        tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
+        tank2.lifeBar.scale.set(tank2.life / 1000, tank2.lifeBar.scale.y, tank2.lifeBar.scale.z);
+        scene.add(tank2.lifeBar);
         scene.add(tank2.object);
 
         // Inserindo Canhão em cena.
@@ -106,13 +117,22 @@ function init() {
         tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
         scene.add(tank1.object);
 
+        // Tanque 2.
         tank2 = new Tank(1, 1);
         tank2.object.position.set(60, 0, 36);
+        tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
+        tank2.lifeBar.scale.set(tank2.life / 1000, tank2.lifeBar.scale.y, tank2.lifeBar.scale.z);
         tank2.object.rotation.set(0, THREE.MathUtils.degToRad(-180), 0);
+        scene.add(tank2.lifeBar);
         scene.add(tank2.object);
+
+        // Tanque 3.
         tank3 = new Tank(2, 1);
         tank3.object.position.set(60, 0, 10);
+        tank3.lifeBar.position.set(tank3.object.position.x, tank3.object.position.y + 5, tank3.object.position.z);
+        tank3.lifeBar.scale.set(tank3.life / 1000, tank3.lifeBar.scale.y, tank3.lifeBar.scale.z);
         tank3.object.rotateY(THREE.MathUtils.degToRad(270));
+        scene.add(tank3.lifeBar);
         scene.add(tank3.object);
 
         // // Inserindo Canhão em cena.
@@ -202,6 +222,9 @@ function swapLevel() {
             scene.remove(tank2.object);
             scene.remove(tank3.object);
 
+            scene.remove(tank2.lifeBar);
+            scene.remove(tank3.lifeBar);
+
             spotLights.forEach((spotLight) => {
                 scene.remove(spotLight.object);
                 scene.remove(spotLight.spotLight);
@@ -211,6 +234,9 @@ function swapLevel() {
             scene.remove(directionalLight);
 
             // scene.remove(cannon.object);
+
+            // Atualiza os valores inicias da função que movimente os tanques adversários.
+            UpdateEnemies();
     
             // Chamando a função que inicia o jogo com o tipo do nível 1.
             levelType = 1;
@@ -226,6 +252,8 @@ function swapLevel() {
             scene.remove(level.floor);
             scene.remove(tank1.object);
             scene.remove(tank2.object);
+
+            scene.remove(tank2.lifeBar);
 
             scene.remove(directionalLight);
 
@@ -249,22 +277,26 @@ function swapLevel() {
 // Função play chamada na render atualiza toda a lógica do jogo.
 function play(end) {
     const currentTime = performance.now();  // Obtém o tempo atual.
-    let shoot = false;
-    // Verifica se já se passaram 3 segundos.
+    // Verifica se já se passaram 10 segundos.
     if(currentTime - lastTime >= interval) {
-        shoot = true;
+        shoot = false;
         lastTime = currentTime;
     }
 
     if(!end) {
         if(levelType == 1) {
             camera.update1(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
+            tank1.move(1, level, levelType);
+            tank2.move(2, level, levelType, tank1.object, shoot, scene);
         } else {
             camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
+            tank1.move(1, level, levelType);
+            tank2.move(2, level, levelType, tank1.object, shoot, scene);
+            // tank3.move(3, level, levelType, tank1.object, shoot, scene);
         }
-        tank1.move(1, level, levelType);
-        tank2.move(2, level, levelType, tank1.object, shoot);
-        tank3.move(3, level, levelType, tank1.object, shoot);
+        tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
+        tank3.lifeBar.position.set(tank3.object.position.x, tank3.object.position.y + 5, tank3.object.position.z);
+         
         // cannonControl.updateCannonRotation();  // Atualizando a rotação do canhão.
         // tank1.life -= 5;
         // if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
@@ -277,35 +309,20 @@ function end() {
     return false;
 };
 
-let levelU = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-    [1, 2, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
-    [1, 2, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
-    [1, 2, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
-    [1, 2, 0, 0, 2, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 2, 1],
-    [1, 2, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 2, 0, 0, 2, 1],
-    [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 2, 1],
-    [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 2, 1],
-    [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 2, 1],
-    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+let level1 = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 2, 2, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
+    [1, 1, 0, 2, 2, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
+    [1, 1, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 1, 1],
+    [1, 1, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 1, 1],
+    [1, 1, 0, 2, 2, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
+    [1, 1, 0, 2, 2, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
-
-for(let i = 0; i < levelU.length; i++) {
-    for(let j = 0; j < levelU[i].length; j++) {
-        if(levelU[i][j] === 0) {
-            // Calcula a posição do waypoint com base nas coordenadas do mapa.
-            const x = j * 4;
-            const y = 5;
-            const z = i * 4;
-
-            let sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32));
-            sphere.position.set(x, y, z);
-            scene.add(sphere);
-        }
-    }
-}
 
 init();
 render();
