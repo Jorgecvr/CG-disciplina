@@ -263,8 +263,8 @@ function play(end) {
             camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
         }
         tank1.move(1, level, levelType);
-        // tank2.move(2, level, levelType, tank1.object, shoot);
-        // tank3.move(2, level, levelType, tank1.object, shoot);
+        tank2.move(2, level, levelType, tank1.object, shoot);
+        tank3.move(3, level, levelType, tank1.object, shoot);
         // cannonControl.updateCannonRotation();  // Atualizando a rotação do canhão.
         // tank1.life -= 5;
         // if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
@@ -277,10 +277,35 @@ function end() {
     return false;
 };
 
+let levelU = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+    [1, 2, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
+    [1, 2, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
+    [1, 2, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
+    [1, 2, 0, 0, 2, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 2, 1],
+    [1, 2, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 2, 0, 0, 2, 1],
+    [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 2, 1],
+    [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 2, 1],
+    [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 0, 2, 1],
+    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+];
 
-let sphere = new THREE.Mesh(new THREE.SphereGeometry(1, 32));
-sphere.position.set(64, 4, 8);
-scene.add(sphere);
+for(let i = 0; i < levelU.length; i++) {
+    for(let j = 0; j < levelU[i].length; j++) {
+        if(levelU[i][j] === 0) {
+            // Calcula a posição do waypoint com base nas coordenadas do mapa.
+            const x = j * 4;
+            const y = 5;
+            const z = i * 4;
+
+            let sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32));
+            sphere.position.set(x, y, z);
+            scene.add(sphere);
+        }
+    }
+}
 
 init();
 render();

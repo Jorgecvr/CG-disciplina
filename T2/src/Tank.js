@@ -209,8 +209,8 @@ export class Tank {
                 } 
                 if(keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
                 if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
-            } else if(type == 2) {
-                UpdateTankPosition(player, this, shoot, level);
+            } else if(type == 2 || type == 3) {
+                UpdateTankPosition(player, this, shoot, levelType, type);
             }
 
             // Pega as coordenadas x e z do tanque em relação ao mundo.
