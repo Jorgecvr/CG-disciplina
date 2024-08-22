@@ -31,6 +31,9 @@ export class Tank {
         // Criando a vida de cada tanque.
         this.life = 1000;
         this.lifeBar = this.createLifeBar();
+
+        // Criando atributos para a morte do tanque.
+        this.isDead = false;
     };
 
     // Método que importa o modelo e cria o tanque.
@@ -57,10 +60,19 @@ export class Tank {
         return object;
     };
 
-    // Cria a geometria da vida do tanque.
+    // Método para criar a geometria da vida do tanque.
     createLifeBar() {
         let lifeBar = new THREE.Mesh(new THREE.BoxGeometry(4, 0.3, 0.3), new THREE.MeshBasicMaterial({color: "rgb(205, 50, 50)"}));
         return lifeBar;
+    };
+
+    // Método para "matar" o tanque.
+    kill(scene) {
+        this.life = 0;
+        scene.remove(this.object);
+        scene.remove(this.lifeBar);
+        this.object.position.set(100, 100, 100);
+        this.isDead = true;
     };
 
     // Método que controla a movimentação do tanque.

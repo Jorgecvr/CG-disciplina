@@ -23,12 +23,15 @@ var ambientLight;                                               // Iniciando o c
 var directionalLight;                                           // Iniciando o controle da luz direcional.
 
 var level;                                                      // Criando o nível.
+
 var tank1;                                                      // Criando o primeiro tanque.
 var tank2;                                                      // Criando o segundo tanque.    
 var tank3;                                                      // Criando o terceiro tanque.
+
 var camera = new Camera(renderer);                              // Criando a câmera.
     scene.add(camera.holder);                                   // Adicionando o câmera holder.
     camera.holder.add(camera.camera);
+
 var message = new SecondaryBox();                               // Criando as mensagens de vida.
 var levelType = 2;                                              // Armazena o tipo do nível atual (começa em 1).
 var spotLights = [];                                            // Array para as luminárias.
@@ -40,6 +43,7 @@ var shoot = false;
 var lastTime = 0;
 const interval = 10000; // 10 segundos.
 
+// Redimensionamento da câmera utilizando zoom.
 var zoom = 1;
 var lastWidth = window.innerWidth;
 window.addEventListener('resize', function() {
@@ -92,7 +96,7 @@ function init() {
         // Inicializando o controle do canhão após a definição do canhão.
         cannonControl = new CannonControl(cannon, [tank1, tank2]);
         
-        // Iniciando a câmera do nível 1.
+        // Iniciando a câmera e a orbitCamera do nível 1.
         camera.initCamera(1, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
 
         // Criando luz básica para iluminar a cena do nível 1.
@@ -143,7 +147,7 @@ function init() {
         // // Inicializando o controle do canhão após a definição do canhão.
         // cannonControl = new CannonControl(cannon, [tank1, tank2, tank3]);
 
-        // Iniciando a câmera do nível2.
+        // Iniciando a câmera e a orbitCamera do nível 2.
         camera.initCamera(2, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
 
         // Inseriando a luz ambiente.
@@ -287,12 +291,26 @@ function play(end) {
         if(levelType == 1) {
             camera.update1(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
             tank1.move(1, level, levelType);
-            tank2.move(2, level, levelType, tank1.object, shoot, scene);
+            // tank2.move(2, level, levelType, tank1.object, shoot, scene);
         } else {
-            camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
+            if(tank2.isDead) {
+                // Tanque 2 morto.
+                camera.update1(tank1.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
+                tank3.move(3, level, levelType, tank1.object, shoot, scene);
+            } else if(tank3.isDead) {
+                // Tanque 3 morto.
+                camera.update1(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
+                tank2.move(2, level, levelType, tank1.object, shoot, scene);
+            } else {
+                // Nenhum tanque adversário morto.
+                console.log(tank3.object.getWorldPosition(new THREE.Vector3()));
+                camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
+                // tank2.move(2, level, levelType, tank1.object, shoot, scene);
+                // tank3.move(3, level, levelType, tank1.object, shoot, scene);
+            }
             tank1.move(1, level, levelType);
-            tank2.move(2, level, levelType, tank1.object, shoot, scene);
-            // tank3.move(3, level, levelType, tank1.object, shoot, scene);
+            
+            
         }
         tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
         tank3.lifeBar.position.set(tank3.object.position.x, tank3.object.position.y + 5, tank3.object.position.z);

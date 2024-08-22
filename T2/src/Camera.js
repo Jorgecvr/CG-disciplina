@@ -124,7 +124,7 @@ export class Camera {
             this.holder.position.z = midZ - this.initMidZ;
 
             // Aproxima e afasta a câmera com base na distância entre os tanques.
-            const factor = 1.2;
+            const factor = 1.5;
             this.camera.translateZ((dist - this.lastDistance) / factor);
 
             // Mantém o lookAt da câmera apontando para a posição média.
