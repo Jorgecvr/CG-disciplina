@@ -33,15 +33,10 @@ var camera = new Camera(renderer);                              // Criando a câ
     camera.holder.add(camera.camera);
 
 var message = new SecondaryBox();                               // Criando as mensagens de vida.
-var levelType = 2;                                              // Armazena o tipo do nível atual (começa em 1).
+var levelType = 1;                                              // Armazena o tipo do nível atual (começa em 1).
 var spotLights = [];                                            // Array para as luminárias.
 var cannon;                                                     // Criando o canhão.
 var cannonControl;                                              // Iniciando o controle do canhão.
-
-// Variáveis para controle do tempo de tiro.
-var shoot = false;
-var lastTime = 0;
-var interval = 3000; // 1.5 segundos.
 
 // Redimensionamento da câmera utilizando zoom.
 var zoom = 1;
@@ -92,11 +87,24 @@ function init() {
         camera.initCamera(1, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
 
         // Criando luz básica para iluminar a cena do nível 1.
-        let power = 5; 
-        directionalLight = new THREE.DirectionalLight('white', 0.7 * power);
-        directionalLight.position.copy(new THREE.Vector3(2, 1, 1));
-        directionalLight.castShadow = false;
+        let power = 4; 
+        directionalLight = new THREE.DirectionalLight("white", 0.7 * power);
+        directionalLight.position.copy(new THREE.Vector3(32, 100, 22));
+        directionalLight.castShadow = true;
+
+        // Definindo o mapa de sombras do primeiro nível (apenas luz direcional).
+        const shadow = directionalLight.shadow;
+        shadow.mapSize.width = 512;
+        shadow.mapSize.height = 512;
+        shadow.camera.near = 0.5;
+        shadow.camera.far = 500;
+        shadow.camera.left = -5;
+        shadow.camera.right = 5;
+        shadow.camera.bottom = -5;
+        shadow.camera.top = 5;
+
         scene.add(directionalLight);
+
     } 
     else if(levelType == 2) {
         // Renderizando o nível 2.
@@ -107,11 +115,14 @@ function init() {
         // Inserindo os tanques em cena.
         // Tanque 1.
         tank1 = new Tank(1, 2);
+        tank1.object.name = "Player";
         tank1.object.position.set(8, 0, 10);
         tank1.object.add(tank1.lifeBar);
         tank1.lifeBar.position.y += 5;
         tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
         scene.add(tank1.object);
+
+        console.log(tank1.object);
 
         // Tanque 2.
         tank2 = new Tank(1, 1);
@@ -269,8 +280,6 @@ function swapLevel() {
             scene.remove(tank2.lifeBar);
 
             scene.remove(directionalLight);
-
-            scene.remove(cannon.object);
     
             // Chamando a função que inicia o jogo com o tipo do nível 2.
             levelType = 2;
@@ -316,41 +325,32 @@ function swapLevel() {
 
 // Função play chamada na render atualiza toda a lógica do jogo.
 function play(end) {
-    const currentTime = performance.now();  // Obtém o tempo atual.
-    shoot = false;
-    // Verifica se já se passaram 3 segundos.
-    if(currentTime - lastTime >= interval) {
-        tank2.kill(scene);
-        camera.initCamera(1, tank1.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
-        interval = 10000000000000;
-    }
-
     if(!end) {
         if(levelType == 1) {
             camera.update1(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
             tank1.move(1, level, levelType);
-            // tank2.move(2, level, levelType, tank1.object, shoot, scene);
+            tank2.move(2, level, levelType, tank1.object);
         } else {
             if(tank2.isDead) {
                 // Tanque 2 morto.
                 camera.update1(tank1.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
-                tank3.move(3, level, levelType, tank1.object, shoot, scene);
+                tank3.move(3, level, levelType, tank1.object);
             } else if(tank3.isDead) {
                 // Tanque 3 morto.
                 camera.update1(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
-                tank2.move(2, level, levelType, tank1.object, shoot, scene);
+                tank2.move(2, level, levelType, tank1.object);
             } else {
                 // Nenhum tanque adversário morto.
                 camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
-                tank2.move(2, level, levelType, tank1.object, shoot, scene);
-                tank3.move(3, level, levelType, tank1.object, shoot, scene);
+                // tank2.move(2, level, levelType, tank1.object);
+                // tank3.move(3, level, levelType, tank1.object);
             }
             tank1.move(1, level, levelType);
             cannonControl.updateCannonRotation();  // Atualizando a rotação do canhão.
             
         }
         tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
-        tank3.lifeBar.position.set(tank3.object.position.x, tank3.object.position.y + 5, tank3.object.position.z);
+        // tank3.lifeBar.position.set(tank3.object.position.x, tank3.object.position.y + 5, tank3.object.position.z);
          
         tank1.life -= 5;
         if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
@@ -362,21 +362,6 @@ function end() {
     message.changeMessage("To Do");
     return false;
 };
-
-let level1 = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 2, 2, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
-    [1, 1, 0, 2, 2, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
-    [1, 1, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 1, 1],
-    [1, 1, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 1, 1],
-    [1, 1, 0, 2, 2, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
-    [1, 1, 0, 2, 2, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-];
 
 init();
 render();

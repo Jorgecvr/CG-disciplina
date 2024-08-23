@@ -76,7 +76,7 @@ export class Tank {
     };
 
     // Método que controla a movimentação do tanque.
-    move(type, level, levelType, player = null, shoot = false, scene = null) {
+    move(type, level, levelType, player) {
         let keyboard = new KeyboardState();
         keyboard.update();
 
@@ -120,7 +120,7 @@ export class Tank {
                     this.lifeBar.rotateY(rotationSpeed);
                 }
             } else if(type == 2) {
-                UpdateTankPositionLevel1(player, this, shoot, type, level, scene);
+                UpdateTankPositionLevel1(player, this, type, level);
             }
 
             // Pega as coordenadas x e z do tanque em relação ao mundo.
@@ -236,7 +236,7 @@ export class Tank {
                 if(keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
                 if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
             } else if(type == 2 || type == 3) {
-                UpdateTankPositionLevel2(player, this, shoot, type, level, scene);
+                UpdateTankPositionLevel2(player, this, type, level);
             }
 
             // Pega as coordenadas x e z do tanque em relação ao mundo.
