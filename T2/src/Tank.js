@@ -52,7 +52,7 @@ export class Tank {
                     });
                 } 
                 child.castShadow = true;
-                child.receiveShadow = true;
+                // child.receiveShadow = true;
             });
             obj.scale.set(1.3, 1.3, 1.3);
             object.add(obj);
@@ -137,7 +137,6 @@ export class Tank {
             let {collisionBlock, collisionType} = CheckCollisionsWithWall(this, level);
             if(this.lastDirection == 0) {
                 if(collisionBlock) {
-                    console.log(collisionBlock.position);
                     if(collisionBlock.position.x == 32 && collisionBlock.position.z == 12) {
                         if(z <= 15.5) {
                             if(collisionType == 1) {
@@ -300,6 +299,34 @@ export class Tank {
                         if(z >= 24.5) {
                             levelLimits.minX = x <= 52 ? 5 : 57;
                             levelLimits.maxX = x <= 52 ? 47 : 63;
+                        }
+                    }
+                    else if((collisionBlock.position.x == 32 && collisionBlock.position.z == 20)) {
+                        if(z >= 16.5) {
+                            levelLimits.maxX = 28;
+                        } else {
+                            levelLimits.maxZ = 16;
+                        }
+                    }
+                    else if((collisionBlock.position.x == 32 && collisionBlock.position.z == 24)) {
+                        if(z <= 27.5) {
+                            levelLimits.maxX = 28;
+                        } else {
+                            levelLimits.minZ = 28;
+                        }
+                    }
+                    else if((collisionBlock.position.x == 36 && collisionBlock.position.z == 24)) {
+                        if(z <= 27.5) {
+                            levelLimits.minX = 40;
+                        } else {
+                            levelLimits.minZ = 28;
+                        }
+                    }
+                    else if((collisionBlock.position.x == 36 && collisionBlock.position.z == 20 )) {
+                        if(z >= 16.5) {
+                            levelLimits.minX = 40;
+                        } else {
+                            levelLimits.maxZ = 16;
                         }
                     }
                     

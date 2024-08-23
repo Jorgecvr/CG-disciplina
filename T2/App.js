@@ -41,7 +41,7 @@ var cannonControl;                                              // Iniciando o c
 // Variáveis para controle do tempo de tiro.
 var shoot = false;
 var lastTime = 0;
-const interval = 10000; // 10 segundos.
+var interval = 3000; // 1.5 segundos.
 
 // Redimensionamento da câmera utilizando zoom.
 var zoom = 1;
@@ -87,14 +87,6 @@ function init() {
         tank2.lifeBar.scale.set(tank2.life / 1000, tank2.lifeBar.scale.y, tank2.lifeBar.scale.z);
         scene.add(tank2.lifeBar);
         scene.add(tank2.object);
-
-        // Inserindo Canhão em cena.
-        cannon = new Cannon();
-        cannon.object.position.set(30, 10, 25);
-        scene.add(cannon.object);
-
-        // Inicializando o controle do canhão após a definição do canhão.
-        cannonControl = new CannonControl(cannon, [tank1, tank2]);
         
         // Iniciando a câmera e a orbitCamera do nível 1.
         camera.initCamera(1, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
@@ -139,13 +131,14 @@ function init() {
         scene.add(tank3.lifeBar);
         scene.add(tank3.object);
 
-        // // Inserindo Canhão em cena.
-        // cannon = new Cannon();
-        // cannon.object.position.set(30, 10, 25);
-        // scene.add(cannon.object);
+        // Inserindo Canhão em cena.
+        cannon = new Cannon();
+        cannon.object.scale.multiplyScalar(1.5);
+        cannon.object.position.set(34, 3, 22);
+        scene.add(cannon.object);
 
-        // // Inicializando o controle do canhão após a definição do canhão.
-        // cannonControl = new CannonControl(cannon, [tank1, tank2, tank3]);
+        // Inicializando o controle do canhão após a definição do canhão.
+        cannonControl = new CannonControl(cannon, [tank1, tank2, tank3]);
 
         // Iniciando a câmera e a orbitCamera do nível 2.
         camera.initCamera(2, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
@@ -217,7 +210,7 @@ function swapLevel() {
 
     // Muda para o nível 1.
     if(keyboard.down(1)) {
-        // Apenas reinicia se o nível anterior era o 2.
+        // Nível anterior era o 2.
         if(levelType === 2) {
             // Removendo os elementos da cena.
             scene.remove(level.wall);
@@ -237,7 +230,7 @@ function swapLevel() {
             scene.remove(ambientLight);
             scene.remove(directionalLight);
 
-            // scene.remove(cannon.object);
+            scene.remove(cannon.object);
 
             // Atualiza os valores inicias da função que movimente os tanques adversários.
             UpdateEnemies();
@@ -245,11 +238,27 @@ function swapLevel() {
             // Chamando a função que inicia o jogo com o tipo do nível 1.
             levelType = 1;
             init();
+        } else {
+            // Removendo os elementos da cena.
+            scene.remove(level.wall);
+            scene.remove(level.floor);
+            scene.remove(tank1.object);
+            scene.remove(tank2.object);
+
+            scene.remove(tank2.lifeBar);
+
+            scene.remove(directionalLight);
+
+            scene.remove(cannon.object);
+    
+            // Chamando a função que inicia o jogo com o tipo do nível 2.
+            levelType = 1;
+            init();
         }
     }
     // Muda para o nível 2.
     if(keyboard.down(2)) {
-        // Apenas reinicia se o nível anterior era o 1.
+        // Nível anterior era o 1.
         if(levelType === 1) {
             // Removendo os elementos da cena.
             scene.remove(level.wall);
@@ -264,6 +273,33 @@ function swapLevel() {
             scene.remove(cannon.object);
     
             // Chamando a função que inicia o jogo com o tipo do nível 2.
+            levelType = 2;
+            init();
+        } else {
+            // Removendo os elementos da cena.
+            scene.remove(level.wall);
+            scene.remove(level.floor);
+            scene.remove(tank1.object);
+            scene.remove(tank2.object);
+            scene.remove(tank3.object);
+
+            scene.remove(tank2.lifeBar);
+            scene.remove(tank3.lifeBar);
+
+            spotLights.forEach((spotLight) => {
+                scene.remove(spotLight.object);
+                scene.remove(spotLight.spotLight);
+            });
+
+            scene.remove(ambientLight);
+            scene.remove(directionalLight);
+
+            scene.remove(cannon.object);
+
+            // Atualiza os valores inicias da função que movimente os tanques adversários.
+            UpdateEnemies();
+    
+            // Chamando a função que inicia o jogo com o tipo do nível 1.
             levelType = 2;
             init();
         }
@@ -281,10 +317,12 @@ function swapLevel() {
 // Função play chamada na render atualiza toda a lógica do jogo.
 function play(end) {
     const currentTime = performance.now();  // Obtém o tempo atual.
-    // Verifica se já se passaram 10 segundos.
+    shoot = false;
+    // Verifica se já se passaram 3 segundos.
     if(currentTime - lastTime >= interval) {
-        shoot = false;
-        lastTime = currentTime;
+        tank2.kill(scene);
+        camera.initCamera(1, tank1.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
+        interval = 10000000000000;
     }
 
     if(!end) {
@@ -303,21 +341,19 @@ function play(end) {
                 tank2.move(2, level, levelType, tank1.object, shoot, scene);
             } else {
                 // Nenhum tanque adversário morto.
-                console.log(tank3.object.getWorldPosition(new THREE.Vector3()));
                 camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
-                // tank2.move(2, level, levelType, tank1.object, shoot, scene);
-                // tank3.move(3, level, levelType, tank1.object, shoot, scene);
+                tank2.move(2, level, levelType, tank1.object, shoot, scene);
+                tank3.move(3, level, levelType, tank1.object, shoot, scene);
             }
             tank1.move(1, level, levelType);
-            
+            cannonControl.updateCannonRotation();  // Atualizando a rotação do canhão.
             
         }
         tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
         tank3.lifeBar.position.set(tank3.object.position.x, tank3.object.position.y + 5, tank3.object.position.z);
          
-        // cannonControl.updateCannonRotation();  // Atualizando a rotação do canhão.
-        // tank1.life -= 5;
-        // if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
+        tank1.life -= 5;
+        if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
     }
 };
 
