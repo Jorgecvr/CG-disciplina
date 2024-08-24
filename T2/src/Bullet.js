@@ -82,35 +82,42 @@ function checkCollisions(Bullet){
         Bullet.AcertouInimigo = 1;
     }
 
-
+    // Cima
     else if(bulletPosition.z < 4.5){
         collisionPlane = new THREE.Vector3(0,0,1);
      }
-    // // Calculando Colisão Bordas
-    // if(bulletPosition.z >= -34.0 && bulletPosition.z <= -30.0 && bulletPosition.x >= -14.0 ) {
-    //     collisionPlane = new THREE.Vector3(1, 0, 0);
-    // }
-    // else if(bulletPosition.z >= -34.0 && bulletPosition.z <= -30.0 && bulletPosition.x <= -30.0) {
-    //     collisionPlane = new THREE.Vector3(1, 0, 0);
-    // }
-    // else if(bulletPosition.x > -2.5) {
-    //     collisionPlane = new THREE.Vector3(-1, 0, 0);
-    // }
-    // else if(bulletPosition.x < -42) {
-    //     collisionPlane = new THREE.Vector3(1, 0, 0);
-    // }
-    // else if(bulletPosition.z > -2.2) {
-    //     collisionPlane = new THREE.Vector3(0, 0, -1);
-    // }
-    // else if(bulletPosition.z < -62) {
-    //     collisionPlane = new THREE.Vector3(0, 0, 1); // Parede cima
-    // }
-    // else if(bulletPosition.z <= -29.5 && bulletPosition.z >= -34.5 && (bulletPosition.x >= -14.0)) {
-    //     collisionPlane = new THREE.Vector3(0, 0, 1);
-    // }
-    // else if(bulletPosition.z <= -29.5 && bulletPosition.z >= -34.5 && (bulletPosition.x <= -30.0)) {
-    //     collisionPlane = new THREE.Vector3(0, 0, 1);
-    // }
+     // Baixo
+    else if(bulletPosition.z >= 42.0) {
+        collisionPlane = new THREE.Vector3(0, 0, 1);
+    }
+    // Esquerda
+    else if(bulletPosition.x < 3.0) {
+        collisionPlane = new THREE.Vector3(1, 0, 0);
+    }
+    //Direita
+    else if(bulletPosition.x > 61.5) {
+        collisionPlane = new THREE.Vector3(1, 0, 0);
+    }
+
+    // Retangulo
+    // Baixo Lados
+    else if(bulletPosition.x > 30.0 && bulletPosition.x < 34.3 && bulletPosition.z > 29 && bulletPosition.z < 42.0) {
+         collisionPlane = new THREE.Vector3(1, 0, 0);
+    }
+    // Baixo Ponta
+    else if(bulletPosition.z > 28.3 && bulletPosition.x > 30.0 && bulletPosition.x < 34.3) {
+         collisionPlane = new THREE.Vector3(0, 0, 1);
+    }
+
+    // Cima Lados
+    else if(bulletPosition.x > 29.5 && bulletPosition.x < 34.3 && bulletPosition.z > 4.5 && bulletPosition.z < 16) {
+         collisionPlane = new THREE.Vector3(1, 0, 0);
+    }
+    // Cima Ponta
+    else if(bulletPosition.z < 16.3 && bulletPosition.x > 29.2 && bulletPosition.x < 34.3) {
+         collisionPlane = new THREE.Vector3(0, 0, 1);
+    }
+
     // // Se houver colisão com uma parede, reflete a direção da bala
     if(collisionPlane != null){
         Bullet.direction.reflect(collisionPlane).normalize();
