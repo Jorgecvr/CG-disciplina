@@ -21,6 +21,7 @@ var renderer = initRenderer("rgb(30, 30, 42)");                 // Iniciando o r
 
 var ambientLight;                                               // Iniciando o controle da luz ambiente.
 var directionalLight;                                           // Iniciando o controle da luz direcional.
+    var directionalLightTarget;
 
 var level;                                                      // Criando o nível.
 
@@ -96,10 +97,14 @@ function init() {
         camera.initCamera(1, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
 
         // Criando luz básica para iluminar a cena do nível 1.
-        let power = 1; 
-        directionalLight = new THREE.DirectionalLight("white", 0.7 * power);
-        directionalLight.position.copy(new THREE.Vector3(30, 35, 30));
-        // directionalLight.target = 1;
+        directionalLight = new THREE.DirectionalLight("white", 1);
+        // Criando o target da luz direcional.
+        directionalLightTarget = new THREE.Object3D();
+        directionalLightTarget.position.set(32, 0, 22);
+        // Atribuindo as propriedades da luz.
+        directionalLight.position.copy(new THREE.Vector3(32, 50, 22));
+        scene.add(directionalLightTarget);
+        directionalLight.target = directionalLightTarget;
         directionalLight.castShadow = true;
 
         // Definindo o mapa de sombras do primeiro nível (apenas luz direcional).
@@ -108,10 +113,10 @@ function init() {
         shadow.mapSize.height = 512;
         shadow.camera.near = 0.5;
         shadow.camera.far = 500;
-        shadow.camera.left = -5;
-        shadow.camera.right = 5;
-        shadow.camera.bottom = -5;
-        shadow.camera.top = 5;
+        shadow.camera.left = -32;
+        shadow.camera.right = 32;
+        shadow.camera.bottom = -20;
+        shadow.camera.top = 20;
 
         scene.add(directionalLight);
 

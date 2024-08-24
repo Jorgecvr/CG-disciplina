@@ -105,7 +105,7 @@ function checkCollisions(Bullet){
          collisionPlane = new THREE.Vector3(1, 0, 0);
     }
     // Baixo Ponta
-    else if(bulletPosition.z > 28.3 && bulletPosition.x > 30.0 && bulletPosition.x < 34.3) {
+    else if(bulletPosition.z > 28.5 && bulletPosition.x > 30.0 && bulletPosition.x < 34.3) {
          collisionPlane = new THREE.Vector3(0, 0, 1);
     }
 
@@ -114,7 +114,7 @@ function checkCollisions(Bullet){
          collisionPlane = new THREE.Vector3(1, 0, 0);
     }
     // Cima Ponta
-    else if(bulletPosition.z < 16.3 && bulletPosition.x > 29.2 && bulletPosition.x < 34.3) {
+    else if(bulletPosition.z < 16.3 && bulletPosition.x > 29.2 && bulletPosition.x < 35.3) {
          collisionPlane = new THREE.Vector3(0, 0, 1);
     }
 
