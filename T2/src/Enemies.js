@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { CheckCollisionsWithWall } from './Collisions.js';
+import { CriaBala, CriaBala2 } from './Bullet.js';
 
 // Níveis para a criação dos waypoints.
 let level1 = [
@@ -42,13 +43,26 @@ let isColliding3 = false;
 let waypoint2;
 let waypoint3;
 
-// Armazena variáveis para controle do tempo de movimentação e tiro.
-let shoot = false;
-let isShooting = false;
-let lastTime = 0;
-const shootInterval = 1000;           // 1 segundo.
-const shootingInterval = 3000;        // 3 segundos.
-const swapRotationInterval = 1000.    // 1 segundo.
+// Armazena variáveis para controle do tempo de movimentação e tiro para os tanques adversários 2 e 3.
+let lastTimes = [0, 0, 0, 0, 0, 0];   // Array para salvar os tempos.
+
+let shoot2 = false;
+let isShooting2 = false;
+let direction2 = 0;
+let leftOrRight2 = 0;
+
+let shoot3 = false;
+let isShooting3 = false;
+let direction3 = 0;
+let leftOrRight3 = 0;
+
+const shootInterval2 = 1000;
+const shootingInterval2 = 5000;
+let swapRotationInterval2 = 400;
+
+const shootInterval3 = 1500;
+const shootingInterval3 = 4000;
+let swapRotationInterval3 = 300;
 
 // Função para reiniciar os valores inicias na troca de níveis.
 export function UpdateEnemies() {
@@ -57,31 +71,52 @@ export function UpdateEnemies() {
     isColliding2 = false;
     isColliding3 = false;
 
-    let shoot = false;
-    let isShooting = false;
-    let lastTime = 0;
+    lastTimes = [0, 0, 0, 0, 0, 0];
+
+    swapRotationInterval2 = 400;
+    swapRotationInterval3 = 400;
+
+    shoot2 = false;
+    isShooting2 = false;
+    direction2 = 0;
+
+    shoot3 = false;
+    isShooting3 = false;
+    direction3 = 0;
 
     waypoint2 = null;
     waypoint3 = null;
 };
 
 // Função para mover o tanque adversário utilizando um método de fuga e ataque com waypoints (nível 1).
-export function UpdateTankPositionLevel1(player, tank, type, level) {
+export function UpdateTankPositionLevel1(player, tank, type, level, Bullet, scene) {
 
-    // Cálcula os tempos.
+    // Cálcula os tempos de tiro, rotação e mudança de movimento.
+    const currentTime = performance.now(); // Obtém o tempo atual.
 
-    // // Obtém o tempo atual.
-    // const currentTime = performance.now();
-    // // shoot = false;
-    // // Verifica se já se passaram 3 segundos.
-    // if(currentTime - lastTime >= interval) {
-    //     shoot = !shoot;
-    //     lastTime = currentTime;
-    //     // tank2.kill(scene);
-    //     // camera.initCamera(1, tank1.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
-    //     // interval = 10000000000000;
-    // }
+    if(currentTime - lastTimes[0] >= shootingInterval2) {
+        direction2 = 0;
+        isShooting2 = !isShooting2;
+        swapRotationInterval2 = 400;
 
+        lastTimes[0] = currentTime;
+    }
+
+    if(currentTime - lastTimes[1] >= shootInterval2) {
+        shoot2 = true;
+
+        lastTimes[1] = currentTime;
+    }
+
+    if(currentTime - lastTimes[2] >= swapRotationInterval2) {
+        if(direction2 == 1) {
+            leftOrRight2 = !leftOrRight2;
+
+            swapRotationInterval2 += 100;
+
+            lastTimes[2] = currentTime;
+        }
+    }
 
     // Criação de waypoints para onde o tanque pode se mover.
     let waypoints = [];
@@ -114,7 +149,7 @@ export function UpdateTankPositionLevel1(player, tank, type, level) {
 
     // Salva a posição atual do player.
     let playerPosition = new THREE.Vector3();
-    player.getWorldPosition(playerPosition);
+    player.object.getWorldPosition(playerPosition);
 
     // Salva a direção e posição atuais do tanque adversário.
     let tankDirection = new THREE.Vector3();
@@ -125,112 +160,187 @@ export function UpdateTankPositionLevel1(player, tank, type, level) {
     // Calcula a distância do tanque para o player.
     const distanceToPlayer = tankPosition.distanceTo(playerPosition);
 
-    // // Verifica se os tanques adversários podem atirar.
-    // if(shoot) {
-    //     tank.object.lookAt(playerPosition);
-    //     console.log("ATIRA");
-    // }
+    // Verifica se os tanques adversários podem atirar.
+    if(isShooting2) {
+        if(direction2 == 0) {
+            // Olha para o player.
+            tank.object.lookAt(playerPosition);
 
-    // Movimenta o tanque.
-    if(type == 2) {
-        // Verifica se o tanque pode atirar.
-        // Verifica colisão.
-        const {collisionBlock, collisionType} = CheckCollisionsWithWall(tank, level);
+            direction2 = 1;
+        } else if(leftOrRight2 == 0) {
+            tank.object.rotateY(0.03);
+        } else {
+            tank.object.rotateY(-0.03);
+        }
 
-        // Direção alvo do tanque.
-        let targetWaypoint;
+        // Verifica se o tanque atira.
+        if(shoot2) {
+            Bullet.push(CriaBala(tank.object, player));
+            scene.add(Bullet[Bullet.length-1].obj);
 
-        if(isColliding2) {
-            // Se teve colisão, tanque deve se mover para os waypoints de segurança.
+            // Após atirar faz um intervalo.
+            shoot2 = false;
+        }
 
-            // Se não estiver se movendo pega o waypoint de segurança.
-            if(!isMoving2) {
-                if(collisionBlock) {
-                    if(collisionBlock.position.x == 32 || collisionBlock.position.x == 28 || collisionBlock.position.x == 36) {
-                        
-                        let randomWaypoint;
-                        if(tankPosition.x >= 32) {
-                            randomWaypoint = safeWaypoints1[Math.floor(Math.random() * safeWaypoints1.length)];
-                        } else {
-                            randomWaypoint = safeWaypoints2[Math.floor(Math.random() * safeWaypoints2.length)];
+        // Tanque se desloca devagar ao atirar.
+        tank.object.translateZ(0.05);
+    } else {
+        // Movimenta o tanque.
+        if(type == 2) {
+            // Verifica se o tanque pode atirar.
+            // Verifica colisão.
+            const {collisionBlock, collisionType} = CheckCollisionsWithWall(tank, level);
+    
+            // Direção alvo do tanque.
+            let targetWaypoint;
+    
+            if(isColliding2) {
+                // Se teve colisão, tanque deve se mover para os waypoints de segurança.
+    
+                // Se não estiver se movendo pega o waypoint de segurança.
+                if(!isMoving2) {
+                    if(collisionBlock) {
+                        if(collisionBlock.position.x == 32 || collisionBlock.position.x == 28 || collisionBlock.position.x == 36) {
+                            
+                            let randomWaypoint;
+                            if(tankPosition.x >= 32) {
+                                randomWaypoint = safeWaypoints1[Math.floor(Math.random() * safeWaypoints1.length)];
+                            } else {
+                                randomWaypoint = safeWaypoints2[Math.floor(Math.random() * safeWaypoints2.length)];
+                            }
+                            waypoint2 = randomWaypoint;
+                            targetWaypoint = randomWaypoint;
+    
+                            isMoving2 = true;
                         }
+                    } else {
+                        isColliding2 = false;
+                        isMoving2 = false;
+                    }
+                } else {
+                    // Move o tanque em direção ao waypoint de segurança.
+                    const targetWaypoint = waypoint2;
+    
+                    tank.object.lookAt(targetWaypoint);
+                    tank.object.translateZ(0.2);
+    
+                    // Verifica se o próximo waypoint deve ser cálculado.
+                    if(tankPosition.distanceTo(targetWaypoint) <= 1) {
+                        isMoving2 = false;
+                        isColliding2 = false;
+                    }
+                }
+            } else {
+                // Se não estiver se movendo cálcula um novo waypoint de deslocamento.
+                if(!isMoving2) {
+                    // Calcula a distância entre o player e todos os waypoints.
+                    const distances = waypoints.map((waypoint) => playerPosition.distanceTo(waypoint));
+    
+                    // Ordena os waypoints com base na distância.
+                    const sortedWaypoints = waypoints.map((waypoint, index) => ({waypoint: waypoint, distance: distances[index]}))
+                    .sort((a, b) => a.distance - b.distance);
+    
+                    if(distanceToPlayer <= escapeDistance) {
+                        // Tanque foge do player.
+                        const furthestWaypoint = sortedWaypoints[sortedWaypoints.length-1].waypoint;
+                        waypoint2 = furthestWaypoint;
+                        targetWaypoint = furthestWaypoint;
+        
+                    } else {
+                        // Tanque se aproxima do player.
+                        // Escolhe um waypoint aleatório para se mover.
+                        const randomWaypoint = sortedWaypoints[Math.floor(Math.random() * sortedWaypoints.length)].waypoint;
                         waypoint2 = randomWaypoint;
                         targetWaypoint = randomWaypoint;
-
+        
+                    }
+    
+                    // Se a distância desse waypoint para o tanque for maior que 10, movimenta.
+                    if(tankPosition.distanceTo(targetWaypoint) >= 10) {
                         isMoving2 = true;
                     }
                 } else {
-                    isColliding2 = false;
-                    isMoving2 = false;
-                }
-            } else {
-                // Move o tanque em direção ao waypoint de segurança.
-                const targetWaypoint = waypoint2;
-
-                tank.object.lookAt(targetWaypoint);
-                tank.object.translateZ(0.2);
-
-                // Verifica se o próximo waypoint deve ser cálculado.
-                if(tankPosition.distanceTo(targetWaypoint) <= 1) {
-                    isMoving2 = false;
-                    isColliding2 = false;
-                }
-            }
-        } else {
-            // Se não estiver se movendo cálcula um novo waypoint de deslocamento.
-            if(!isMoving2) {
-                // Calcula a distância entre o player e todos os waypoints.
-                const distances = waypoints.map((waypoint) => playerPosition.distanceTo(waypoint));
-
-                // Ordena os waypoints com base na distância.
-                const sortedWaypoints = waypoints.map((waypoint, index) => ({waypoint: waypoint, distance: distances[index]}))
-                .sort((a, b) => a.distance - b.distance);
-
-                if(distanceToPlayer <= escapeDistance) {
-                    // Tanque foge do player.
-                    const furthestWaypoint = sortedWaypoints[sortedWaypoints.length-1].waypoint;
-                    waypoint2 = furthestWaypoint;
-                    targetWaypoint = furthestWaypoint;
-    
-                } else {
-                    // Tanque se aproxima do player.
-                    // Escolhe um waypoint aleatório para se mover.
-                    const randomWaypoint = sortedWaypoints[Math.floor(Math.random() * sortedWaypoints.length)].waypoint;
-                    waypoint2 = randomWaypoint;
-                    targetWaypoint = randomWaypoint;
-    
-                }
-
-                // Se a distância desse waypoint para o tanque for maior que 10, movimenta.
-                if(tankPosition.distanceTo(targetWaypoint) >= 10) {
-                    isMoving2 = true;
-                }
-            } else {
-                // Move o tanque em direção ao waypoint.
-                const targetWaypoint = waypoint2;
-    
-                tank.object.lookAt(targetWaypoint);
-                tank.object.translateZ(0.2);
-    
-                // Se teve colisão, tanque deve se mover para os waypoints de segurança.
-                if(collisionBlock) {
-                    if(collisionBlock.position.x == 32 || collisionBlock.position.x == 28 || collisionBlock.position.x == 36) {
-                        isColliding2 = true;
+                    // Move o tanque em direção ao waypoint.
+                    const targetWaypoint = waypoint2;
+        
+                    tank.object.lookAt(targetWaypoint);
+                    tank.object.translateZ(0.2);
+        
+                    // Se teve colisão, tanque deve se mover para os waypoints de segurança.
+                    if(collisionBlock) {
+                        if(collisionBlock.position.x == 32 || collisionBlock.position.x == 28 || collisionBlock.position.x == 36) {
+                            isColliding2 = true;
+                            isMoving2 = false;
+                        }
+                    }
+        
+                    // Verifica se o próximo waypoint deve ser cálculado.
+                    if(tankPosition.distanceTo(targetWaypoint) <= 1) {
                         isMoving2 = false;
                     }
-                }
-    
-                // Verifica se o próximo waypoint deve ser cálculado.
-                if(tankPosition.distanceTo(targetWaypoint) <= 1) {
-                    isMoving2 = false;
                 }
             }
         }
     }
+
 }
 
 // Função para mover os tanques adversários utilizando um método de fuga e ataque com waypoints (nível 2).
-export function UpdateTankPositionLevel2(player, tank, type, level) {
+export function UpdateTankPositionLevel2(player, tank, type, level, Bullet, scene, oTank, cannon) {
+
+    // Cálcula os tempos de tiro, rotação e mudança de movimento.
+    const currentTime = performance.now(); // Obtém o tempo atual.
+
+    if(type == 2) {
+        if(currentTime - lastTimes[0] >= shootingInterval2) {
+            direction2 = 0;
+            isShooting2 = !isShooting2;
+            swapRotationInterval2 = 400;
+    
+            lastTimes[0] = currentTime;
+        }
+    
+        if(currentTime - lastTimes[1] >= shootInterval2) {
+            shoot2 = true;
+    
+            lastTimes[1] = currentTime;
+        }
+    
+        if(currentTime - lastTimes[2] >= swapRotationInterval2) {
+            if(direction2 == 1) {
+                leftOrRight2 = !leftOrRight2;
+    
+                swapRotationInterval2 += 100;
+    
+                lastTimes[2] = currentTime;
+            }
+        }
+    } else {
+        if(currentTime - lastTimes[3] >= shootingInterval3) {
+            direction3 = 0;
+            isShooting3 = !isShooting3;
+            swapRotationInterval3 = 400;
+    
+            lastTimes[3] = currentTime;
+        }
+    
+        if(currentTime - lastTimes[4] >= shootInterval3) {
+            shoot3 = true;
+    
+            lastTimes[4] = currentTime;
+        }
+    
+        if(currentTime - lastTimes[5] >= swapRotationInterval3) {
+            if(direction3 == 1) {
+                leftOrRight3 = !leftOrRight3;
+    
+                swapRotationInterval3 += 100;
+    
+                lastTimes[5] = currentTime;
+            }
+        }
+    }
+
     // Criação de waypoints para onde o tanque pode se mover.
     let waypoints = [];
 
@@ -275,7 +385,7 @@ export function UpdateTankPositionLevel2(player, tank, type, level) {
 
     // Salva a posição atual do player.
     let playerPosition = new THREE.Vector3();
-    player.getWorldPosition(playerPosition);
+    player.object.getWorldPosition(playerPosition);
 
     // Salva a direção e posição atuais do tanque adversário.
     let tankDirection = new THREE.Vector3();
@@ -286,13 +396,32 @@ export function UpdateTankPositionLevel2(player, tank, type, level) {
     // Calcula a distância do tanque para o player.
     const distanceToPlayer = tankPosition.distanceTo(playerPosition);
 
-    // Verifica se os tanques adversários podem atirar.
-    // if(shoot) {
-    //     tank.object.lookAt(playerPosition);
-    //     console.log("ATIRA");
-    // // } else {
-        // Movimenta o tanque 2.
-        if(type == 2) {
+    if(type == 2) {
+        // Verifica se o tanque 2 pode atirar.
+        if(isShooting2) {
+            if(direction2 == 0) {
+                // Olha para o player.
+                tank.object.lookAt(playerPosition);
+
+                direction2 = 1;
+            } else if(leftOrRight2 == 0) {
+                tank.object.rotateY(0.03);
+            } else {
+                tank.object.rotateY(-0.03);
+            }
+
+            // Verifica se o tanque atira.
+            if(shoot2) {
+                Bullet.push(CriaBala2(tank.object, player, oTank, cannon.object));
+                scene.add(Bullet[Bullet.length-1].obj);
+
+                // Após atirar faz um intervalo.
+                shoot2 = false;
+            }
+
+            // Tanque se desloca devagar ao atirar.
+            tank.object.translateZ(0.05);
+        } else {
             // Verifica colisão.
             const {collisionBlock, collisionType} = CheckCollisionsWithWall(tank, level);
     
@@ -409,9 +538,34 @@ export function UpdateTankPositionLevel2(player, tank, type, level) {
                 }   
             }
         }
-        // Movimenta o tanque 3.
-        else if(type == 3) {
-            // Verifica se o tanque pode atirar.
+    }
+    // Movimenta o tanque 3.
+    else if(type == 3) {
+        if(isShooting3) {
+            if(direction3 == 0) {
+                // Olha para o player.
+                tank.object.lookAt(playerPosition);
+
+                direction3 = 1;
+            } else if(leftOrRight3 == 0) {
+                tank.object.rotateY(0.03);
+            } else {
+                tank.object.rotateY(-0.03);
+            }
+
+            // Verifica se o tanque atira.
+            if(shoot3) {
+                Bullet.push(CriaBala2(tank.object, player, oTank, cannon.object));
+                scene.add(Bullet[Bullet.length-1].obj);
+
+                // Após atirar faz um intervalo.
+                shoot3 = false;
+            }
+
+            // Tanque se desloca devagar ao atirar.
+            tank.object.translateZ(0.05);
+        } else {
+
             // Verifica colisão.
             const {collisionBlock, collisionType} = CheckCollisionsWithWall(tank, level);
     
@@ -527,6 +681,5 @@ export function UpdateTankPositionLevel2(player, tank, type, level) {
                 }   
             }
         }
-    // }
-    
+    }
 };

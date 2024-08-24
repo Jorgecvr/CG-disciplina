@@ -66,6 +66,14 @@ export class Tank {
         return lifeBar;
     };
 
+    // Métodos para pegar e setar a vida do tanque.
+    getLife(){
+        return this.life;
+    };
+    setLife(life){
+        this.life = life;
+    };
+
     // Método para "matar" o tanque.
     kill(scene) {
         this.life = 0;
@@ -76,7 +84,7 @@ export class Tank {
     };
 
     // Método que controla a movimentação do tanque.
-    move(type, level, levelType, player) {
+    move(type, level, levelType, player, Bullet = [], scene = null, oTank = null, cannon = null) {
         let keyboard = new KeyboardState();
         keyboard.update();
 
@@ -120,7 +128,7 @@ export class Tank {
                     this.lifeBar.rotateY(rotationSpeed);
                 }
             } else if(type == 2) {
-                UpdateTankPositionLevel1(player, this, type, level);
+                UpdateTankPositionLevel1(player, this, type, level, Bullet, scene);
             }
 
             // Pega as coordenadas x e z do tanque em relação ao mundo.
@@ -236,7 +244,7 @@ export class Tank {
                 if(keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
                 if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
             } else if(type == 2 || type == 3) {
-                UpdateTankPositionLevel2(player, this, type, level);
+                UpdateTankPositionLevel2(player, this, type, level, Bullet, scene, oTank, cannon);
             }
 
             // Pega as coordenadas x e z do tanque em relação ao mundo.

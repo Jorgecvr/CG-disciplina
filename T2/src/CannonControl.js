@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { CriaBala3 } from './Bullet.js';
 
 export class CannonControl {
     constructor(cannon, tanks) {
@@ -6,7 +7,13 @@ export class CannonControl {
         this.tanks = tanks;
     }
 
-    updateCannonRotation() {
+    updateCannonRotation(Bullet, shoot, tank1, tank2, tank3, scene) {
+        // Canhão atira.
+        if(shoot) {
+            Bullet.push(CriaBala3(this.cannon.object, tank1, tank2, tank3));
+            scene.add(Bullet[Bullet.length-1].obj);
+        }
+
         // Encontra o tanque mais próximo
         let closestTank = this.findClosestTank();
         if (!closestTank) return;

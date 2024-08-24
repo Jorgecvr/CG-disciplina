@@ -66,7 +66,7 @@ export class Camera {
                 (position_tank1.x - position_tank2.x)*(position_tank1.x - position_tank2.x) +
                 (position_tank1.z - position_tank2.z)*(position_tank1.z - position_tank2.z)
             );
-        } else {
+        } else if(levelType == 2) {
             const midX = (position_tank1.x + position_tank2.x + position_tank3.x) / 3;
             const midZ = (position_tank1.z + position_tank2.z + position_tank3.z) / 3;
             this.camera.position.set(midX, 40, 70);
@@ -88,6 +88,21 @@ export class Camera {
                 (position_tank2.z - position_tank3.z)*(position_tank2.z - position_tank3.z)
             );
             this.lastDistance = dist1 + dist2 + dist3;
+        } else {
+            // Inicia a câmera quando um dos tanques morre.
+            // Inicia a posição e o lookAt da câmera com base na posição média.
+            const midX = (position_tank1.x + position_tank2.x) / 2;
+            const midZ = (position_tank1.z + position_tank2.z) / 2;
+            this.camera.position.set(midX, 40, 70);
+            this.camera.lookAt(midX, -10, midZ);
+            this.initMidX = midX;
+            this.initMidZ = midZ;
+
+            // Salva a distância inicial entre os dois tanques.
+            this.lastDistance = Math.sqrt(
+                (position_tank1.x - position_tank2.x)*(position_tank1.x - position_tank2.x) +
+                (position_tank1.z - position_tank2.z)*(position_tank1.z - position_tank2.z)
+            );
         }
     };
 
@@ -163,11 +178,40 @@ export class Camera {
             this.holder.position.z = midZ - this.initMidZ;
 
             // Aproxima e afasta a câmera com base na distância entre os tanques.
-            const factor = 3;
+            const factor = 4;
             this.camera.translateZ((dist - this.lastDistance) / factor);
 
             // Mantém o lookAt da câmera apontando para a posição média.
             this.setLookAt(new THREE.Vector3(midX, -5, midZ));
+
+            // Atualiza as variáveis de controle.
+            this.lastDistance = dist;
+        }
+    };
+
+    // Método para atualizar a câmera no nivel 2 quando tanque morre.
+    update3(position_tank1, position_tank2) {
+        // Calculando a posição média entre os tanques e a distância entre eles.
+        const midX = (position_tank1.x + position_tank2.x) / 2;
+        const midZ = (position_tank1.z + position_tank2.z) / 2;
+        const dist = Math.sqrt(
+            (position_tank1.x - position_tank2.x)*(position_tank1.x - position_tank2.x) +
+            (position_tank1.z - position_tank2.z)*(position_tank1.z - position_tank2.z)
+        );
+
+        // Câmera atualiza apenas quando o orbitControls está desligado.
+        if(!this.orbitControls.enabled) {
+
+            // Atualize a posição do holder com base na posição média.
+            this.holder.position.x = midX - this.initMidX;
+            this.holder.position.z = midZ - this.initMidZ;
+
+            // Aproxima e afasta a câmera com base na distância entre os tanques.
+            const factor = 1.5;
+            this.camera.translateZ((dist - this.lastDistance) / factor);
+
+            // Mantém o lookAt da câmera apontando para a posição média.
+            this.setLookAt(new THREE.Vector3(midX, -10, midZ));
 
             // Atualiza as variáveis de controle.
             this.lastDistance = dist;
