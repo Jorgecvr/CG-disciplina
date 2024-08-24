@@ -74,12 +74,12 @@ function init() {
 
         // Inserindo os tanques em cena.
         // Tanque 1.
-        tank1 = new Tank(1, 1);
+        tank1 = new Tank(1, 2);
         tank1.object.rotateY(THREE.MathUtils.degToRad(180));
         tank1.object.position.set(10, 0, 36);
-        tank1.object.add(tank1.lifeBar);
-        tank1.lifeBar.position.y += 5;
+        tank1.lifeBar.position.set(tank1.object.position.x, tank1.object.position.y + 5, tank1.object.position.z);
         tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
+        scene.add(tank1.lifeBar);
         scene.add(tank1.object);
         
         // Tanque 2.
@@ -133,9 +133,9 @@ function init() {
         tank1 = new Tank(1, 2);
         tank1.object.name = "Player";
         tank1.object.position.set(8, 0, 10);
-        tank1.object.add(tank1.lifeBar);
-        tank1.lifeBar.position.y += 5;
+        tank1.lifeBar.position.set(tank1.object.position.x, tank1.object.position.y + 5, tank1.object.position.z);
         tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
+        scene.add(tank1.lifeBar);
         scene.add(tank1.object);
 
         // Tanque 2.
@@ -169,12 +169,12 @@ function init() {
         camera.initCamera(2, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
 
         // Inseriando a luz ambiente.
-        ambientLight = new THREE.AmbientLight("rgb(40, 40, 40)");
+        ambientLight = new THREE.AmbientLight("rgb(30, 30, 30)");
         ambientLight.castShadow = false;
         scene.add(ambientLight);
 
         // Inserindo a luz direcional
-        directionalLight = new THREE.DirectionalLight("rgb(80, 80, 80)", 3);
+        directionalLight = new THREE.DirectionalLight("rgb(80, 80, 80)", 2);
         directionalLight.position.copy(new THREE.Vector3(2, 1, 1));
         directionalLight.castShadow = false;
         scene.add(directionalLight);
@@ -321,6 +321,7 @@ function swapLevel(choice) {
             scene.remove(tank2.object);
             scene.remove(tank3.object);
 
+            scene.remove(tank1.lifeBar);
             scene.remove(tank2.lifeBar);
             scene.remove(tank3.lifeBar);
 
@@ -357,6 +358,7 @@ function swapLevel(choice) {
             scene.remove(tank1.object);
             scene.remove(tank2.object);
 
+            scene.remove(tank1.lifeBar);
             scene.remove(tank2.lifeBar);
 
             scene.remove(directionalLight);
@@ -386,6 +388,7 @@ function swapLevel(choice) {
             scene.remove(tank1.object);
             scene.remove(tank2.object);
 
+            scene.remove(tank1.lifeBar);
             scene.remove(tank2.lifeBar);
 
             scene.remove(directionalLight);
@@ -411,6 +414,7 @@ function swapLevel(choice) {
             scene.remove(tank2.object);
             scene.remove(tank3.object);
 
+            scene.remove(tank1.lifeBar);
             scene.remove(tank2.lifeBar);
             scene.remove(tank3.lifeBar);
 
@@ -459,6 +463,7 @@ function play() {
         tank2.move(2, level, levelType, tank1, Bullet, scene);
 
         // Atualiza as vidas dos tanques.
+        tank1.lifeBar.position.set(tank1.object.position.x, tank1.object.position.y + 5, tank1.object.position.z);
         tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
         if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
         if(tank2.lifeBar.scale.x > 0) tank2.lifeBar.scale.set(tank2.life / 1000, tank2.lifeBar.scale.y, tank2.lifeBar.scale.z);
@@ -498,6 +503,7 @@ function play() {
         tank1.move(1, level, levelType);
         cannonControl.updateCannonRotation(Bullet3, shoot, tank1, tank2, tank3, scene);  // Atualizando a rotação do canhão.
         
+        tank1.lifeBar.position.set(tank1.object.position.x, tank1.object.position.y + 5, tank1.object.position.z);
         tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
         tank3.lifeBar.position.set(tank3.object.position.x, tank3.object.position.y + 5, tank3.object.position.z);
 

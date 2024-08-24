@@ -62,7 +62,7 @@ export class Tank {
 
     // Método para criar a geometria da vida do tanque.
     createLifeBar() {
-        let lifeBar = new THREE.Mesh(new THREE.BoxGeometry(4, 0.3, 0.3), new THREE.MeshBasicMaterial({color: "rgb(205, 50, 50)"}));
+        let lifeBar = new THREE.Mesh(new THREE.BoxGeometry(4, 0.3, 0.3), new THREE.MeshLambertMaterial({color: "rgb(205, 50, 50)", emissive: "rgb(205, 50, 50)", emissiveIntensity: 0.8}));
         return lifeBar;
     };
 
@@ -102,14 +102,8 @@ export class Tank {
                     this.object.translateZ(-movementSpeed);
                     if(this.lastDirection != 1) this.lastDirection = 1;
                 }
-                if(keyboard.pressed("A")) {
-                    this.object.rotateY(rotationSpeed);
-                    this.lifeBar.rotateY(-rotationSpeed);
-                } 
-                if(keyboard.pressed("D")) {
-                    this.object.rotateY(-rotationSpeed);
-                    this.lifeBar.rotateY(rotationSpeed);
-                }
+                if(keyboard.pressed("A")) this.object.rotateY(rotationSpeed);
+                if(keyboard.pressed("D")) this.object.rotateY(-rotationSpeed);
             
                 if(keyboard.pressed("up")) {
                     this.object.translateZ(movementSpeed);
@@ -119,14 +113,8 @@ export class Tank {
                     this.object.translateZ(-movementSpeed);
                     if(this.lastDirection != 1) this.lastDirection = 1;
                 } 
-                if(keyboard.pressed("left"))  {
-                    this.object.rotateY(rotationSpeed);
-                    this.lifeBar.rotateY(-rotationSpeed);
-                }
-                if(keyboard.pressed("right")) {
-                    this.object.rotateY(-rotationSpeed);
-                    this.lifeBar.rotateY(rotationSpeed);
-                }
+                if(keyboard.pressed("left"))  this.object.rotateY(rotationSpeed);
+                if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
             } else if(type == 2) {
                 UpdateTankPositionLevel1(player, this, type, level, Bullet, scene);
             }
@@ -225,14 +213,8 @@ export class Tank {
                     this.object.translateZ(-movementSpeed);
                     if(this.lastDirection != 1) this.lastDirection = 1;
                 }
-                if(keyboard.pressed("A")) {
-                    this.object.rotateY(rotationSpeed);
-                    this.lifeBar.rotateY(-rotationSpeed);
-                }
-                if(keyboard.pressed("D")) {
-                    this.object.rotateY(-rotationSpeed);
-                    this.lifeBar.rotateY(rotationSpeed);
-                }
+                if(keyboard.pressed("A")) this.object.rotateY(rotationSpeed);
+                if(keyboard.pressed("D")) this.object.rotateY(-rotationSpeed);
                 if(keyboard.pressed("up")) {
                     this.object.translateZ(movementSpeed);
                     if(this.lastDirection != 0) this.lastDirection = 0;
@@ -241,7 +223,7 @@ export class Tank {
                     this.object.translateZ(-movementSpeed);
                     if(this.lastDirection != 1) this.lastDirection = 1;
                 } 
-                if(keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
+                if(keyboard.pressed("left"))  this.object.rotateY(rotationSpeed);
                 if(keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
             } else if(type == 2 || type == 3) {
                 UpdateTankPositionLevel2(player, this, type, level, Bullet, scene, oTank, cannon);
