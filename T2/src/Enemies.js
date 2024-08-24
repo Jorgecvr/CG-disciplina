@@ -103,7 +103,9 @@ export function UpdateTankPositionLevel1(player, tank, type, level, Bullet, scen
     }
 
     if(currentTime - lastTimes[1] >= shootInterval2) {
-        shoot2 = true;
+        if(isShooting2) {
+            shoot2 = true;
+        }
 
         lastTimes[1] = currentTime;
     }
@@ -301,7 +303,9 @@ export function UpdateTankPositionLevel2(player, tank, type, level, Bullet, scen
         }
     
         if(currentTime - lastTimes[1] >= shootInterval2) {
-            shoot2 = true;
+            if(isShooting2) {
+                shoot2 = true;
+            }
     
             lastTimes[1] = currentTime;
         }
@@ -325,7 +329,9 @@ export function UpdateTankPositionLevel2(player, tank, type, level, Bullet, scen
         }
     
         if(currentTime - lastTimes[4] >= shootInterval3) {
-            shoot3 = true;
+            if(isShooting3) {
+                shoot3 = true;
+            }
     
             lastTimes[4] = currentTime;
         }

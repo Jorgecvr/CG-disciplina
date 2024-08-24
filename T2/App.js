@@ -1,7 +1,6 @@
 // Importações básicas.
 import * as THREE from 'three';
 import { initRenderer } from '../../libs/util/util.js';
-import { SecondaryBox } from '../libs/util/util.js';
 import KeyboardState from '../libs/util/KeyboardState.js';
 
 // Importações de arquivos criados para o trabalho.
@@ -33,7 +32,6 @@ var camera = new Camera(renderer);                              // Criando a câ
     scene.add(camera.holder);                                   // Adicionando o câmera holder.
     camera.holder.add(camera.camera);
 
-var message = new SecondaryBox();                               // Criando as mensagens de vida.
 var levelType = 1;                                              // Armazena o tipo do nível atual (começa em 1).
 var spotLights = [];                                            // Array para as luminárias.
 var cannon;                                                     // Criando o canhão.
@@ -97,7 +95,7 @@ function init() {
         camera.initCamera(1, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
 
         // Criando luz básica para iluminar a cena do nível 1.
-        directionalLight = new THREE.DirectionalLight("white", 1);
+        directionalLight = new THREE.DirectionalLight("white", 0.7);
         // Criando o target da luz direcional.
         directionalLightTarget = new THREE.Object3D();
         directionalLightTarget.position.set(32, 0, 22);
@@ -176,7 +174,7 @@ function init() {
         scene.add(ambientLight);
 
         // Inserindo a luz direcional
-        directionalLight = new THREE.DirectionalLight("rgb(255, 255, 255)", 3);
+        directionalLight = new THREE.DirectionalLight("rgb(80, 80, 80)", 3);
         directionalLight.position.copy(new THREE.Vector3(2, 1, 1));
         directionalLight.castShadow = false;
         scene.add(directionalLight);
@@ -363,8 +361,6 @@ function swapLevel(choice) {
 
             scene.remove(directionalLight);
 
-            scene.remove(cannon.object);
-
             Bullet.forEach((bullet) => {
                 scene.remove(bullet.obj);
             });
@@ -456,93 +452,83 @@ function swapLevel(choice) {
 };
 
 // Função play chamada na render atualiza toda a lógica do jogo.
-function play(end) {
-    if(!end) {
-        if(levelType == 1) {
-            camera.update1(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
-            tank1.move(1, level, levelType);
-            tank2.move(2, level, levelType, tank1, Bullet, scene);
+function play() {
+    if(levelType == 1) {
+        camera.update1(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
+        tank1.move(1, level, levelType);
+        tank2.move(2, level, levelType, tank1, Bullet, scene);
 
-            // Atualiza as vidas dos tanques.
-            tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
-            if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
-            if(tank2.lifeBar.scale.x > 0) tank2.lifeBar.scale.set(tank2.life / 1000, tank2.lifeBar.scale.y, tank2.lifeBar.scale.z);
+        // Atualiza as vidas dos tanques.
+        tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
+        if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
+        if(tank2.lifeBar.scale.x > 0) tank2.lifeBar.scale.set(tank2.life / 1000, tank2.lifeBar.scale.y, tank2.lifeBar.scale.z);
 
-            // Verifica se os tanques morrem.
-            if(tank1.getLife() == 0) {
-                swapLevel(1);
-            }
-            else if(tank2.getLife() == 0) {
-                swapLevel(2);
-            }
+        // Verifica se os tanques morrem.
+        if(tank1.getLife() == 0) {
+            swapLevel(1);
+        }
+        else if(tank2.getLife() == 0) {
+            swapLevel(2);
+        }
+
+    } else {
+        const currentTime = performance.now(); // Obtém o tempo atual.
+        shoot = false;
+        if(currentTime - lastTime >= interval) {
+            shoot = true;
+            lastTime = currentTime;
+        }
+        if(tank2.isDead) {
+            // Tanque 2 morto.
+            camera.update3(tank1.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
+            tank3.move(3, level, levelType, tank1, Bullet2, scene, tank2, cannon);
+
+        } else if(tank3.isDead) {
+            // Tanque 3 morto.
+            camera.update3(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
+            tank2.move(2, level, levelType, tank1, Bullet2, scene, tank3, cannon);
 
         } else {
-            const currentTime = performance.now(); // Obtém o tempo atual.
-            shoot = false;
-            if(currentTime - lastTime >= interval) {
-                shoot = true;
-                lastTime = currentTime;
-            }
-            if(tank2.isDead) {
-                // Tanque 2 morto.
-                camera.update3(tank1.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
-                tank3.move(3, level, levelType, tank1, Bullet2, scene, tank2, cannon);
+            // Nenhum tanque adversário morto.
+            camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
+            tank2.move(2, level, levelType, tank1, Bullet2, scene, tank3, cannon);
+            tank3.move(3, level, levelType, tank1, Bullet2, scene, tank2, cannon);
 
-            } else if(tank3.isDead) {
-                // Tanque 3 morto.
-                camera.update3(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
-                tank2.move(2, level, levelType, tank1, Bullet2, scene, tank3, cannon);
-
-            } else {
-                // Nenhum tanque adversário morto.
-                camera.update2(tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
-                tank2.move(2, level, levelType, tank1, Bullet2, scene, tank3, cannon);
-                tank3.move(3, level, levelType, tank1, Bullet2, scene, tank2, cannon);
-
-            }
-            tank1.move(1, level, levelType);
-            cannonControl.updateCannonRotation(Bullet3, shoot, tank1, tank2, tank3, scene);  // Atualizando a rotação do canhão.
-            
-            tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
-            tank3.lifeBar.position.set(tank3.object.position.x, tank3.object.position.y + 5, tank3.object.position.z);
-
-            // Atualiza as vidas dos tanques.
-            if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
-            if(tank2.lifeBar.scale.x > 0) tank2.lifeBar.scale.set(tank2.life / 1000, tank2.lifeBar.scale.y, tank2.lifeBar.scale.z);
-            if(tank3.lifeBar.scale.x > 0) tank3.lifeBar.scale.set(tank3.life / 1000, tank3.lifeBar.scale.y, tank3.lifeBar.scale.z);
-
-            // Verifica se os tanques morrem.
-            if(tank1.getLife() == 0) {
-                swapLevel(2);
-            } else if(tank2.getLife() == 0 && tank3.getLife() == 0) {
-                swapLevel(2);
-            } else if(tank2.getLife() == 0) {
-                tank2.kill(scene);
-                camera.initCamera(3, tank1.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3));
-            } else if(tank3.getLife() == 0) {
-                tank3.kill(scene);
-                camera.initCamera(3, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3));
-            }
         }
-        BulletControl(Bullet);
-        BulletControl2(Bullet2);
-        BulletControl3(Bullet3);
+        tank1.move(1, level, levelType);
+        cannonControl.updateCannonRotation(Bullet3, shoot, tank1, tank2, tank3, scene);  // Atualizando a rotação do canhão.
+        
+        tank2.lifeBar.position.set(tank2.object.position.x, tank2.object.position.y + 5, tank2.object.position.z);
+        tank3.lifeBar.position.set(tank3.object.position.x, tank3.object.position.y + 5, tank3.object.position.z);
 
+        // Atualiza as vidas dos tanques.
+        if(tank1.lifeBar.scale.x > 0) tank1.lifeBar.scale.set(tank1.life / 1000, tank1.lifeBar.scale.y, tank1.lifeBar.scale.z);
+        if(tank2.lifeBar.scale.x > 0) tank2.lifeBar.scale.set(tank2.life / 1000, tank2.lifeBar.scale.y, tank2.lifeBar.scale.z);
+        if(tank3.lifeBar.scale.x > 0) tank3.lifeBar.scale.set(tank3.life / 1000, tank3.lifeBar.scale.y, tank3.lifeBar.scale.z);
+
+        // Verifica se os tanques morrem.
+        if(tank1.getLife() == 0) {
+            swapLevel(2);
+        } else if(tank2.getLife() == 0 && tank3.getLife() == 0) {
+            swapLevel(2);
+        } else if(tank2.getLife() == 0) {
+            tank2.kill(scene);
+            camera.initCamera(3, tank1.object.getWorldPosition(new THREE.Vector3), tank3.object.getWorldPosition(new THREE.Vector3), camera.lastDistance);
+        } else if(tank3.getLife() == 0) {
+            tank3.kill(scene);
+            camera.initCamera(3, tank1.object.getWorldPosition(new THREE.Vector3), tank2.object.getWorldPosition(new THREE.Vector3), camera.lastDistance);
+        }
     }
+    BulletControl(Bullet);
+    BulletControl2(Bullet2);
+    BulletControl3(Bullet3);
 };
-
-// Função que constrola a lógica de gameover.
-function end() {
-    message.changeMessage("To Do");
-    return false;
-};
-
 
 init();
 render();
 function render() {
     swapLevel();
-    play(end());
+    play();
     requestAnimationFrame(render);
     renderer.render(scene, camera.camera);
 };

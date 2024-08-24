@@ -361,6 +361,34 @@ export class Tank {
                         } else {
                             levelLimits.maxZ = 23.5;
                         }
+                    } 
+                    else if((collisionBlock.position.x == 32 && collisionBlock.position.z == 20)) {
+                        if(z >= 16.5) {
+                            levelLimits.maxX = 28;
+                        } else {
+                            levelLimits.maxZ = 16;
+                        }
+                    }
+                    else if((collisionBlock.position.x == 32 && collisionBlock.position.z == 24)) {
+                        if(z <= 27.5) {
+                            levelLimits.maxX = 28;
+                        } else {
+                            levelLimits.minZ = 28;
+                        }
+                    }
+                    else if((collisionBlock.position.x == 36 && collisionBlock.position.z == 24)) {
+                        if(z <= 27.5) {
+                            levelLimits.minX = 40;
+                        } else {
+                            levelLimits.minZ = 28;
+                        }
+                    }
+                    else if((collisionBlock.position.x == 36 && collisionBlock.position.z == 20 )) {
+                        if(z >= 16.5) {
+                            levelLimits.minX = 40;
+                        } else {
+                            levelLimits.maxZ = 16;
+                        }
                     }
                 }
             }

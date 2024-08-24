@@ -6,7 +6,7 @@ export class Camera {
     // Construtor da classe.
     constructor(renderer) {
         // Iniciando a câmera perspectiva.
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
+        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
             this.camera.zoom = 1;
             this.camera.updateProjectionMatrix();
 
@@ -51,7 +51,7 @@ export class Camera {
     };
 
     // Método para cálcular os valores iniciais de distância e posição média.
-    initCamera(levelType = 1, position_tank1, position_tank2, position_tank3 = new THREE.Vector3(0, 0, 0)) {
+    initCamera(levelType = 1, position_tank1, position_tank2, position_tank3 = new THREE.Vector3(0, 0, 0), finalDistance = new THREE.Vector3(0, 0, 0)) {
         if(levelType == 1) {
             // Inicia a posição e o lookAt da câmera com base na posição média.
             const midX = (position_tank1.x + position_tank2.x) / 2;
@@ -94,15 +94,12 @@ export class Camera {
             const midX = (position_tank1.x + position_tank2.x) / 2;
             const midZ = (position_tank1.z + position_tank2.z) / 2;
             this.camera.position.set(midX, 40, 70);
-            this.camera.lookAt(midX, -10, midZ);
+            this.camera.lookAt(midX, -5, midZ);
             this.initMidX = midX;
             this.initMidZ = midZ;
 
             // Salva a distância inicial entre os dois tanques.
-            this.lastDistance = Math.sqrt(
-                (position_tank1.x - position_tank2.x)*(position_tank1.x - position_tank2.x) +
-                (position_tank1.z - position_tank2.z)*(position_tank1.z - position_tank2.z)
-            );
+            this.lastDistance = finalDistance;
         }
     };
 
@@ -211,7 +208,7 @@ export class Camera {
             this.camera.translateZ((dist - this.lastDistance) / factor);
 
             // Mantém o lookAt da câmera apontando para a posição média.
-            this.setLookAt(new THREE.Vector3(midX, -10, midZ));
+            this.setLookAt(new THREE.Vector3(midX, -5, midZ));
 
             // Atualiza as variáveis de controle.
             this.lastDistance = dist;

@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { setDefaultMaterial } from '../../libs/util/util.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Caso 0: Nível 1
@@ -7,7 +6,11 @@ import { setDefaultMaterial } from '../../libs/util/util.js';
 export function CriaBala(tank, tankInimigo){
     let WallCollision = 0;
     let AcertouInimigo = 0;
-    const materialBullet = setDefaultMaterial('white')
+    const materialBullet = new THREE.MeshLambertMaterial({
+        color: 0xFFFFFF,
+        emissive: 0xFFFFFF,
+        emissiveIntensity: 0.2
+    });
     const geometryBullet = new THREE.SphereGeometry( 0.3, 32, 32, 50 );  
     const bullet = new THREE.Mesh( geometryBullet, materialBullet );
     // Define a posição inicial da bala na posição do tanque
@@ -59,13 +62,13 @@ export function balaAnda(Bullet){
         return 1;
     } else {
         // Verifica se a bala colidiu com uma parede e remove-a se necessário
-        // if( Bullet.WallCollision == 3){ 
-        //     Bullet.removed = true;
-        //     return 1;
-        // }
-        // else{
+        if( Bullet.WallCollision == 3){ 
+            Bullet.removed = true;
+            return 1;
+        }
+        else{
             return 0;
-        // }
+        }
     }
     
 }
@@ -114,8 +117,8 @@ function checkCollisions(Bullet){
          collisionPlane = new THREE.Vector3(1, 0, 0);
     }
     // Cima Ponta
-    else if(bulletPosition.z < 16.3 && bulletPosition.x > 29.2 && bulletPosition.x < 35.3) {
-         collisionPlane = new THREE.Vector3(0, 0, 1);
+    else if(bulletPosition.z < 16.5 && bulletPosition.x > 29.5 && bulletPosition.x < 34.3) {
+          collisionPlane = new THREE.Vector3(0, 0, 1);
     }
 
     // // Se houver colisão com uma parede, reflete a direção da bala
@@ -131,7 +134,11 @@ function checkCollisions(Bullet){
 export function CriaBala1(Qatirou, inimigo1, inimigo2, cannon){
     let WallCollision = 0;
     let AcertouInimigo = 0;
-    const materialBullet = setDefaultMaterial('white');
+    const materialBullet = new THREE.MeshLambertMaterial({
+        color: 0xFFFFFF,
+        emissive: 0xFFFFFF,
+        emissiveIntensity: 0.2
+    });
     const geometryBullet = new THREE.SphereGeometry(0.3, 32, 32, 50);  
     const bullet = new THREE.Mesh(geometryBullet, materialBullet);
 
@@ -285,7 +292,11 @@ function checkCollisions1(Bullet){
 export function CriaBala2(TankInimigo, inimigo1, inimigo2, cannon){
     let WallCollision = 0;
     let AcertouInimigo = 0;
-    const materialBullet = setDefaultMaterial('white');
+    const materialBullet = new THREE.MeshLambertMaterial({
+        color: 0xFFFFFF,
+        emissive: 0xFFFFFF,
+        emissiveIntensity: 0.2
+    });
     const geometryBullet = new THREE.SphereGeometry(0.3, 32, 32, 50);  
     const bullet = new THREE.Mesh(geometryBullet, materialBullet);
 
@@ -434,7 +445,11 @@ function checkCollisions2(Bullet){
 export function CriaBala3(Cannon, inimigo1, inimigo2, inimigo3){
     let WallCollision = 0;
     let AcertouInimigo = 0;
-    const materialBullet = setDefaultMaterial('white');
+    const materialBullet = new THREE.MeshLambertMaterial({
+        color: 0xFFFFFF,
+        emissive: 0xFFFFFF,
+        emissiveIntensity: 0.2
+    });
     const geometryBullet = new THREE.SphereGeometry(0.3, 32, 32, 50);  
     const bullet = new THREE.Mesh(geometryBullet, materialBullet);
 

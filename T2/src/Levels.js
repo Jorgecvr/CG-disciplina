@@ -11,7 +11,7 @@ function createBlock(x, z, type, level) {
                         type === 1 ? new THREE.MeshLambertMaterial({color: 0x328f62}) : new THREE.MeshLambertMaterial({color: 0x808080});
     const block = new THREE.Mesh(geometry, material);
 
-    block.position.set(x*4, type === 1 ? 1.55 : 0.0, z*4);
+    block.position.set(x*4, type === 1 ? 1.55 : -0.1, z*4);
     block.receiveShadow = true;
     block.castShadow = true;
     return block;
