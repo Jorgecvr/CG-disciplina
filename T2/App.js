@@ -235,7 +235,6 @@ function init() {
 // Função que chama a criação de bala.
 function InitBullet(){
     if(levelType == 1) {
-        console.log(tank1.object.getWorldPosition(new THREE.Vector3()));
         Bullet.push(CriaBala(tank1.object, tank2));
         scene.add(Bullet[Bullet.length-1].obj);
     } else {

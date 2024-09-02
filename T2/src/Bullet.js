@@ -515,7 +515,7 @@ export function balaAnda3(Bullet){
     }
     else {
         // Verifica se a bala colidiu com uma parede e remove-a se necessário
-        if (Bullet.WallCollision === 3) { 
+        if (Bullet.WallCollision === 1) { 
             Bullet.removed = true;
             return 1;
         } else {
