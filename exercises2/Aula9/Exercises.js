@@ -25,7 +25,7 @@ var axesHelper = new THREE.AxesHelper( 12 );
 scene.add( axesHelper );
 
 // Function to set a texture.
-function setMaterial(file, repeatU = 1, repeatV = 1, offsetx = 1, offsety = 1, color = 'rgb(255,255,255)',){
+function setMaterial(file, repeatU = 1, repeatV = 1, offsetx = 0, offsety = 1, color = 'rgb(255,255,255)',){
     let loader = new THREE.TextureLoader();
     let mat = new THREE.MeshBasicMaterial({ map: loader.load(file), color:color});
        mat.map.colorSpace = THREE.SRGBColorSpace;
