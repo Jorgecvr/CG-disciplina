@@ -8,6 +8,8 @@ import { Tank } from './src/Tank.js';
 import { CreateLevel } from './src/Levels.js';
 import { Camera } from './src/Camera.js';
 import { Light } from './src/Light.js';
+import { CriaBala , BalaAnda } from './src/Bullet.js';
+
 
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
@@ -26,8 +28,8 @@ var levelType = 1;                                  // Armazena o tipo do nível
 
 // Adicionando os níveis a cena.
 scene.add(level1);
-// scene.add(level2);
-// scene.add(level3);
+scene.add(level2);
+scene.add(level3);
 
 var player;                                         // Criando o player.
 player = new Tank(1, 2, scene);
@@ -157,8 +159,9 @@ function keyboardPress() {
     keyboard.update();
 
     // Mudaça do OrbitControls da Câmera.
-    if(keyboard.down("O")) {
-        camera.swapOrbitControls();
+    if(keyboard.down("space")) {
+        //camera.swapOrbitControls();
+        console.log(player.object.getWorldPosition(new THREE.Vector3));
     }
 };
     
