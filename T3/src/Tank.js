@@ -59,7 +59,7 @@ export class Tank {
     };
 
     // Método que controla a movimentação do tanque.
-    movePlayer(type, level, levelType) {
+    movePlayer(type, levels) {
         let keyboard = new KeyboardState();
         keyboard.update();
 
@@ -67,21 +67,19 @@ export class Tank {
         const rotationSpeed = 0.05;
 
         // Define as condições de movimento.
-        if(levelType === 1) {
-            if(type === 0) {
-                if(keyboard.pressed("W") || keyboard.pressed("up")) {
-                    this.object.translateZ(movementSpeed);
-                    if(this.lastDirection != 0) this.lastDirection = 0;
-                } 
-                if(keyboard.pressed("S") || keyboard.pressed("down")) {
-                    this.object.translateZ(-movementSpeed);
-                    if(this.lastDirection != 1) this.lastDirection = 1;
-                }
-                if(keyboard.pressed("A") || keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
-                if(keyboard.pressed("D") || keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
-            } else if(type == 1) {
-
+        if(type === 0) {
+            if(keyboard.pressed("W") || keyboard.pressed("up")) {
+                this.object.translateZ(movementSpeed);
+                if(this.lastDirection != 0) this.lastDirection = 0;
+            } 
+            if(keyboard.pressed("S") || keyboard.pressed("down")) {
+                this.object.translateZ(-movementSpeed);
+                if(this.lastDirection != 1) this.lastDirection = 1;
             }
+            if(keyboard.pressed("A") || keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
+            if(keyboard.pressed("D") || keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
+        } else if(type == 1) {
+
         }
 
         // Pega as coordenadas x e z do tanque em relação ao mundo.
@@ -89,8 +87,8 @@ export class Tank {
         let z = this.object.getWorldPosition(new THREE.Vector3()).z;
 
         // Verificando colisão.
-        let collisions = CheckCollisionsWithWall(this, level);
-        // console.log(collisions);
+        let collisions = CheckCollisionsWithWall(this, levels);
+        // console.log(collisions[0]);
 
         // Definição dos limites inicias do primeiro nível.
         const levelLimits = {
@@ -101,7 +99,7 @@ export class Tank {
         };
 
         // Tratamento de colisões.
-        if(levelType === 1 && collisions.length > 0) {
+        if(collisions.length > 0) {
             // Atualiza levelLimits com base na posição do bloco e direção do tanque.
             collisions.forEach((collisionBlock) => {
                 this.updateLimits(collisionBlock, levelLimits);

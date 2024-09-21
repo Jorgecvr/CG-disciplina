@@ -45,14 +45,47 @@ function checkTankCollisions(tank, block) {
 };
 
 // Método que verifica a colisão do tanque com os blocos da parede.
-export function CheckCollisionsWithWall(tank, level) {
-    let colissions = [];
-    level.children[1].children.forEach((block) => {
-        let collision = checkTankCollisions(tank, block);
-        if(collision != -1) {
-            colissions.push(block);
-        }
+export function CheckCollisionsWithWall(tank, levels) {
+    let colisions = [];
+
+    levels.forEach((level) => {
+        level.children[1].children.forEach((block) => {
+            let collision = checkTankCollisions(tank, block);
+            if(collision != -1) {
+                colisions.push(block);
+            }
+        });
+        level.children[2].children.forEach((block) => {
+            let collision = checkTankCollisions(tank, block);
+            if(collision != -1) {
+                colisions.push(block);
+            }
+        });
+        level.children[3].children.forEach((block)=>{
+            let collision = checkTankCollisions(tank, block);
+            if(collision != -1) {
+                colisions.push(block);
+            }
+        });
+        level.children[5].children.forEach((block)=>{
+            let collision = checkTankCollisions(tank, block);
+            if(collision != -1) {
+                colisions.push(block);
+            }
+        });
+        level.children[6].children.forEach((block)=>{
+            let collision = checkTankCollisions(tank, block);
+            if(collision != -1) {
+                colisions.push(block);
+            }
+        });
+        level.children[7].children.forEach((block)=>{
+            let collision = checkTankCollisions(tank, block);
+            if(collision != -1) {
+                colisions.push(block);
+            }
+        });
     });
 
-    return colissions;
+    return colisions;
 };

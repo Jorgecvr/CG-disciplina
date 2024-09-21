@@ -26,12 +26,13 @@ var levelType = 1;                                  // Armazena o tipo do nível
 
 // Adicionando os níveis a cena.
 scene.add(level1);
-// scene.add(level2);
-// scene.add(level3);
+scene.add(level2);
+scene.add(level3);
+level3.visible = false;
 
 var player;                                         // Criando o player.
 player = new Tank(1, 2, scene);
-player.object.position.set(20, 0, 10);
+player.object.position.set(10, 0, 10);
 scene.add(player.object);
 
 // Luz ambiente geral.
@@ -55,7 +56,7 @@ const shadow1 = directionalLightLevel1.shadow;
     shadow1.camera.far = 100;
     shadow1.camera.left = -28;
     shadow1.camera.right = 46;
-    shadow1.camera.bottom = -18;
+    shadow1.camera.bottom = -24;
     shadow1.camera.top = 36;
 
 // Luz direcional no nível 3.
@@ -83,10 +84,10 @@ var spotLights = [];
 // Inserindo os spotLights.
 // Luminária 1.
 let spotLight1 = new Light();
-spotLight1.object.position.set(146, 0.2, 42);
+spotLight1.object.position.set(150, 0.2, 42);
 spotLight1.object.rotateY(THREE.MathUtils.degToRad(135));
-spotLight1.spotLight.position.set(143.3, 21.8, 39.3);
-spotLight1.spotLight.target.position.set(137, 0.2, 32);
+spotLight1.spotLight.position.set(147.3, 21.8, 39.3);
+spotLight1.spotLight.target.position.set(141, 0.2, 32);
 spotLight1.spotLight.target.updateMatrixWorld();
 scene.add(spotLight1.object);
 scene.add(spotLight1.spotLight);
@@ -94,10 +95,10 @@ spotLights.push(spotLight1);
 
 // Luminária 2.
 let spotLight2 = new Light();
-spotLight2.object.position.set(82, 0.2, 2);
+spotLight2.object.position.set(86, 0.2, 2);
 spotLight2.object.rotateY(THREE.MathUtils.degToRad(-45));
-spotLight2.spotLight.position.set(84.8, 21.8, 4.8);
-spotLight2.spotLight.target.position.set(91, 0.2, 11);
+spotLight2.spotLight.position.set(88.8, 21.8, 4.8);
+spotLight2.spotLight.target.position.set(95, 0.2, 11);
 spotLight2.spotLight.target.updateMatrixWorld();
 scene.add(spotLight2.object);
 scene.add(spotLight2.spotLight);
@@ -105,10 +106,10 @@ spotLights.push(spotLight2);
 
 // Luminária 3.
 let spotLight3 = new Light();
-spotLight3.object.position.set(114, 0.2, 42.7);
+spotLight3.object.position.set(118, 0.2, 42.7);
 spotLight3.object.rotateY(THREE.MathUtils.degToRad(90));
-spotLight3.spotLight.position.set(114, 21.8, 38.9);
-spotLight3.spotLight.target.position.set(114, 0.2, 34.5);
+spotLight3.spotLight.position.set(118, 21.8, 38.9);
+spotLight3.spotLight.target.position.set(118, 0.2, 34.5);
 spotLight3.spotLight.target.updateMatrixWorld();
 spotLight3.spotLight.angle = THREE.MathUtils.degToRad(24);
 scene.add(spotLight3.object);
@@ -117,10 +118,10 @@ spotLights.push(spotLight3);
 
 // Luminária 4.
 let spotLight4 = new Light();
-spotLight4.object.position.set(144, 0.2, 1.3);
+spotLight4.object.position.set(118, 0.2, 1.3);
 spotLight4.object.rotateY(THREE.MathUtils.degToRad(-90));
-spotLight4.spotLight.position.set(114, 21.8, 5.2);
-spotLight4.spotLight.target.position.set(114, 0.2, 9.5)
+spotLight4.spotLight.position.set(118, 21.8, 5.2);
+spotLight4.spotLight.target.position.set(118, 0.2, 9.5)
 spotLight4.spotLight.target.updateMatrixWorld();
 spotLight4.spotLight.angle = THREE.MathUtils.degToRad(24);
 scene.add(spotLight4.object);
@@ -160,16 +161,84 @@ function keyboardPress() {
     if(keyboard.down("O")) {
         camera.swapOrbitControls();
     }
-};
-    
-// Função play chamada na render atualiza a lógica do jogo.
-function play() {
-    keyboardPress();
-    player.movePlayer(0, level1, 1);
-    camera.update(player.object.getWorldPosition(new THREE.Vector3));
-    updateMovingWalls();
+
+    if(keyboard.down("C")) {
+        moveGates[0] = 1;
+    }
+    if(keyboard.down("V")) {
+        moveGates[1] = 1;
+    }
+    if(keyboard.down("B")) {
+        moveGates[2] = 1;
+    }
+    if(keyboard.down("N")) {
+        moveGates[3] = 1;
+    }
+    if(keyboard.down("space")) {
+        console.log(player.object.position);
+    }
 };
 
+// Função de atualização dos níveis.
+function updateLevels() {
+    if(player.object.position.x > 68.5 && player.object.position.x < 88) {
+        levelType = 2;
+    }
+    else if(player.object.position.x > 88 && player.object.position.x < 156.5) {
+        levelType = 3;
+    }
+    else if(player.object.position.x > 156.5 && player.object.position.x < 176.5) {
+        levelType = 4;
+    }
+    else if(player.object.position.x > 176.5) {
+        levelType = 5;
+    }
+};
+
+// Função de atualização dos portões.
+var moveGates = [0, 0, 0, 0];
+function updateGates() {
+    // Portão 1, do mapa 1 para o 2.
+    if(moveGates[0] === 1) {
+        level1.children[2].position.y -= 0.02;
+    }
+    if(moveGates[0] === 2 && levelType === 2) {
+        level1.children[2].position.y += 0.02;
+    }
+    if(level1.children[2].position.y < -3.5) moveGates[0] = 2;
+    if(level1.children[2].position.y > 0) moveGates[0] = 0;
+
+    // Portão 2, do mapa 1 para o 2.
+    if(moveGates[1] === 1) {
+        level2.children[2].position.y -= 0.02;
+    }
+    if(moveGates[1] === 2 && levelType === 3) {
+        level2.children[2].position.y += 0.02;
+    }
+    if(level2.children[2].position.y < -3.5) moveGates[1] = 2;
+    if(level2.children[2].position.y > 0) moveGates[1] = 0;
+
+    // Portão 1, do mapa 2 para o 3.
+    if(moveGates[2] === 1) {
+        level2.children[3].position.y -= 0.02;
+    }
+    if(moveGates[2] === 2 && levelType === 4) {
+        level2.children[3].position.y += 0.02;
+    }
+    if(level2.children[3].position.y < -3.5) moveGates[2] = 2;
+    if(level2.children[3].position.y > 0) moveGates[2] = 0;
+    
+    // Portão 3, do mapa 2 para o 3.
+    if(moveGates[3] === 1) {
+        level3.children[3].position.y -= 0.02;
+    }
+    if(moveGates[3] === 2 && levelType === 5) {
+        level3.children[3].position.y += 0.02;
+    }
+    if(level3.children[3].position.y < -3.5) moveGates[3] = 2;
+    if(level3.children[3].position.y > 0) moveGates[3] = 0;
+};
+    
 // Função de atualização das paredes móveis.
 var wallsDirections = [0, 0, 0];
 function updateMovingWalls() {
@@ -189,9 +258,9 @@ function updateMovingWalls() {
     }
 
     // Definindo constantes para as paredes móveis.
-    const movingWall1 = level3.children[4];
-    const movingWall2 = level3.children[5];
-    const movingWall3 = level3.children[6];
+    const movingWall1 = level3.children[5];
+    const movingWall2 = level3.children[6];
+    const movingWall3 = level3.children[7];
 
     movingWall1.position.z += velMovingWall1;
     movingWall2.position.z += velMovingWall2;
@@ -217,6 +286,17 @@ function updateMovingWalls() {
         wallsDirections[2] = 0;
     }
 };
+
+// Função play chamada na render atualiza a lógica do jogo.
+function play() {
+    keyboardPress();
+    player.movePlayer(0, [level1, level2, level3]);
+    camera.update(player.object.getWorldPosition(new THREE.Vector3));
+    updateMovingWalls();
+    updateGates();
+    updateLevels();
+};
+
 
 render();
 function render() {
