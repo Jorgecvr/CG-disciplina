@@ -63,8 +63,8 @@ export class Tank {
         let keyboard = new KeyboardState();
         keyboard.update();
 
-        const movementSpeed = 0.25;
-        const rotationSpeed = 0.025;
+        const movementSpeed = 0.7;
+        const rotationSpeed = 0.05;
 
         // Define as condições de movimento.
         if(levelType === 1) {
@@ -90,7 +90,7 @@ export class Tank {
 
         // Verificando colisão.
         let collisions = CheckCollisionsWithWall(this, level);
-        console.log(collisions);
+        // console.log(collisions);
 
         // Definição dos limites inicias do primeiro nível.
         const levelLimits = {

@@ -26,21 +26,21 @@ var levelType = 1;                                  // Armazena o tipo do nível
 
 // Adicionando os níveis a cena.
 scene.add(level1);
-scene.add(level2);
-scene.add(level3);
+// scene.add(level2);
+// scene.add(level3);
 
 var player;                                         // Criando o player.
 player = new Tank(1, 2, scene);
-player.object.position.set(10, 0, 10);
+player.object.position.set(20, 0, 10);
 scene.add(player.object);
 
 // Luz ambiente geral.
-var ambientLight = new THREE.AmbientLight("rgb(30, 30, 30)");   
+var ambientLight = new THREE.AmbientLight("rgb(20, 20, 20)");   
     ambientLight.castShadow = false;
     scene.add(ambientLight);
 
 // Luz direcional do nível 1.
-var directionalLightLevel1 = new THREE.DirectionalLight("white", 0.3);
+var directionalLightLevel1 = new THREE.DirectionalLight("white", 0.4);
     directionalLightLevel1.position.set(64, 30, 0);
     scene.add(directionalLightLevel1);
     scene.add(directionalLightLevel1.target);
@@ -59,7 +59,7 @@ const shadow1 = directionalLightLevel1.shadow;
     shadow1.camera.top = 36;
 
 // Luz direcional no nível 3.
-var directionalLightLevel3 = new THREE.DirectionalLight("white", 0.3);
+var directionalLightLevel3 = new THREE.DirectionalLight("white", 0.4);
     directionalLightLevel3.position.set(164, 40, -8);
     scene.add(directionalLightLevel3);
     scene.add(directionalLightLevel3.target);
@@ -150,10 +150,6 @@ var camera = new Camera(renderer);                  // Criando a câmera.
     camera.holder.add(camera.camera);
 
 camera.init(player.object.getWorldPosition(new THREE.Vector3));
-
-let sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16));
-sphere.position.set(190, 5, 16);
-scene.add(sphere);
 
 // Função para verificar o pressionamento de teclas.
 function keyboardPress() {

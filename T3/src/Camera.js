@@ -25,7 +25,7 @@ export class Camera {
     };
 
     init(player_position) {
-        this.camera.position.set(10, 60, 70);
+        this.camera.position.set(20, 60, 70);
         // this.holder.position.set(0, -200, 0);
         this.camera.lookAt(player_position.x, 0, 25);
 
@@ -43,7 +43,7 @@ export class Camera {
     };
 
     update(player_position) {
-        this.holder.position.x = player_position.x - 10;
+        this.holder.position.x = player_position.x - 20;
         // Câmera atualiza apenas quando o orbitControls está desligado.
         if(!this.orbitControls.enabled) {
     
