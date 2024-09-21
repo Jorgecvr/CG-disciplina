@@ -1,22 +1,5 @@
 import * as THREE from 'three';
 
-// // Função para criar blocos com base nos níveis.
-// function createBlock(x, z, type, level) {
-//     // Tipo 1 é bloco da parede e tipo 0 é bloco do piso.
-
-//     const geometry = new THREE.BoxGeometry(4, type === 1 ? 4 : 0.1, 4);
-//     const material = level === 1 ?
-//                         type === 1 ? new THREE.MeshLambertMaterial({color: 0x3D3D3D}) : new THREE.MeshLambertMaterial({color: 0x808080})
-//                         :
-//                         type === 1 ? new THREE.MeshLambertMaterial({color: 0x328f62}) : new THREE.MeshLambertMaterial({color: 0x808080});
-//     const block = new THREE.Mesh(geometry, material);
-
-//     block.position.set(x*4, type === 1 ? 1.55 : -0.1, z*4);
-//     block.receiveShadow = true;
-//     block.castShadow = true;
-//     return block;
-// };
-
 // Função para criar os blocos do chão.
 function createFloor(larg, comp, level) {
     const geometry = new THREE.BoxGeometry(4, 0.1, 4);
@@ -65,14 +48,30 @@ function createHall(larg, comp, level) {
     return block;
 };
 
+// Função para criar os blocos das paredes móveis.
+function createMovingWalls(larg, comp, level) {
+    const geometry = new THREE.BoxGeometry(4, 4, 4);
+    const material = new THREE.MeshLambertMaterial({color: 0xff6400});
+    const block = new THREE.Mesh(geometry, material);
+
+    block.position.set(larg, 1.55, comp);
+    block.receiveShadow = true;
+    block.castShadow = true;
+
+    return block;
+};
+
 // Função que cria o nível com base na matriz fornecida.
 function createLevel(levelMatrix, levelType) {
-    // O nível será um grupo com 4 grupos de blocos (chão, parede, portão e corredor).
+    // O nível será um grupo com 7 grupos de blocos (chão, parede, portão, corredor e paredes móveis).
     const level = new THREE.Group;
     const floor = new THREE.Group;
     const wall = new THREE.Group;
     const gate = new THREE.Group;
     const hall = new THREE.Group;
+    const movingWall1 = new THREE.Group;
+    const movingWall2 = new THREE.Group;
+    const movingWall3 = new THREE.Group;
 
     let larg, comp;
     if(levelType === 1) {
@@ -90,7 +89,7 @@ function createLevel(levelMatrix, levelType) {
 
     for(let i = 0; i < levelMatrix.length; i++) {
         for(let j = 0; j < levelMatrix[i].length; j++) {
-            if(levelMatrix[i][j] === 0) {
+            if(levelMatrix[i][j] === 0 || levelMatrix[i][j] === 5 || levelMatrix[i][j] === 6 || levelMatrix[i][j] === 7) {
                 // Cria o bloco do chão.
                 const block = createFloor(j*4 + larg, i*4 + comp, levelType);
                 floor.add(block);
@@ -110,10 +109,28 @@ function createLevel(levelMatrix, levelType) {
                 const block = createHall(j*4 + larg, i*4 + comp, levelType);
                 gate.add(block);
             }
+
+            if(levelType === 3) {
+                if(levelMatrix[i][j] === 5) {
+                    // Cria bloco da primeira parede móvel.
+                    const block = createMovingWalls(j*4 + larg, i*4 + comp, levelType);
+                    movingWall1.add(block);
+                }
+                else if(levelMatrix[i][j] === 6) {
+                    // Cria bloco da segunda parede móvel.
+                    const block = createMovingWalls(j*4 + larg, i*4 + comp, levelType);
+                    movingWall2.add(block);
+                }
+                else if(levelMatrix[i][j] === 7) {
+                    // Cria bloco da terceira parede móvel.
+                    const block = createMovingWalls(j*4 + larg, i*4 + comp, levelType);
+                    movingWall3.add(block);
+                }
+            }
         }
     }
 
-    level.add(floor, wall, gate, hall);
+    level.add(floor, wall, gate, hall, movingWall1, movingWall2, movingWall3);
     return level;
 };
 
@@ -154,13 +171,13 @@ export function CreateLevel(level) {
         [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1],
-        [2, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1],
-        [2, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 1],
+        [2, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 1],
+        [2, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 1],
         [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],

@@ -25,7 +25,8 @@ export class Camera {
     };
 
     init(player_position) {
-        this.camera.position.set(0, 60, 70);
+        this.camera.position.set(10, 60, 70);
+        // this.holder.position.set(0, -200, 0);
         this.camera.lookAt(player_position.x, 0, 25);
 
         this.lastDistance = this.camera.position.z - player_position.z;
@@ -42,9 +43,9 @@ export class Camera {
     };
 
     update(player_position) {
+        this.holder.position.x = player_position.x - 10;
         // Câmera atualiza apenas quando o orbitControls está desligado.
         if(!this.orbitControls.enabled) {
-            this.holder.position.x = player_position.x;
     
             let dist = this.camera.position.z - player_position.z;
             this.camera.translateZ((dist - this.lastDistance) / 2.5);

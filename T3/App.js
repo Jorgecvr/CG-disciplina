@@ -19,14 +19,19 @@ let textureEquirec = textureLoader.load('./assets/textures/skybox.jpg');
 textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
 scene.background = textureEquirec;
 
-var level1;                                         // Criando o nível 1.
-var level2;                                         // Criando o nível 2.
-var level3;                                         // Criando o nível 3.
+var level1 = CreateLevel(1);                        // Criando o nível 1.
+var level2 = CreateLevel(2);                        // Criando o nível 2.
+var level3 = CreateLevel(3);                        // Criando o nível 3.
 var levelType = 1;                                  // Armazena o tipo do nível atual (começa em 1).
 
+// Adicionando os níveis a cena.
+scene.add(level1);
+scene.add(level2);
+scene.add(level3);
+
 var player;                                         // Criando o player.
-player = new Tank(1, 2);
-player.object.position.set(200, 0, 10);
+player = new Tank(1, 2, scene);
+player.object.position.set(10, 0, 10);
 scene.add(player.object);
 
 // Luz ambiente geral.
@@ -122,7 +127,23 @@ scene.add(spotLight4.object);
 scene.add(spotLight4.spotLight);
 spotLights.push(spotLight4);
 
-var directionalLightLevel3                          // Luz direcional do nível 3.
+// Redimensionamento da câmera utilizando zoom.
+var zoom = 1;
+var lastWidth = window.innerWidth;
+window.addEventListener('resize', function() {
+    let aspect = window.innerWidth / window.innerHeight;
+    camera.camera.aspect = aspect;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    
+    if(lastWidth < window.innerWidth) {
+        zoom += (window.innerWidth - lastWidth)*0.0007;
+    } else if(lastWidth > window.innerWidth) {
+        zoom -= (lastWidth - window.innerWidth)*0.0007;
+    }
+    camera.camera.zoom = zoom;
+    camera.camera.updateProjectionMatrix();
+    lastWidth = window.innerWidth;
+});
 
 var camera = new Camera(renderer);                  // Criando a câmera.
     scene.add(camera.holder);                       // Adicionando o câmera holder.           
@@ -141,7 +162,6 @@ function keyboardPress() {
 
     // Mudaça do OrbitControls da Câmera.
     if(keyboard.down("O")) {
-        console.log("AQUII");
         camera.swapOrbitControls();
     }
 };
@@ -149,8 +169,57 @@ function keyboardPress() {
 // Função play chamada na render atualiza a lógica do jogo.
 function play() {
     keyboardPress();
-    player.movePlayer(levelType);
+    player.movePlayer(0, level1, 1);
     camera.update(player.object.getWorldPosition(new THREE.Vector3));
+    updateMovingWalls();
+};
+
+// Função de atualização das paredes móveis.
+var wallsDirections = [0, 0, 0];
+function updateMovingWalls() {
+    // Definindo as velocidades das paredes móveis.
+    let velMovingWall1 = 0.1;
+    let velMovingWall2 = -0.05;
+    let velMovingWall3 = 0.15;
+
+    if(wallsDirections[0] == 1) {
+        velMovingWall1 *= -1;
+    }
+    if(wallsDirections[1] == 1) {
+        velMovingWall2 *= -1;
+    }
+    if(wallsDirections[2] == 1) {
+        velMovingWall3 *= -1;
+    }
+
+    // Definindo constantes para as paredes móveis.
+    const movingWall1 = level3.children[4];
+    const movingWall2 = level3.children[5];
+    const movingWall3 = level3.children[6];
+
+    movingWall1.position.z += velMovingWall1;
+    movingWall2.position.z += velMovingWall2;
+    movingWall3.position.z += velMovingWall3;
+
+    // Limita o movimento das paredes.
+    if(movingWall1.position.z > 16) {
+        wallsDirections[0] = 1;
+    }
+    if(movingWall1.position.z < -0.1) {
+        wallsDirections[0] = 0;
+    }
+    if(movingWall2.position.z > 0.1) {
+        wallsDirections[1] = 0;
+    }
+    if(movingWall2.position.z < -16) {
+        wallsDirections[1] = 1;
+    }
+    if(movingWall3.position.z > 16) {
+        wallsDirections[2] = 1;
+    }
+    if(movingWall3.position.z < -0.1) {
+        wallsDirections[2] = 0;
+    }
 };
 
 render();
@@ -159,10 +228,3 @@ function render() {
     requestAnimationFrame(render);
     renderer.render(scene, camera.camera);
 };
-
-level1 = CreateLevel(1);
-scene.add(level1);
-level2 = CreateLevel(2);
-scene.add(level2);
-level3 = CreateLevel(3);
-scene.add(level3);
