@@ -8,6 +8,7 @@ import { Tank } from './src/Tank.js';
 import { CreateLevel } from './src/Levels.js';
 import { Camera } from './src/Camera.js';
 import { Light } from './src/Light.js';
+import { UpdateEnemies } from './src/Enemies.js';
 
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
@@ -27,13 +28,34 @@ var levelType = 1;                                  // Armazena o tipo do nível
 // Adicionando os níveis a cena.
 scene.add(level1);
 scene.add(level2);
-scene.add(level3);
+// scene.add(level3);
 level3.visible = false;
 
 var player;                                         // Criando o player.
-player = new Tank(1, 2, scene);
-player.object.position.set(10, 0, 10);
+player = new Tank(1, true);
+player.object.position.set(10, 0, 34);
+player.object.rotateY(THREE.MathUtils.degToRad(180));
 scene.add(player.object);
+
+// Criando os tanques inimigos.
+// Nível 1.
+var enemy1 = new Tank(2, false);
+enemy1.object.position.set(54, 0, 34);
+enemy1.object.rotateY(THREE.MathUtils.degToRad(180));
+scene.add(enemy1.object);
+
+// Nível 2.
+var enemy2 = new Tank(1, false);
+enemy2.object.position.set(144, 0, 34);
+enemy2.object.rotateY(THREE.MathUtils.degToRad(180));
+scene.add(enemy2.object);
+var enemy3 = new Tank(2, false);
+enemy3.object.position.set(144, 0, 10);
+enemy3.object.rotateY(THREE.MathUtils.degToRad(-90));
+scene.add(enemy3.object);
+
+// Atualiza os valores inicias da função que movimente os tanques adversários.
+UpdateEnemies();
 
 // Luz ambiente geral.
 var ambientLight = new THREE.AmbientLight("rgb(20, 20, 20)");   
@@ -41,7 +63,7 @@ var ambientLight = new THREE.AmbientLight("rgb(20, 20, 20)");
     scene.add(ambientLight);
 
 // Luz direcional do nível 1.
-var directionalLightLevel1 = new THREE.DirectionalLight("white", 0.4);
+var directionalLightLevel1 = new THREE.DirectionalLight("white", 0.7);
     directionalLightLevel1.position.set(64, 30, 0);
     scene.add(directionalLightLevel1);
     scene.add(directionalLightLevel1.target);
@@ -66,6 +88,7 @@ var directionalLightLevel3 = new THREE.DirectionalLight("white", 0.4);
     scene.add(directionalLightLevel3.target);
     directionalLightLevel3.target.position.set(190, 5, 16);
     directionalLightLevel3.castShadow = true;
+    directionalLightLevel3.visible = false;
 
 // Definindo o mapa de sombras do terceiro nível.
 const shadow3 = directionalLightLevel3.shadow;
@@ -291,12 +314,30 @@ function updateMovingWalls() {
 function play() {
     keyboardPress();
     player.movePlayer(0, [level1, level2, level3]);
+    // enemy1.movePlayer(1, [level1, level2, level3], player);
+    // enemy2.movePlayer(2, [level1, level2, level3], player);
+    // enemy3.movePlayer(3, [level1, level2, level3], player);
     camera.update(player.object.getWorldPosition(new THREE.Vector3));
     updateMovingWalls();
     updateGates();
     updateLevels();
 };
 
+
+let level2Matrix = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 0, 1, 1, 1, 4, 0, 0, 0, 0, 6, 0, 0, 0, 2, 1, 1],
+    [1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1],
+    [1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 2, 1, 1],
+    [1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
+    [1, 1, 3, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
+    [1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1],
+    [1, 1, 3, 0, 0, 0, 5, 0, 0, 0, 0, 7, 1, 1, 1, 0, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+];
 
 render();
 function render() {

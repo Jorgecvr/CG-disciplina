@@ -133,6 +133,7 @@ export class Tank {
             let {collisionBlock, collisionType} = CheckCollisionsWithWall(this, level);
             if(this.lastDirection == 0) {
                 if(collisionBlock) {
+                    console.log(collisionBlock.position);
                     if(collisionBlock.position.x == 32 && collisionBlock.position.z == 12) {
                         if(z <= 15.5) {
                             if(collisionType == 1) {
@@ -245,6 +246,7 @@ export class Tank {
             if(this.lastDirection == 0) {
                 // Se há colisão.
                 if(collisionBlock) {
+                    console.log(collisionBlock.position);
                     if(collisionBlock.position.x == 16 && collisionBlock.position.z == 16) {
                         if(z <= 19.5) {
                             if(collisionType == 1) {

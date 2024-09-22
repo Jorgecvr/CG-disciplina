@@ -7,11 +7,14 @@ import { GLTFLoader } from '../../build/jsm/loaders/GLTFLoader.js';
 // Importação do Verificador de Colisões.
 import { CheckCollisionsWithWall } from './Collisions.js';
 
+// Importação da movimentação dos tanques inimigos.
+import { UpdateTankPositionLevel1, UpdateTankPositionLevel2 } from './Enemies.js';
+
 // Criação da classe Tank para montar e exportar o tanque.
 export class Tank {
-    constructor(type, levelType, scene) {
+    constructor(type, isPlayer) {
         this.object = new THREE.Object3D();
-        this.loadModel(type, levelType, scene);
+        this.loadModel(type, isPlayer);
 
         // Objetos de apoio à colisão.
         this.base = new THREE.Mesh(new THREE.BoxGeometry(4.7, 2, 4.3));
@@ -36,17 +39,17 @@ export class Tank {
     };
 
     // Método que importa o modelo e cria o tanque.
-    loadModel(type, levelType, scene) {
+    loadModel(type, isPlayer) {
         let loader = new GLTFLoader();
 
         loader.load('assets/objects/tankModel.glb', (glb) => {
             let obj = glb.scene;
 
             obj.traverse((child) => {
-                if(levelType === 1) {
+                if(!isPlayer) {
                     child.material = new THREE.MeshPhongMaterial({
                         color: type === 1 ? 'rgb(205, 50, 50)' : 'rgb(50, 50, 205)',
-                        shininess: "200",
+                        shininess: "30",
                         specular: "rgb(255, 255, 255)"
                     });
                 } 
@@ -59,7 +62,7 @@ export class Tank {
     };
 
     // Método que controla a movimentação do tanque.
-    movePlayer(type, levels) {
+    movePlayer(type, levels, player = null, Bullet = [], scene = null, oTank = null, oTank2 = null, cannon = null) {
         let keyboard = new KeyboardState();
         keyboard.update();
 
@@ -78,8 +81,10 @@ export class Tank {
             }
             if(keyboard.pressed("A") || keyboard.pressed("left")) this.object.rotateY(rotationSpeed);
             if(keyboard.pressed("D") || keyboard.pressed("right")) this.object.rotateY(-rotationSpeed);
-        } else if(type == 1) {
-
+        } else if(type === 1) {
+            UpdateTankPositionLevel1(player, this, type, levels, Bullet, scene);
+        } else if(type === 2 || type === 3) {
+            UpdateTankPositionLevel2(player, this, type, levels, Bullet, scene, oTank, cannon);
         }
 
         // Pega as coordenadas x e z do tanque em relação ao mundo.
@@ -100,6 +105,7 @@ export class Tank {
 
         // Tratamento de colisões.
         if(collisions.length > 0) {
+            console.log(collisions[0].position);
             // Atualiza levelLimits com base na posição do bloco e direção do tanque.
             collisions.forEach((collisionBlock) => {
                 this.updateLimits(collisionBlock, levelLimits);

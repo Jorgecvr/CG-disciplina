@@ -8,18 +8,6 @@ function checkTankCollisions(tank, block) {
     const tankRotationMatrix3 = new THREE.Matrix3().setFromMatrix4(tank.object.matrixWorld);
     block.updateMatrixWorld();
     const blockRotationMatrix3 = new THREE.Matrix3().setFromMatrix4(block.matrixWorld);
-    
-    // Criando as OBBs para os objetos de apoio.
-    // const baseOBB = new OBB(
-    //     tank.base.getWorldPosition(new THREE.Vector3),
-    //     new THREE.Vector3(4.7 / 2, 2 / 2, 4.2 / 2),
-    //     tankRotationMatrix3
-    // );
-    // const cannonOBB = new OBB(
-    //     tank.cannon.getWorldPosition(new THREE.Vector3),
-    //     new THREE.Vector3(0.5 / 2, 0.5 / 2, 2 / 2),
-    //     tankRotationMatrix3,
-    // );
 
     const boxOBB = new OBB(
         tank.box.getWorldPosition(new THREE.Vector3),
@@ -38,9 +26,6 @@ function checkTankCollisions(tank, block) {
     if(blockOBB.intersectsOBB(boxOBB)) {
         return 0;
     } 
-    // if(blockOBB.intersectsOBB(cannonOBB)) {
-    //     return 1;
-    // }
     else return -1;
 };
 
