@@ -33,7 +33,7 @@ level3.visible = true;
 
 var player;                                         // Criando o player.
 player = new Tank(1, true);
-player.object.position.set(180, 0, 34);
+player.object.position.set(10, 0, 34);
 player.object.rotateY(THREE.MathUtils.degToRad(180));
 scene.add(player.object);
 
