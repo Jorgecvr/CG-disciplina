@@ -28,12 +28,12 @@ var levelType = 1;                                  // Armazena o tipo do nível
 // Adicionando os níveis a cena.
 scene.add(level1);
 scene.add(level2);
-// scene.add(level3);
-level3.visible = false;
+scene.add(level3);
+level3.visible = true;
 
 var player;                                         // Criando o player.
 player = new Tank(1, true);
-player.object.position.set(10, 0, 34);
+player.object.position.set(180, 0, 34);
 player.object.rotateY(THREE.MathUtils.degToRad(180));
 scene.add(player.object);
 
@@ -53,6 +53,18 @@ var enemy3 = new Tank(2, false);
 enemy3.object.position.set(144, 0, 10);
 enemy3.object.rotateY(THREE.MathUtils.degToRad(-90));
 scene.add(enemy3.object);
+
+// Nível 3.
+var enemy4 = new Tank(3, false);
+enemy4.object.position.set(208, 0, 0);
+scene.add(enemy4.object);
+var enemy5 = new Tank(4, false);
+enemy5.object.position.set(228, 0, 38);
+enemy5.object.rotateY(THREE.MathUtils.degToRad(180));
+scene.add(enemy5.object);
+var enemy6 = new Tank(2, false);
+enemy6.object.position.set(248, 0, 0);
+scene.add(enemy6.object);
 
 // Atualiza os valores inicias da função que movimente os tanques adversários.
 UpdateEnemies();
@@ -317,27 +329,14 @@ function play() {
     // enemy1.movePlayer(1, [level1, level2, level3], player);
     // enemy2.movePlayer(2, [level1, level2, level3], player);
     // enemy3.movePlayer(3, [level1, level2, level3], player);
+    // enemy4.movePlayer(4, [level1, level2, level3], player);
+    // enemy5.movePlayer(5, [level1, level2, level3], player);
+    // enemy6.movePlayer(6, [level1, level2, level3], player);
     camera.update(player.object.getWorldPosition(new THREE.Vector3));
     updateMovingWalls();
     updateGates();
     updateLevels();
 };
-
-
-let level2Matrix = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 0, 1, 1, 1, 4, 0, 0, 0, 0, 6, 0, 0, 0, 2, 1, 1],
-    [1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1],
-    [1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 2, 1, 1],
-    [1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
-    [1, 1, 3, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
-    [1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1],
-    [1, 1, 3, 0, 0, 0, 5, 0, 0, 0, 0, 7, 1, 1, 1, 0, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-];
 
 render();
 function render() {

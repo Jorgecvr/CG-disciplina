@@ -8,7 +8,7 @@ import { GLTFLoader } from '../../build/jsm/loaders/GLTFLoader.js';
 import { CheckCollisionsWithWall } from './Collisions.js';
 
 // Importação da movimentação dos tanques inimigos.
-import { UpdateTankPositionLevel1, UpdateTankPositionLevel2 } from './Enemies.js';
+import { UpdateTankPositionLevel1, UpdateTankPositionLevel2, UpdateTankPositionLevel3 } from './Enemies.js';
 
 // Criação da classe Tank para montar e exportar o tanque.
 export class Tank {
@@ -45,10 +45,16 @@ export class Tank {
         loader.load('assets/objects/tankModel.glb', (glb) => {
             let obj = glb.scene;
 
+            let color;
+            if(type === 1) color = 'rgb(205, 50, 50)';
+            else if(type === 2) color = 'rgb(50, 50, 205)';
+            else if(type === 3) color = 'rgb(130, 7, 5)';
+            else if(type === 4) color = 'rgb(50, 110, 240)';
+
             obj.traverse((child) => {
                 if(!isPlayer) {
                     child.material = new THREE.MeshPhongMaterial({
-                        color: type === 1 ? 'rgb(205, 50, 50)' : 'rgb(50, 50, 205)',
+                        color: color,
                         shininess: "30",
                         specular: "rgb(255, 255, 255)"
                     });
@@ -85,7 +91,10 @@ export class Tank {
             UpdateTankPositionLevel1(player, this, type, levels, Bullet, scene);
         } else if(type === 2 || type === 3) {
             UpdateTankPositionLevel2(player, this, type, levels, Bullet, scene, oTank, cannon);
+        } else if(type === 4 || type === 5 || type === 6) {
+            UpdateTankPositionLevel3(player, this, type-2, levels, Bullet, scene, oTank, oTank2, cannon);
         }
+
 
         // Pega as coordenadas x e z do tanque em relação ao mundo.
         let x = this.object.getWorldPosition(new THREE.Vector3()).x;
