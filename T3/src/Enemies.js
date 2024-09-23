@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { CheckCollisionsWithWall } from './Collisions.js';
+import { CriaBala } from './Bullet.js';
 
 // Níveis para a criação dos waypoints.
 let level1 = [
@@ -215,8 +216,8 @@ export function UpdateTankPositionLevel1(player, tank, type, level, Bullet = nul
 
         // Verifica se o tanque atira.
         if(shoot2) {
-            // Bullet.push(CriaBala(tank.object, player));
-            // scene.add(Bullet[Bullet.length-1].obj);
+            Bullet.push(CriaBala(tank.object, player, tank, tank, 1, 1));
+            scene.add(Bullet[Bullet.length-1].obj);
 
             // Após atirar faz um intervalo.
             shoot2 = false;

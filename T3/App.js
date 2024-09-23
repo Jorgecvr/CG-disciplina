@@ -10,6 +10,8 @@ import { Camera } from './src/Camera.js';
 import { Light } from './src/Light.js';
 import { UpdateEnemies } from './src/Enemies.js';
 
+import { CriaBala, BalaAnda } from './src/Bullet.js';
+
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
 var renderer = initRenderer("rgb(30, 30, 42)");     // Iniciando o renderer básico.
@@ -28,12 +30,14 @@ var levelType = 1;                                  // Armazena o tipo do nível
 // Adicionando os níveis a cena.
 scene.add(level1);
 scene.add(level2);
-scene.add(level3);
+// scene.add(level3);
 level3.visible = true;
+
+var Bullet = [];                                        // Vetor Balas.
 
 var player;                                         // Criando o player.
 player = new Tank(1, true);
-player.object.position.set(10, 0, 34);
+player.object.position.set(110, 0, 34);
 player.object.rotateY(THREE.MathUtils.degToRad(180));
 scene.add(player.object);
 
@@ -211,6 +215,14 @@ function keyboardPress() {
     }
     if(keyboard.down("space")) {
         console.log(player.object.position);
+        if( levelType == 1){
+            Bullet.push(CriaBala(player.object, enemy1, enemy2, enemy3, 1, 0));
+            scene.add(Bullet[Bullet.length-1].obj);
+        }
+        else if(levelType == 3){
+            Bullet.push(CriaBala(player.object, enemy2, enemy3, enemy4, 2, 0));
+            scene.add(Bullet[Bullet.length-1].obj);
+        }
     }
 };
 
@@ -322,11 +334,41 @@ function updateMovingWalls() {
     }
 };
 
+function BulletControl(Bullet) {
+    if(levelType == 1) {
+        if (Bullet.length === 0){
+            return 0;
+        }
+        else{
+            Bullet.forEach((bullet, index) => {
+                let remove = BalaAnda(bullet);
+                if(remove) { 
+                    scene.remove(bullet.obj);
+                    Bullet.splice(index, 1);
+                };
+            });
+        }
+    } else {
+        if (Bullet.length === 0){
+            return 0;
+        }
+        else{
+            Bullet.forEach((bullet, index) => {
+                let remove = BalaAnda(bullet);
+                if(remove) { 
+                    scene.remove(bullet.obj);
+                    Bullet.splice(index, 1);
+                };
+            });
+        }
+    }
+};
+
 // Função play chamada na render atualiza a lógica do jogo.
 function play() {
     keyboardPress();
     player.movePlayer(0, [level1, level2, level3]);
-    // enemy1.movePlayer(1, [level1, level2, level3], player);
+    // enemy1.movePlayer(1, [level1, level2, level3], player, Bullet, scene);
     // enemy2.movePlayer(2, [level1, level2, level3], player);
     // enemy3.movePlayer(3, [level1, level2, level3], player);
     // enemy4.movePlayer(4, [level1, level2, level3], player);
@@ -336,7 +378,10 @@ function play() {
     updateMovingWalls();
     updateGates();
     updateLevels();
+
+    BulletControl(Bullet);
 };
+
 
 render();
 function render() {
