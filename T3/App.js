@@ -11,6 +11,7 @@ import { Light } from './src/Light.js';
 import { UpdateEnemies } from './src/Enemies.js';
 
 import { CriaBala, BalaAnda } from './src/Bullet.js';
+import { PlayAudio } from './src/Audio.js';
 
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
@@ -28,16 +29,16 @@ var level3 = CreateLevel(3);                        // Criando o nível 3.
 var levelType = 1;                                  // Armazena o tipo do nível atual (começa em 1).
 
 // Adicionando os níveis a cena.
-scene.add(level1);
-scene.add(level2);
-// scene.add(level3);
+// scene.add(level1);
+// scene.add(level2);
+scene.add(level3);
 level3.visible = true;
 
 var Bullet = [];                                        // Vetor Balas.
 
 var player;                                         // Criando o player.
 player = new Tank(1, true);
-player.object.position.set(110, 0, 34);
+player.object.position.set(200, 0, 34);
 player.object.rotateY(THREE.MathUtils.degToRad(180));
 scene.add(player.object);
 
@@ -218,10 +219,18 @@ function keyboardPress() {
         if( levelType == 1){
             Bullet.push(CriaBala(player.object, enemy1, enemy2, enemy3, 1, 0));
             scene.add(Bullet[Bullet.length-1].obj);
+            PlayAudio(1);
         }
         else if(levelType == 3){
             Bullet.push(CriaBala(player.object, enemy2, enemy3, enemy4, 2, 0));
             scene.add(Bullet[Bullet.length-1].obj);
+            PlayAudio(1);
+        }
+        else if(levelType == 5){
+            Bullet.push(CriaBala(player.object, enemy4, enemy5, enemy6, 3, 0));
+            scene.add(Bullet[Bullet.length-1].obj);
+            PlayAudio(0, 0.5);
+            PlayAudio(3, 0.1);
         }
     }
 };
@@ -369,11 +378,11 @@ function play() {
     keyboardPress();
     player.movePlayer(0, [level1, level2, level3]);
     // enemy1.movePlayer(1, [level1, level2, level3], player, Bullet, scene);
-    // enemy2.movePlayer(2, [level1, level2, level3], player);
-    // enemy3.movePlayer(3, [level1, level2, level3], player);
-    // enemy4.movePlayer(4, [level1, level2, level3], player);
-    // enemy5.movePlayer(5, [level1, level2, level3], player);
-    // enemy6.movePlayer(6, [level1, level2, level3], player);
+    // enemy2.movePlayer(2, [level1, level2, level3], player, Bullet, scene, enemy3);
+    // enemy3.movePlayer(3, [level1, level2, level3], player, Bullet, scene, enemy2);
+    enemy4.movePlayer(4, [level1, level2, level3], player, Bullet, scene, enemy5, enemy6);
+    enemy5.movePlayer(5, [level1, level2, level3], player, Bullet, scene, enemy4, enemy6);
+    enemy6.movePlayer(6, [level1, level2, level3], player, Bullet, scene, enemy4, enemy5);
     camera.update(player.object.getWorldPosition(new THREE.Vector3));
     updateMovingWalls();
     updateGates();
