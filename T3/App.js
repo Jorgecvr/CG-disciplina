@@ -12,6 +12,7 @@ import { UpdateEnemies } from './src/Enemies.js';
 
 import { CriaBala, BalaAnda } from './src/Bullet.js';
 import { PlayAudio } from './src/Audio.js';
+// import { GodMode } from './src/Tank.js';
 
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
@@ -214,6 +215,9 @@ function keyboardPress() {
     if(keyboard.down("N")) {
         moveGates[3] = 1;
     }
+    // if(keyboard.down("G")){
+    //     GodMode();
+    // }
     if(keyboard.down("space")) {
         console.log(player.object.position);
         if( levelType == 1){
@@ -229,8 +233,7 @@ function keyboardPress() {
         else if(levelType == 5){
             Bullet.push(CriaBala(player.object, enemy4, enemy5, enemy6, 3, 0));
             scene.add(Bullet[Bullet.length-1].obj);
-            PlayAudio(0, 0.5);
-            PlayAudio(3, 0.1);
+            PlayAudio(1, 0.5);
         }
     }
 };
@@ -251,15 +254,17 @@ function updateLevels() {
     }
 };
 
-// Função de atualização dos portões.
+
 var moveGates = [0, 0, 0, 0];
 function updateGates() {
     // Portão 1, do mapa 1 para o 2.
     if(moveGates[0] === 1) {
         level1.children[2].position.y -= 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[0] === 2 && levelType === 2) {
         level1.children[2].position.y += 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
     }
     if(level1.children[2].position.y < -3.5) moveGates[0] = 2;
     if(level1.children[2].position.y > 0) moveGates[0] = 0;
@@ -267,9 +272,11 @@ function updateGates() {
     // Portão 2, do mapa 1 para o 2.
     if(moveGates[1] === 1) {
         level2.children[2].position.y -= 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[1] === 2 && levelType === 3) {
         level2.children[2].position.y += 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
     }
     if(level2.children[2].position.y < -3.5) moveGates[1] = 2;
     if(level2.children[2].position.y > 0) moveGates[1] = 0;
@@ -277,23 +284,28 @@ function updateGates() {
     // Portão 1, do mapa 2 para o 3.
     if(moveGates[2] === 1) {
         level2.children[3].position.y -= 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[2] === 2 && levelType === 4) {
         level2.children[3].position.y += 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
     }
     if(level2.children[3].position.y < -3.5) moveGates[2] = 2;
     if(level2.children[3].position.y > 0) moveGates[2] = 0;
-    
+
     // Portão 3, do mapa 2 para o 3.
     if(moveGates[3] === 1) {
         level3.children[3].position.y -= 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[3] === 2 && levelType === 5) {
         level3.children[3].position.y += 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
     }
     if(level3.children[3].position.y < -3.5) moveGates[3] = 2;
     if(level3.children[3].position.y > 0) moveGates[3] = 0;
 };
+
     
 // Função de atualização das paredes móveis.
 var wallsDirections = [0, 0, 0];

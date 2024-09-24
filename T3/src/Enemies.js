@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CheckCollisionsWithWall } from './Collisions.js';
 import { CriaBala } from './Bullet.js';
+import { PlayAudio } from './Audio.js';
 
 // Níveis para a criação dos waypoints.
 let level1 = [
@@ -459,6 +460,7 @@ export function UpdateTankPositionLevel2(player, tank, type, levels, Bullet = nu
             if(shoot2) {
                 Bullet.push(CriaBala(tank.object, player, oTank, oTank /*Cannon*/, 2, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
+                PlayAudio(2, 0.5);
 
                 // Após atirar faz um intervalo.
                 shoot2 = false;
@@ -603,6 +605,7 @@ export function UpdateTankPositionLevel2(player, tank, type, levels, Bullet = nu
             if(shoot3) {
                 Bullet.push(CriaBala(tank.object, player, oTank, oTank /*Cannon*/, 2, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
+                PlayAudio(2, 0.5);
 
                 // Após atirar faz um intervalo.
                 shoot3 = false;
@@ -872,6 +875,7 @@ export function UpdateTankPositionLevel3(player, tank, type, levels, Bullet = nu
             if(shoot2) {
                 Bullet.push(CriaBala(tank.object, player, oTank, oTank2, 3, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
+                PlayAudio(2, 0.5);
 
                 // Após atirar faz um intervalo.
                 shoot2 = false;
@@ -1021,6 +1025,7 @@ export function UpdateTankPositionLevel3(player, tank, type, levels, Bullet = nu
             if(shoot3) {
                 Bullet.push(CriaBala(tank.object, player, oTank, oTank2, 3, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
+                PlayAudio(2, 0.5);
 
                 // Após atirar faz um intervalo.
                 shoot3 = false;
@@ -1170,6 +1175,7 @@ export function UpdateTankPositionLevel3(player, tank, type, levels, Bullet = nu
             if(shoot4) {
                 Bullet.push(CriaBala(tank.object, player, oTank, oTank2, 3, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
+                PlayAudio(2, 0.5);
 
                 // Após atirar faz um intervalo.
                 shoot4 = false;
