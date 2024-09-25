@@ -57,13 +57,13 @@ export class Tank {
             if(type === 1) color = 'rgb(205, 50, 50)';
             else if(type === 2) color = 'rgb(50, 50, 205)';
             else if(type === 3) color = 'rgb(130, 7, 5)';
-            else if(type === 4) color = 'rgb(50, 110, 240)';
+            else if(type === 4) color = 'rgb(105, 150, 150)';
 
             obj.traverse((child) => {
                 if(!isPlayer) {
                     child.material = new THREE.MeshPhongMaterial({
                         color: color,
-                        shininess: "30",
+                        shininess: "200",
                         specular: "rgb(255, 255, 255)"
                     });
                 } 
@@ -91,7 +91,7 @@ export class Tank {
 
     // Método para "matar" o tanque.
     kill(scene) {
-        this.life = 0;
+        this.life = 1000;
         scene.remove(this.object);
         scene.remove(this.lifeBar);
         this.object.position.set(-200, -200, -200);

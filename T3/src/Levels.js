@@ -114,7 +114,7 @@ function createLevel(levelMatrix, levelType, textures) {
 
     for(let i = 0; i < levelMatrix.length; i++) {
         for(let j = 0; j < levelMatrix[i].length; j++) {
-            if(levelMatrix[i][j] === 0 || levelMatrix[i][j] === 5 || levelMatrix[i][j] === 6 || levelMatrix[i][j] === 7) {
+            if(levelMatrix[i][j] === 0 || levelMatrix[i][j] === 4 || levelMatrix[i][j] === 5 || levelMatrix[i][j] === 6 || levelMatrix[i][j] === 7) {
                 // Cria o bloco do chão.
                 const block = createFloor(j*4 + larg, i*4 + comp, levelType, textures);
                 floor.add(block);
@@ -133,6 +133,12 @@ function createLevel(levelMatrix, levelType, textures) {
                 // Cria o bloco do corredor.
                 const block = createHall(j*4 + larg, i*4 + comp, levelType, textures);
                 hall.add(block);
+            }
+            else if(levelMatrix[i][j] === 4) {
+                // Cria bloco de apoio à colisão do canhão.
+                const block = createWall(j*4 + larg, i*4 + comp, levelType, textures);
+                block.visible = false;
+                wall.add(block);
             }
 
             if(levelType === 2 || levelType === 3) {

@@ -9,6 +9,8 @@ import { CreateLevel } from './src/Levels.js';
 import { Camera } from './src/Camera.js';
 import { Light } from './src/Light.js';
 import { UpdateEnemies } from './src/Enemies.js';
+import { Cannon } from './src/Cannon.js';
+import { CannonControl } from './src/CannonControl.js';
 
 import { CriaBala, BalaAnda } from './src/Bullet.js';
 import { PlayAudio } from './src/Audio.js';
@@ -17,6 +19,9 @@ import { PlayAudio } from './src/Audio.js';
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
 var renderer = initRenderer("rgb(30, 30, 42)");     // Iniciando o renderer básico.
+var camera = new Camera(renderer);                  // Criando a câmera.
+camera.camera.position.set(10, 60, 70);
+camera.camera.lookAt(10, 0, 25);
 
 // Adicionando a skybox.
 const textureLoader = new THREE.TextureLoader();
@@ -24,153 +29,318 @@ let textureEquirec = textureLoader.load('./assets/textures/skybox.jpg');
 textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
 scene.background = textureEquirec;
 
-var level1 = CreateLevel(1);                        // Criando o nível 1.
-var level2 = CreateLevel(2);                        // Criando o nível 2.
-var level3 = CreateLevel(3);                        // Criando o nível 3.
-var levelType = 1;                                  // Armazena o tipo do nível atual (começa em 1).
-
-// Adicionando os níveis a cena.
-// scene.add(level1);
-// scene.add(level2);
-scene.add(level3);
-level3.visible = true;
-
-var Bullet = [];                                        // Vetor Balas.
-
-var player;                                         // Criando o player.
-player = new Tank(1, true);
-player.object.position.set(200, 0, 34);
-player.object.rotateY(THREE.MathUtils.degToRad(180));
-scene.add(player.object);
-
-// Criando os tanques inimigos.
-// Nível 1.
-var enemy1 = new Tank(2, false);
-enemy1.object.position.set(54, 0, 34);
-enemy1.object.rotateY(THREE.MathUtils.degToRad(180));
-scene.add(enemy1.object);
-
-// Nível 2.
-var enemy2 = new Tank(1, false);
-enemy2.object.position.set(144, 0, 34);
-enemy2.object.rotateY(THREE.MathUtils.degToRad(180));
-scene.add(enemy2.object);
-var enemy3 = new Tank(2, false);
-enemy3.object.position.set(144, 0, 10);
-enemy3.object.rotateY(THREE.MathUtils.degToRad(-90));
-scene.add(enemy3.object);
-
-// Nível 3.
-var enemy4 = new Tank(3, false);
-enemy4.object.position.set(208, 0, 0);
-scene.add(enemy4.object);
-var enemy5 = new Tank(4, false);
-enemy5.object.position.set(228, 0, 38);
-enemy5.object.rotateY(THREE.MathUtils.degToRad(180));
-scene.add(enemy5.object);
-var enemy6 = new Tank(2, false);
-enemy6.object.position.set(248, 0, 0);
-scene.add(enemy6.object);
-
-// Atualiza os valores inicias da função que movimente os tanques adversários.
-UpdateEnemies();
-
 // Luz ambiente geral.
-var ambientLight = new THREE.AmbientLight("rgb(20, 20, 20)");   
+var ambientLight = new THREE.AmbientLight("rgb(30, 30, 30)");   
     ambientLight.castShadow = false;
     scene.add(ambientLight);
 
-// Luz direcional do nível 1.
-var directionalLightLevel1 = new THREE.DirectionalLight("white", 0.7);
-    directionalLightLevel1.position.set(64, 30, 0);
-    scene.add(directionalLightLevel1);
-    scene.add(directionalLightLevel1.target);
-    directionalLightLevel1.target.position.set(50, 5, 16);
-    directionalLightLevel1.castShadow = true;
+// Vetor Balas.
+var Bullet = [];
 
-// Definindo o mapa de sombras do primeiro nível.
-const shadow1 = directionalLightLevel1.shadow;
-    shadow1.mapSize.width = 2048;
-    shadow1.mapSize.height = 2048;
-    shadow1.camera.near = 1;
-    shadow1.camera.far = 100;
-    shadow1.camera.left = -28;
-    shadow1.camera.right = 46;
-    shadow1.camera.bottom = -24;
-    shadow1.camera.top = 36;
-
-// Luz direcional no nível 3.
-var directionalLightLevel3 = new THREE.DirectionalLight("white", 0.4);
-    directionalLightLevel3.position.set(164, 40, -8);
-    scene.add(directionalLightLevel3);
-    scene.add(directionalLightLevel3.target);
-    directionalLightLevel3.target.position.set(190, 5, 16);
-    directionalLightLevel3.castShadow = true;
-    directionalLightLevel3.visible = false;
-
-// Definindo o mapa de sombras do terceiro nível.
-const shadow3 = directionalLightLevel3.shadow;
-    shadow3.mapSize.width = 2048;
-    shadow3.mapSize.height = 2048;
-    shadow3.camera.near = 1;
-    shadow3.camera.far = 100;
-    shadow3.camera.left = -55;
-    shadow3.camera.right = 40;
-    shadow3.camera.bottom = -27;
-    shadow3.camera.top = 50;
+// Luzes direcionais.
+var directionalLight1;
+var directionalLight2;
+var directionalLight3;
 
 // Array para as luminárias.
 var spotLights = [];
 
-// Inserindo os spotLights.
-// Luminária 1.
-let spotLight1 = new Light();
-spotLight1.object.position.set(150, 0.2, 42);
-spotLight1.object.rotateY(THREE.MathUtils.degToRad(135));
-spotLight1.spotLight.position.set(147.3, 21.8, 39.3);
-spotLight1.spotLight.target.position.set(141, 0.2, 32);
-spotLight1.spotLight.target.updateMatrixWorld();
-scene.add(spotLight1.object);
-scene.add(spotLight1.spotLight);
-spotLights.push(spotLight1);
+// Criando o player.
+var player;
 
-// Luminária 2.
-let spotLight2 = new Light();
-spotLight2.object.position.set(86, 0.2, 2);
-spotLight2.object.rotateY(THREE.MathUtils.degToRad(-45));
-spotLight2.spotLight.position.set(88.8, 21.8, 4.8);
-spotLight2.spotLight.target.position.set(95, 0.2, 11);
-spotLight2.spotLight.target.updateMatrixWorld();
-scene.add(spotLight2.object);
-scene.add(spotLight2.spotLight);
-spotLights.push(spotLight2);
+// Variáveis para os tanques inimigos.
+var enemy1;
+var enemy2;
+var enemy3;
+var enemy4;
+var enemy5;
+var enemy6;
 
-// Luminária 3.
-let spotLight3 = new Light();
-spotLight3.object.position.set(118, 0.2, 42.7);
-spotLight3.object.rotateY(THREE.MathUtils.degToRad(90));
-spotLight3.spotLight.position.set(118, 21.8, 38.9);
-spotLight3.spotLight.target.position.set(118, 0.2, 34.5);
-spotLight3.spotLight.target.updateMatrixWorld();
-spotLight3.spotLight.angle = THREE.MathUtils.degToRad(24);
-scene.add(spotLight3.object);
-scene.add(spotLight3.spotLight);
-spotLights.push(spotLight3);
+// Variável para armazenar o canhão.
+var cannon;
+var cannonControl; // Iniciando o controle do canhão.
 
-// Luminária 4.
-let spotLight4 = new Light();
-spotLight4.object.position.set(118, 0.2, 1.3);
-spotLight4.object.rotateY(THREE.MathUtils.degToRad(-90));
-spotLight4.spotLight.position.set(118, 21.8, 5.2);
-spotLight4.spotLight.target.position.set(118, 0.2, 9.5)
-spotLight4.spotLight.target.updateMatrixWorld();
-spotLight4.spotLight.angle = THREE.MathUtils.degToRad(24);
-scene.add(spotLight4.object);
-scene.add(spotLight4.spotLight);
-spotLights.push(spotLight4);
+// Variáveis para controle de tempo do canhão.
+var interval = 3000; // 3 segundos.
+var lastTime = 0;
+var shoot = false;
 
-var camera = new Camera(renderer);                  // Criando a câmera.
-camera.init(player.object.getWorldPosition(new THREE.Vector3));
+// Armazena o tipo do nível atual (começa em 1).
+var levelType = 5;                                  
+var level1 = CreateLevel(1);     // Criando o nível 1.
+    level1.visible = false;
+    scene.add(level1);
+var level2 = CreateLevel(2);     // Criando o nível 2.
+    level2.visible = false;
+    scene.add(level2);
+var level3 = CreateLevel(3);     // Criando o nível 3.
+    level3.visible = false;
+    scene.add(level3);
+
+// Função que carrega os níveis.
+function loadLevels(level, resetPlayer) {
+    if(level === 1) {
+        level1.visible = true;
+
+        if(resetPlayer) {
+            player = new Tank(1, true);
+            player.object.position.set(10, 0, 34);
+            player.object.rotateY(THREE.MathUtils.degToRad(180));
+            player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
+            player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
+        }
+
+        enemy1 = new Tank(2, false);
+        enemy1.object.position.set(54, 0, 34);
+        enemy1.object.rotateY(THREE.MathUtils.degToRad(180));
+        enemy1.lifeBar.position.set(enemy1.object.position.x, enemy1.object.position.y + 5, enemy1.object.position.z);
+        enemy1.lifeBar.scale.set(enemy1.life/1000, enemy1.lifeBar.scale.y, enemy1.lifeBar.scale.z);
+
+        UpdateEnemies();
+
+        // Luz direcional do nível 1.
+        directionalLight1 = new THREE.DirectionalLight("white", 0.5);
+        directionalLight1.position.set(-10, 50, -10);
+        scene.add(directionalLight1);
+        scene.add(directionalLight1.target);
+        directionalLight1.target.position.set(32, 2, 21);
+        directionalLight1.castShadow = true;
+
+        // Definindo o mapa de sombras do primeiro nível.
+        const shadow1 = directionalLight1.shadow;
+        shadow1.mapSize.width = 2048;
+        shadow1.mapSize.height = 2048;
+        shadow1.camera.near = 1;
+        shadow1.camera.far = 100;
+        shadow1.camera.left = -50;
+        shadow1.camera.right = 50;
+        shadow1.camera.bottom = -50;
+        shadow1.camera.top = 50;
+        
+        if(resetPlayer) {
+            scene.add(player.object);
+            scene.add(player.lifeBar);
+        }
+        scene.add(enemy1.object);
+        scene.add(enemy1.lifeBar);
+    }
+    if(level === 2) {
+        level2.visible = true;
+
+        if(resetPlayer) {
+            player = new Tank(1, true);
+            player.object.position.set(92, 0, 8);
+            player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
+            player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
+        }
+
+        enemy2 = new Tank(1, false);
+        enemy2.object.position.set(144, 0, 34);
+        enemy2.object.rotateY(THREE.MathUtils.degToRad(180));
+        enemy2.lifeBar.position.set(enemy2.object.position.x, enemy2.object.position.y + 5, enemy2.object.position.z);
+        enemy2.lifeBar.scale.set(enemy2.life/1000, enemy2.lifeBar.scale.y, enemy2.lifeBar.scale.z);
+
+        enemy3 = new Tank(2, false);
+        enemy3.object.position.set(144, 0, 10);
+        enemy3.object.rotateY(THREE.MathUtils.degToRad(-90));
+        enemy3.lifeBar.position.set(enemy3.object.position.x, enemy3.object.position.y + 5, enemy3.object.position.z);
+        enemy3.lifeBar.scale.set(enemy3.life/1000, enemy3.lifeBar.scale.y, enemy3.lifeBar.scale.z);
+
+        // Inserindo a luz direcional
+        directionalLight2 = new THREE.DirectionalLight("rgb(80, 80, 80)", 2);
+        directionalLight2.position.copy(new THREE.Vector3(2, 1, 1));
+        directionalLight2.castShadow = false;
+        scene.add(directionalLight2);
+
+        // Inserindo os spotLights.
+        // Luminária 1.
+        let spotLight1 = new Light();
+        spotLight1.object.position.set(150, 0.2, 42);
+        spotLight1.object.rotateY(THREE.MathUtils.degToRad(135));
+        spotLight1.spotLight.position.set(147.3, 21.8, 39.3);
+        spotLight1.spotLight.target.position.set(141, 0.2, 32);
+        spotLight1.spotLight.target.updateMatrixWorld();
+        scene.add(spotLight1.object);
+        scene.add(spotLight1.spotLight);
+        spotLights.push(spotLight1);
+
+        // Luminária 2.
+        let spotLight2 = new Light();
+        spotLight2.object.position.set(86, 0.2, 2);
+        spotLight2.object.rotateY(THREE.MathUtils.degToRad(-45));
+        spotLight2.spotLight.position.set(88.8, 21.8, 4.8);
+        spotLight2.spotLight.target.position.set(95, 0.2, 11);
+        spotLight2.spotLight.target.updateMatrixWorld();
+        scene.add(spotLight2.object);
+        scene.add(spotLight2.spotLight);
+        spotLights.push(spotLight2);
+
+        // Luminária 3.
+        let spotLight3 = new Light();
+        spotLight3.object.position.set(118, 0.2, 42.7);
+        spotLight3.object.rotateY(THREE.MathUtils.degToRad(90));
+        spotLight3.spotLight.position.set(118, 21.8, 38.9);
+        spotLight3.spotLight.target.position.set(118, 0.2, 34.5);
+        spotLight3.spotLight.target.updateMatrixWorld();
+        spotLight3.spotLight.angle = THREE.MathUtils.degToRad(24);
+        scene.add(spotLight3.object);
+        scene.add(spotLight3.spotLight);
+        spotLights.push(spotLight3);
+
+        // Luminária 4.
+        let spotLight4 = new Light();
+        spotLight4.object.position.set(118, 0.2, 1.3);
+        spotLight4.object.rotateY(THREE.MathUtils.degToRad(-90));
+        spotLight4.spotLight.position.set(118, 21.8, 5.2);
+        spotLight4.spotLight.target.position.set(118, 0.2, 9.5)
+        spotLight4.spotLight.target.updateMatrixWorld();
+        spotLight4.spotLight.angle = THREE.MathUtils.degToRad(24);
+        scene.add(spotLight4.object);
+        scene.add(spotLight4.spotLight);
+        spotLights.push(spotLight4);
+
+        // Inserindo Canhão em cena.
+        cannon = new Cannon();
+        cannon.object.scale.multiplyScalar(1.5);
+        cannon.object.position.set(118, 3, 22);
+        scene.add(cannon.object);
+
+        // Inicializando o controle do canhão após a definição do canhão.
+        cannonControl = new CannonControl(cannon, [player, enemy2, enemy3]);
+
+        UpdateEnemies();
+
+        if(resetPlayer) {
+            scene.add(player.object);
+            scene.add(player.lifeBar);
+        }
+        scene.add(enemy2.object);
+        scene.add(enemy2.lifeBar);
+        scene.add(enemy3.object);
+        scene.add(enemy3.lifeBar);
+    }
+    else if(level === 3) {
+        level3.visible = true;
+
+        if(resetPlayer) {
+            player = new Tank(1, true);
+            player.object.position.set(182, 0, 20);
+            player.object.rotateY(THREE.MathUtils.degToRad(90));
+            player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
+            player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
+        }
+
+        enemy4 = new Tank(3, false);
+        enemy4.object.position.set(208, 0, 0);
+        enemy4.lifeBar.position.set(enemy4.object.position.x, enemy4.object.position.y + 5, enemy4.object.position.z);
+        enemy4.lifeBar.scale.set(enemy4.life/1000, enemy4.lifeBar.scale.y, enemy4.lifeBar.scale.z);
+
+        enemy5 = new Tank(4, false);
+        enemy5.object.position.set(228, 0, 38);
+        enemy5.object.rotateY(THREE.MathUtils.degToRad(180));
+        enemy5.lifeBar.position.set(enemy5.object.position.x, enemy5.object.position.y + 5, enemy5.object.position.z);
+        enemy5.lifeBar.scale.set(enemy5.life/1000, enemy5.lifeBar.scale.y, enemy5.lifeBar.scale.z);
+        
+        enemy6 = new Tank(2, false);
+        enemy6.object.position.set(248, 0, 0);
+        enemy6.lifeBar.position.set(enemy6.object.position.x, enemy6.object.position.y + 5, enemy6.object.position.z);
+        enemy6.lifeBar.scale.set(enemy6.life/1000, enemy6.lifeBar.scale.y, enemy6.lifeBar.scale.z);
+
+        UpdateEnemies();
+
+        // Luz direcional do nível 1.
+        directionalLight3 = new THREE.DirectionalLight("white", 0.8);
+        directionalLight3.position.set(160, 50, -16);
+        scene.add(directionalLight3);
+        scene.add(directionalLight3.target);
+        directionalLight3.target.position.set(216, 2, 18);
+        directionalLight3.castShadow = true;
+
+        // Definindo o mapa de sombras do primeiro nível.
+        const shadow = directionalLight3.shadow;
+        shadow.mapSize.width = 2048;
+        shadow.mapSize.height = 2048;
+        shadow.camera.near = 1;
+        shadow.camera.far = 100;
+        shadow.camera.left = -100;
+        shadow.camera.right = 100;
+        shadow.camera.bottom = -100;
+        shadow.camera.top = 100;
+
+        if(resetPlayer) {
+            scene.add(player.object);
+            scene.add(player.lifeBar);
+        }
+
+        scene.add(enemy4.object);
+        scene.add(enemy4.lifeBar);
+        scene.add(enemy5.object);
+        scene.add(enemy5.lifeBar);
+        scene.add(enemy6.object);
+        scene.add(enemy6.lifeBar);
+    }
+};
+
+// Função que descarrega os níveis.
+function unloadLevels(level, loadLevel, resetPlayer, resetLevel) {
+
+    if(resetPlayer) {
+        scene.remove(player.object);
+        scene.remove(player.lifeBar);
+    }
+    if(level === 1) {
+        level1.visible = false;
+
+        
+        scene.remove(enemy1.object);
+        scene.remove(enemy1.lifeBar);
+
+        Bullet.forEach((bullet) => {
+            scene.remove(bullet.obj);
+        });
+
+        scene.remove(directionalLight1);
+    }
+    else if(level === 2) {
+        level2.visible = false;
+
+        scene.remove(enemy2.object);
+        scene.remove(enemy2.lifeBar);
+        scene.remove(enemy3.object);
+        scene.remove(enemy3.lifeBar);
+
+        Bullet.forEach((bullet) => {
+            scene.remove(bullet.obj);
+        });
+
+        scene.remove(directionalLight2);
+
+        spotLights.forEach((spot) => {
+            scene.remove(spot.spotLight);
+            scene.remove(spot.object);
+        });
+
+        scene.remove(cannon.object);
+    }
+    else if(level === 3) {
+        level3.visible = false;
+
+        scene.remove(enemy4.object);
+        scene.remove(enemy4.lifeBar);
+        scene.remove(enemy5.object);
+        scene.remove(enemy5.lifeBar);
+        scene.remove(enemy6.object);
+        scene.remove(enemy6.lifeBar);
+
+        Bullet.forEach((bullet) => {
+            scene.remove(bullet.obj);
+        });
+    }
+
+    if(resetLevel) {
+        loadLevels(loadLevel, resetPlayer);
+    }
+};
 
 // Redimensionamento da câmera utilizando zoom.
 var zoom = 1;
@@ -221,14 +391,14 @@ function keyboardPress() {
     //     GodMode();
     // }
     if(keyboard.down("space")) {
-        console.log(player.object.position);
+        // console.log(player.object.position);
         if( levelType == 1){
-            Bullet.push(CriaBala(player.object, enemy1, enemy2, enemy3, 1, 0));
+            Bullet.push(CriaBala(player.object, enemy1, enemy1, enemy1, 1, 0));
             scene.add(Bullet[Bullet.length-1].obj);
             PlayAudio(1);
         }
         else if(levelType == 3){
-            Bullet.push(CriaBala(player.object, enemy2, enemy3, enemy4, 2, 0));
+            Bullet.push(CriaBala(player.object, enemy2, enemy3, enemy3, 2, 0));
             scene.add(Bullet[Bullet.length-1].obj);
             PlayAudio(1);
         }
@@ -237,6 +407,9 @@ function keyboardPress() {
             scene.add(Bullet[Bullet.length-1].obj);
             PlayAudio(1, 0.5);
         }
+    }
+    if(keyboard.down("K")) {
+        player.setLife(0.0);
     }
 };
 
@@ -391,12 +564,55 @@ function BulletControl(Bullet) {
 function play() {
     keyboardPress();
     player.movePlayer(0, [level1, level2, level3]);
-    // enemy1.movePlayer(1, [level1, level2, level3], player, Bullet, scene);
+    player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
+    if(player.lifeBar.scale.x > 0) player.lifeBar.scale.set(player.life / 1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
+
+    // Verifica se o player morreu.
+    if(player.getLife() === 0) {
+        if(levelType === 1) {
+            unloadLevels(1, 1, true, true);
+        }
+        else if(levelType === 3) {
+            unloadLevels(2, 2, true, true);
+        }
+        else if(levelType === 5) {
+            unloadLevels(3, 3, true, true);
+        }
+    }
+
+    if(levelType === 1) {
+        // Movimento do inimigo 1.
+        // enemy1.movePlayer(1, [level1, level2, level3], player, Bullet, scene);
+
+        // Atualiza as vidas dos tanques.
+        enemy1.lifeBar.position.set(enemy1.object.position.x, enemy1.object.position.y + 5, enemy1.object.position.z);
+        if(enemy1.lifeBar.scale.x > 0) enemy1.lifeBar.scale.set(enemy1.life / 1000, enemy1.lifeBar.scale.y, enemy1.lifeBar.scale.z);
+
+        // Verifica se o inimigo 1 morreu.
+        if(enemy1.getLife() === 0) {
+            enemy1.kill(scene);
+            moveGates[0] = 1;
+            loadLevels(2, false);
+        }
+    }
+    else if(levelType === 3) {
+        // Atualizando tempo de tiro.
+        const currentTime = performance.now();
+        shoot = false;
+        if(currentTime - lastTime >= interval) {
+            shoot = true;
+            lastTime = currentTime;
+        }
+
+        // Atualizando a rotação do canhão.
+        cannonControl.updateCannonRotation(Bullet, shoot, player, enemy2, enemy3, scene);
+    }
+
     // enemy2.movePlayer(2, [level1, level2, level3], player, Bullet, scene, enemy3);
     // enemy3.movePlayer(3, [level1, level2, level3], player, Bullet, scene, enemy2);
-    enemy4.movePlayer(4, [level1, level2, level3], player, Bullet, scene, enemy5, enemy6);
-    enemy5.movePlayer(5, [level1, level2, level3], player, Bullet, scene, enemy4, enemy6);
-    enemy6.movePlayer(6, [level1, level2, level3], player, Bullet, scene, enemy4, enemy5);
+    // enemy4.movePlayer(4, [level1, level2, level3], player, Bullet, scene, enemy5, enemy6);
+    // enemy5.movePlayer(5, [level1, level2, level3], player, Bullet, scene, enemy4, enemy6);
+    // enemy6.movePlayer(6, [level1, level2, level3], player, Bullet, scene, enemy4, enemy5);
     camera.update(player.object.getWorldPosition(new THREE.Vector3));
     updateMovingWalls();
     updateGates();
@@ -405,7 +621,7 @@ function play() {
     BulletControl(Bullet);
 };
 
-
+loadLevels(3, true);
 render();
 function render() {
     play();
