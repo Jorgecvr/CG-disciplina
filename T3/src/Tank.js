@@ -124,14 +124,28 @@ export class Tank {
             if(this.lastDirection == 1) {
                 levelLimits.minX -= 0.5;
                 levelLimits.maxX += 0.5;
-                levelLimits.minZ -= 0.5;
+                levelLimits.minZ -= 0.7;
                 levelLimits.maxZ += 0.5;
             }
         }
 
         // Aplica a restrição com base nos limites do nível (método clamp restrige o valor da posição).
         this.object.position.x = THREE.MathUtils.clamp(x, levelLimits.minX, levelLimits.maxX);
-        this.object.position.z = THREE.MathUtils.clamp(z, levelLimits.minZ, levelLimits.maxZ);       
+        this.object.position.z = THREE.MathUtils.clamp(z, levelLimits.minZ, levelLimits.maxZ);
+        
+        // Desliza o tanque se colide com as paredes que mexem.
+        if(this.object.position.z > 31 || this.object.position.z < 9) {
+            if(this.object.position.x >= 192 && this.object.position.x <= 196
+              || this.object.position.x >= 212 && this.object.position.x <= 216
+              || this.object.position.x >= 232 && this.object.position.x <= 236) {
+                this.object.position.x -= 0.6;
+            }
+            else if(this.object.position.x > 196 && this.object.position.x <= 200
+                || this.object.position.x > 216 && this.object.position.x <= 220
+                || this.object.position.x > 236 && this.object.position.x <= 240) {
+                this.object.position.x += 0.6;
+            }
+        }
     };
 
     // Função que atualiza os limites de movimento baseado na colisão.

@@ -26,14 +26,14 @@ var level3 = CreateLevel(3);                        // Criando o nível 3.
 var levelType = 1;                                  // Armazena o tipo do nível atual (começa em 1).
 
 // Adicionando os níveis a cena.
-scene.add(level1);
-scene.add(level2);
+// scene.add(level1);
+// scene.add(level2);
 scene.add(level3);
 level3.visible = true;
 
 var player;                                         // Criando o player.
 player = new Tank(1, true);
-player.object.position.set(10, 0, 34);
+player.object.position.set(200, 0, 34);
 player.object.rotateY(THREE.MathUtils.degToRad(180));
 scene.add(player.object);
 
@@ -163,6 +163,9 @@ scene.add(spotLight4.object);
 scene.add(spotLight4.spotLight);
 spotLights.push(spotLight4);
 
+var camera = new Camera(renderer);                  // Criando a câmera.
+camera.init(player.object.getWorldPosition(new THREE.Vector3));
+
 // Redimensionamento da câmera utilizando zoom.
 var zoom = 1;
 var lastWidth = window.innerWidth;
@@ -181,11 +184,10 @@ window.addEventListener('resize', function() {
     lastWidth = window.innerWidth;
 });
 
-var camera = new Camera(renderer);                  // Criando a câmera.
-    scene.add(camera.holder);                       // Adicionando o câmera holder.           
-    camera.holder.add(camera.camera);
-
-camera.init(player.object.getWorldPosition(new THREE.Vector3));
+// Adicionando evento que detecta o scrool do mouse.
+window.addEventListener('wheel', function(event) {
+    camera.handleUpdate(event);
+});
 
 // Função para verificar o pressionamento de teclas.
 function keyboardPress() {

@@ -14,22 +14,13 @@ export class Camera {
             this.orbitControls.enableDamping = true; // Movimento mais suave da câmera.
             this.orbitControls.dampingFactor = 0.1;
 
-        // Iniciando o cameraHolder.
-        this.holder = new THREE.Object3D();
-
         // Atributo para a posição da câmera.
         this.camPosition = this.camera.position.clone();
-
-        // Salva a distância inicial entre o player e a câmera
-        this.lastDistance;
     };
 
     init(player_position) {
-        this.camera.position.set(10, 60, 70);
-        // this.holder.position.set(0, -200, 0);
+        this.camera.position.set(player_position.x, 60, 70);
         this.camera.lookAt(player_position.x, 0, 25);
-
-        this.lastDistance = this.camera.position.z - player_position.z;
     };
 
     swapOrbitControls() {
@@ -42,15 +33,27 @@ export class Camera {
         }
     };
 
+    handleUpdate(event) {
+        if(!this.orbitControls.enabled) {
+            // Velocidade do zoom.
+            const zoomSpeed = 0.01;
+
+            // Ajusta o campo de visão com base no scroll.
+            this.camera.fov += event.deltaY * zoomSpeed;
+
+            // Define limites mínimo e máximo para o zoom.
+            this.camera.fov = THREE.MathUtils.clamp(this.camera.fov, 20, 70);
+
+            // Atualiza a projeção da câmera.
+            this.camera.updateProjectionMatrix();  
+
+        }
+    };
+
     update(player_position) {
-        this.holder.position.x = player_position.x - 10;
         // Câmera atualiza apenas quando o orbitControls está desligado.
         if(!this.orbitControls.enabled) {
-    
-            let dist = this.camera.position.z - player_position.z;
-            this.camera.translateZ((dist - this.lastDistance) / 2.5);
-            this.lastDistance = dist;
-
+            this.camera.position.x = player_position.x;
             this.camera.lookAt(player_position.x, 0, 25);
         }
     };
