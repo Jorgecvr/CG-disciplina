@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { PlayAudio } from './Audio.js';
 
-export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identificador){
+export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identificador, cannon = null){
 
     let WallCollision = 0;
     let AcertouInimigo = 0;
@@ -12,18 +12,27 @@ export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identific
     });
     const geometryBullet = new THREE.SphereGeometry( 0.3, 32, 32, 50 );  
     const bullet = new THREE.Mesh( geometryBullet, materialBullet );
+
     // Define a posição inicial da bala na posição do tanque
     var p = new THREE.Vector3(); 
     let speed = 0.5;
-    Atirador.getWorldPosition(p);
+    if(cannon != null){
+        Atirador.children[0].getWorldPosition(p);
+    } else Atirador.getWorldPosition(p);
     bullet.position.copy(p);
     bullet.position.y = 2.15;
 
     // Cálculo da direção inicial da bala com base na rotação do Atirador
     var direction = new THREE.Vector3(); 
     var AtiradorRotationMatrix = new THREE.Matrix4();
-    Atirador.matrixWorld.decompose(new THREE.Vector3(), Atirador.quaternion, new THREE.Vector3());
-    AtiradorRotationMatrix.makeRotationFromQuaternion(Atirador.quaternion);
+    if(cannon != null){
+        AtiradorRotationMatrix.makeRotationFromQuaternion(Atirador.children[0].quaternion);
+    }
+    else {
+        Atirador.matrixWorld.decompose(new THREE.Vector3(), Atirador.quaternion, new THREE.Vector3());
+        AtiradorRotationMatrix.makeRotationFromQuaternion(Atirador.quaternion);
+    }
+    
     // Define a direção inicial da bala no espaço local do Atirador (direção para frente)
     var localDirection = new THREE.Vector3(0, 0, 1);
     // Transforma a direção local da bala em uma direção global usando a rotação do Atirador
@@ -50,7 +59,7 @@ export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identific
 }
 
 export function BalaAnda(Bullet){
-    if (Bullet.removed) return 0;
+    if (Bullet.removed) return 1;
 
     // Move a bala na direção definida pela sua velocidade
     let step = Bullet.direction.clone().multiplyScalar(Bullet.speed);   
@@ -158,7 +167,8 @@ function checkCollisions(Bullet){
                 return 1;
             }
             else if(Inimigo3Collision){             // Acertou o Cannon  
-                WallCollision = 3;
+                Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
         }
@@ -256,6 +266,7 @@ function checkCollisions(Bullet){
             }
             else if(Inimigo2Collision){             // Acertou o Inimigo
                 Bullet.inimigo2.setLife(Bullet.inimigo2.getLife() - 100);
+                console.log("Teste");
                 Bullet.removed = true;
                 PlayAudio(3, 0.5);
                 return 1;

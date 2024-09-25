@@ -14,7 +14,7 @@ import { CannonControl } from './src/CannonControl.js';
 
 import { CriaBala, BalaAnda } from './src/Bullet.js';
 import { PlayAudio } from './src/Audio.js';
-// import { GodMode } from './src/Tank.js';
+
 
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
@@ -66,7 +66,7 @@ var lastTime = 0;
 var shoot = false;
 
 // Armazena o tipo do nível atual (começa em 1).
-var levelType = 5;                                  
+var levelType = 3;                                  
 var level1 = CreateLevel(1);     // Criando o nível 1.
     level1.visible = false;
     scene.add(level1);
@@ -387,9 +387,9 @@ function keyboardPress() {
     if(keyboard.down("N")) {
         moveGates[3] = 1;
     }
-    // if(keyboard.down("G")){
-    //     GodMode();
-    // }
+    if(keyboard.down("G")){
+        player.GodMode();
+    }
     if(keyboard.down("space")) {
         // console.log(player.object.position);
         if( levelType == 1){
@@ -398,7 +398,7 @@ function keyboardPress() {
             PlayAudio(1);
         }
         else if(levelType == 3){
-            Bullet.push(CriaBala(player.object, enemy2, enemy3, enemy3, 2, 0));
+            Bullet.push(CriaBala(player.object, enemy2, enemy3, cannon, 2, 0));
             scene.add(Bullet[Bullet.length-1].obj);
             PlayAudio(1);
         }
@@ -621,7 +621,7 @@ function play() {
     BulletControl(Bullet);
 };
 
-loadLevels(3, true);
+loadLevels(2, true);
 render();
 function render() {
     play();

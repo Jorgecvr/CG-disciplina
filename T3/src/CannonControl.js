@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-// import { CriaBala3 } from './Bullet.js';
+import { CriaBala } from './Bullet.js';
+import { PlayAudio } from './Audio.js';
 
 export class CannonControl {
     constructor(cannon, tanks) {
@@ -10,8 +11,8 @@ export class CannonControl {
     updateCannonRotation(Bullet, shoot, tank1, tank2, tank3, scene) {
         // Canhão atira.
         if(shoot) {
-            // Bullet.push(CriaBala3(this.cannon.object, tank1, tank2, tank3));
-            // scene.add(Bullet[Bullet.length-1].obj);
+            Bullet.push(CriaBala(this.cannon.object, tank1, tank2, tank3, 2, 2, 1));
+            scene.add(Bullet[Bullet.length-1].obj);
         }
 
         // Encontra o tanque mais próximo

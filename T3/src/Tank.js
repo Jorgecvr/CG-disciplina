@@ -10,17 +10,6 @@ import { CheckCollisionsWithWall } from './Collisions.js';
 // Importação da movimentação dos tanques inimigos.
 import { UpdateTankPositionLevel1, UpdateTankPositionLevel2, UpdateTankPositionLevel3 } from './Enemies.js';
 
-let IsGodMode = false;
-
-// export function GodMode(){
-//     IsGodMode = !IsGodMode;
-//     if(IsGodMode){
-//         this.setLife(Infinity);
-//     }
-//     else{
-//         this.setLife(100);
-//     }
-// }
 
 // Criação da classe Tank para montar e exportar o tanque.
 export class Tank {
@@ -34,6 +23,7 @@ export class Tank {
             this.box.position.y += 1.7;
             this.box.position.z += 0.3
             this.box.visible = false;
+            this.IsGodMode = false;
 
         // Criando a vida de cada tanque.
         this.life = 1000;
@@ -88,6 +78,16 @@ export class Tank {
     setLife(life){
         this.life = life;
     };
+
+    GodMode(){
+        this.IsGodMode = !this.IsGodMode;
+        if(this.IsGodMode){
+            this.setLife(99999999999999999999);
+        }
+        else{
+            this.setLife(100);
+        }
+    }
 
     // Método para "matar" o tanque.
     kill(scene) {

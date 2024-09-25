@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { CheckCollisionsWithWall } from './Collisions.js';
 import { CriaBala } from './Bullet.js';
 import { PlayAudio } from './Audio.js';
+import { Cannon } from './Cannon.js';
 
 // Níveis para a criação dos waypoints.
 let level1 = [
@@ -458,7 +459,7 @@ export function UpdateTankPositionLevel2(player, tank, type, levels, Bullet = nu
 
             // Verifica se o tanque atira.
             if(shoot2) {
-                Bullet.push(CriaBala(tank.object, player, oTank, oTank /*Cannon*/, 2, 1));
+                Bullet.push(CriaBala(tank.object, player, oTank, Cannon , 2, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
                 PlayAudio(2, 0.5);
 
@@ -603,7 +604,7 @@ export function UpdateTankPositionLevel2(player, tank, type, levels, Bullet = nu
 
             // Verifica se o tanque atira.
             if(shoot3) {
-                Bullet.push(CriaBala(tank.object, player, oTank, oTank /*Cannon*/, 2, 1));
+                Bullet.push(CriaBala(tank.object, player, oTank, Cannon , 2, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
                 PlayAudio(2, 0.5);
 
