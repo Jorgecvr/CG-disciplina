@@ -189,7 +189,7 @@ export function CreateLevel(level) {
         ground1: loadTexture('assets/textures/ground1.jpg'),
         ground2: loadTexture('assets/textures/ground2.jpg'),
         ground3: loadTexture('assets/textures/ground3.jpg'),
-        wall1: loadTexture('assets/textures/wall1.png'),
+        wall1: loadTexture('assets/textures/wall1.jpg'),
         wall2: loadTexture('assets/textures/wall2.jpg'),
         wall3: loadTexture('assets/textures/wall3.jpg'),
         wall4: loadTexture('assets/textures/wall4.jpg'),

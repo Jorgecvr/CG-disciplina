@@ -50,7 +50,7 @@ export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identific
 }
 
 export function BalaAnda(Bullet){
-    if (Bullet.removed) return 0;
+    if (Bullet.removed) return 1;
 
     // Move a bala na direção definida pela sua velocidade
     let step = Bullet.direction.clone().multiplyScalar(Bullet.speed);   
@@ -98,7 +98,6 @@ function checkCollisions(Bullet){
         
         // Cima
         if(bulletPosition.z < 4.5){
-            console.log("Aqui");
             collisionPlane = new THREE.Vector3(0,0,1);
         }
         // Baixo

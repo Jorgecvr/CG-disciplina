@@ -66,22 +66,20 @@ var lastTime = 0;
 var shoot = false;
 
 // Armazena o tipo do nível atual (começa em 1).
-var levelType = 5;                                  
+var levelType = 1;                                  
 var level1 = CreateLevel(1);     // Criando o nível 1.
-    level1.visible = false;
-    scene.add(level1);
 var level2 = CreateLevel(2);     // Criando o nível 2.
-    level2.visible = false;
-    scene.add(level2);
 var level3 = CreateLevel(3);     // Criando o nível 3.
-    level3.visible = false;
-    scene.add(level3);
+
+// Armazena os blocos a serem revelados ou retirados gradualmente.
+var blocksToReveal = [];
+var blocksToRemove = [];
 
 // Função que carrega os níveis.
 function loadLevels(level, resetPlayer) {
     if(level === 1) {
-        level1.visible = true;
-
+        scene.add(level1);
+    
         if(resetPlayer) {
             player = new Tank(1, true);
             player.object.position.set(10, 0, 34);
@@ -125,8 +123,15 @@ function loadLevels(level, resetPlayer) {
         scene.add(enemy1.lifeBar);
     }
     if(level === 2) {
-        level2.visible = true;
+        level2.traverse((child) => {
+            if(child instanceof THREE.Mesh) {
+                child.visible = false;
+                blocksToReveal.push(child);
+            }
+        });
 
+        scene.add(level2);
+        
         if(resetPlayer) {
             player = new Tank(1, true);
             player.object.position.set(92, 0, 8);
@@ -220,7 +225,14 @@ function loadLevels(level, resetPlayer) {
         scene.add(enemy3.lifeBar);
     }
     else if(level === 3) {
-        level3.visible = true;
+        level3.traverse((child) => {
+            if(child instanceof THREE.Mesh) {
+                child.visible = false;
+                blocksToReveal.push(child);
+            }
+        });
+
+        scene.add(level3);
 
         if(resetPlayer) {
             player = new Tank(1, true);
@@ -289,9 +301,12 @@ function unloadLevels(level, loadLevel, resetPlayer, resetLevel) {
         scene.remove(player.lifeBar);
     }
     if(level === 1) {
-        level1.visible = false;
+        level1.traverse((child) => {
+            if(child instanceof THREE.Mesh) {
+                blocksToRemove.push(child);
+            }
+        });
 
-        
         scene.remove(enemy1.object);
         scene.remove(enemy1.lifeBar);
 
@@ -302,7 +317,11 @@ function unloadLevels(level, loadLevel, resetPlayer, resetLevel) {
         scene.remove(directionalLight1);
     }
     else if(level === 2) {
-        level2.visible = false;
+        level2.traverse((child) => {
+            if(child instanceof THREE.Mesh) {
+                blocksToRemove.push(child);
+            }
+        });
 
         scene.remove(enemy2.object);
         scene.remove(enemy2.lifeBar);
@@ -323,7 +342,11 @@ function unloadLevels(level, loadLevel, resetPlayer, resetLevel) {
         scene.remove(cannon.object);
     }
     else if(level === 3) {
-        level3.visible = false;
+        level3.traverse((child) => {
+            if(child instanceof THREE.Mesh) {
+                blocksToRemove.push(child);
+            }
+        });
 
         scene.remove(enemy4.object);
         scene.remove(enemy4.lifeBar);
@@ -409,17 +432,24 @@ function keyboardPress() {
         }
     }
     if(keyboard.down("K")) {
-        player.setLife(0.0);
+        // player.setLife(0.0);
+        unloadLevels(1, 2, false, true);
     }
 };
 
 // Função de atualização dos níveis.
 function updateLevels() {
     if(player.object.position.x > 68.5 && player.object.position.x < 88) {
-        levelType = 2;
+        if(levelType === 1) {
+            levelType = 2;
+            moveGates[1] = 1;
+        }
     }
     else if(player.object.position.x > 88 && player.object.position.x < 156.5) {
-        levelType = 3;
+        if(levelType === 2) {
+            levelType = 3;
+            unloadLevels(1, 0, false, false);
+        }
     }
     else if(player.object.position.x > 156.5 && player.object.position.x < 176.5) {
         levelType = 4;
@@ -428,7 +458,6 @@ function updateLevels() {
         levelType = 5;
     }
 };
-
 
 var moveGates = [0, 0, 0, 0];
 function updateGates() {
@@ -606,22 +635,74 @@ function play() {
 
         // Atualizando a rotação do canhão.
         cannonControl.updateCannonRotation(Bullet, shoot, player, enemy2, enemy3, scene);
+
+        // Movimentações dos inimigos.
+        // enemy2.movePlayer(2, [level1, level2, level3], player, Bullet, scene, enemy3);
+        // enemy3.movePlayer(3, [level1, level2, level3], player, Bullet, scene, enemy2);
+
+        enemy2.lifeBar.position.set(enemy2.object.position.x, enemy2.object.position.y + 5, enemy2.object.position.z);
+        if(enemy2.lifeBar.scale.x > 0) enemy2.lifeBar.scale.set(enemy2.life / 1000, enemy2.lifeBar.scale.y, enemy2.lifeBar.scale.z);
+        
+        enemy3.lifeBar.position.set(enemy3.object.position.x, enemy3.object.position.y + 5, enemy3.object.position.z);
+        if(enemy3.lifeBar.scale.x > 0) enemy3.lifeBar.scale.set(enemy3.life / 1000, enemy3.lifeBar.scale.y, enemy3.lifeBar.scale.z);
+        
+    
     }
 
-    // enemy2.movePlayer(2, [level1, level2, level3], player, Bullet, scene, enemy3);
-    // enemy3.movePlayer(3, [level1, level2, level3], player, Bullet, scene, enemy2);
+
     // enemy4.movePlayer(4, [level1, level2, level3], player, Bullet, scene, enemy5, enemy6);
     // enemy5.movePlayer(5, [level1, level2, level3], player, Bullet, scene, enemy4, enemy6);
     // enemy6.movePlayer(6, [level1, level2, level3], player, Bullet, scene, enemy4, enemy5);
     camera.update(player.object.getWorldPosition(new THREE.Vector3));
-    updateMovingWalls();
+    // updateMovingWalls();
     updateGates();
     updateLevels();
 
     BulletControl(Bullet);
+
+    if(blocksToReveal.length > 0) revealBlocks();
+    if(blocksToRemove.length > 0) removeBlocks();
 };
 
-loadLevels(3, true);
+// Função que revela os blocos.
+function revealBlocks() {
+    // Quantos blocos revelar por frame.
+    const blocksPerFrame = 2;
+
+    for(let i = 0; i < blocksPerFrame; i++) {
+        if(blocksToReveal.length > 0) {
+            let block = blocksToReveal.shift(); // Retira o primeiro bloco da lista.
+            
+            block.visible = true;
+
+            if(block.position.x == 116 || block.position.x == 120) {
+                if(block.position.z == 20 || block.position.z == 24) {
+                    if(block.position.y > 1) block.visible = false;
+                }
+            }
+        } else {
+            break;
+        }
+    }
+};
+
+// Função que remove os blocos.
+function removeBlocks() {
+    // Quantos blocos remover por frame.
+    const blocksPerFrame = 2;
+
+    for(let i = 0; i < blocksPerFrame; i++) {
+        if(blocksToRemove.length > 0) {
+            let block = blocksToRemove.shift(); // Retira o primeiro bloco da lista.
+            
+            block.visible = false;
+        } else {
+            break;
+        }
+    }
+}
+
+loadLevels(1, true);
 render();
 function render() {
     play();
