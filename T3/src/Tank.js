@@ -16,23 +16,19 @@ export class Tank {
         this.object = new THREE.Object3D();
         this.loadModel(type, isPlayer);
 
-        // Objetos de apoio à colisão.
-        this.base = new THREE.Mesh(new THREE.BoxGeometry(4.7, 2, 4.3));
-            this.object.add(this.base);
-            this.base.position.y += 1;
-            this.base.position.z -= 0.24;
-            this.base.visible = false;
-        this.cannon = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 2));
-            this.object.add(this.cannon);
-            this.cannon.position.y += 2.7;
-            this.cannon.position.z += 2.5;
-            this.cannon.visible = false;
-
+        // Objeto de apoio à colisão.
         this.box = new THREE.Mesh(new THREE.BoxGeometry(4.7, 3.2, 5.1));
             this.object.add(this.box);
             this.box.position.y += 1.7;
             this.box.position.z += 0.3
             this.box.visible = false;
+
+        // Criando a vida de cada tanque.
+        this.life = 1000;
+        this.lifeBar = this.createLifeBar();
+
+        // Criando atributos para a morte do tanque.
+        this.isDead = false;
 
         // Salva a última direção do tanque (0 para frente e 1 para ré);
         this.lastDirection = 0;
@@ -65,6 +61,29 @@ export class Tank {
             obj.scale.set(1.3, 1.3, 1.3);
             this.object.add(obj);
         });
+    };
+
+    // Método para criar a geometria da vida do tanque.
+    createLifeBar() {
+        let lifeBar = new THREE.Mesh(new THREE.BoxGeometry(4, 0.3, 0.3), new THREE.MeshLambertMaterial({color: "rgb(205, 50, 50)", emissive: "rgb(205, 50, 50)", emissiveIntensity: 0.8}));
+        return lifeBar;
+    };
+
+    // Métodos para pegar e setar a vida do tanque.
+    getLife(){
+        return this.life;
+    };
+    setLife(life){
+        this.life = life;
+    };
+
+    // Método para "matar" o tanque.
+    kill(scene) {
+        this.life = 0;
+        scene.remove(this.object);
+        scene.remove(this.lifeBar);
+        this.object.position.set(-200, -200, -200);
+        this.isDead = true;
     };
 
     // Método que controla a movimentação do tanque.
