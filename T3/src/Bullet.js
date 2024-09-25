@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { PlayAudio } from './Audio.js';
 
 export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identificador){
 
@@ -13,7 +14,7 @@ export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identific
     const bullet = new THREE.Mesh( geometryBullet, materialBullet );
     // Define a posição inicial da bala na posição do tanque
     var p = new THREE.Vector3(); 
-    let speed = -0.5;
+    let speed = 0.5;
     Atirador.getWorldPosition(p);
     bullet.position.copy(p);
     bullet.position.y = 2.15;
@@ -55,31 +56,14 @@ export function BalaAnda(Bullet){
     let step = Bullet.direction.clone().multiplyScalar(Bullet.speed);   
     Bullet.obj.position.add(step);
     checkCollisions(Bullet);
-
-    // Verifica se a bala acertou um inimigo ou uma parede
-    // if (Bullet.AcertouInimigo === 1) { 
-    //     Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
-    //     Bullet.removed = true;
-    //     return 1;
-    // }
-    // else if(Bullet.AcertouInimigo2 === 1) {
-    //     Bullet.inimigo2.setLife(Bullet.inimigo2.getLife() - 100);
-    //     Bullet.removed = true;
-    //     return 1;
-    // } 
-    // else if(Bullet.AcertouCannon === 1) {
-    //     Bullet.removed = true;
-    //     return 1;
-    // }
-    // else {
-    //     // Verifica se a bala colidiu com uma parede e remove-a se necessário
+    
+    // Verifica se a bala colidiu com uma parede e remove-a se necessário
         if (Bullet.WallCollision === 3) { 
             Bullet.removed = true;
             return 1;
         } else {
             return 0;
         }
-    // }
 }
 
 function checkCollisions(Bullet){
@@ -113,7 +97,8 @@ function checkCollisions(Bullet){
         }
         
         // Cima
-        else if(bulletPosition.z < 4.5){
+        if(bulletPosition.z < 4.5){
+            console.log("Aqui");
             collisionPlane = new THREE.Vector3(0,0,1);
         }
         // Baixo
@@ -163,11 +148,13 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){                  // Acertou o inimigo
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
             else if(Inimigo2Collision){             // Acertou o outro Inimigo
                 Bullet.inimigo2.setLife(Bullet.inimigo2.getLife() - 100);
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
             else if(Inimigo3Collision){             // Acertou o Cannon  
@@ -180,10 +167,12 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){                  // Acertou o player
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
             else if(Inimigo2Collision){             // Acertou o outro inimigo
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
             else if(Inimigo3Collision){             // Acertou o Cannon
@@ -196,22 +185,25 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){                  // Acertou o player
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
             else if(Inimigo2Collision){             // Acertou o outro inimigo
                 Bullet.inimigo2.setLife(Bullet.inimigo2.getLife() - 100);
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
             else if(Inimigo3Collision){             // Acertou o outro inimigo
                 Bullet.inimigo3.setLife(Bullet.inimigo3.getLife() - 100);
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
         }
 
         // Cima
-        else if(bulletPosition.z < 4.5){
+        if(bulletPosition.z < 4.5){
             collisionPlane = new THREE.Vector3(0,0,1);
         }
         // Baixo
@@ -219,17 +211,33 @@ function checkCollisions(Bullet){
             collisionPlane = new THREE.Vector3(0, 0, 1);
         }
         // Esquerda
-        else if(bulletPosition.x < 82.0) {
+        else if(bulletPosition.x < 86.0) {
             collisionPlane = new THREE.Vector3(1, 0, 0);
         }
         //Direita
-        else if(bulletPosition.x > 145.5) {
+        else if(bulletPosition.x > 149.5) {
             collisionPlane = new THREE.Vector3(1, 0, 0);
         }
 
-        // Falta os Piruzinho
+        //Lados
+        if(bulletPosition.x > 98.0 && bulletPosition.x < 103.5 && bulletPosition.z > 3.0 && bulletPosition.z < 19.5) {
+            collisionPlane = new THREE.Vector3(-1, 0, 0);
+        }
+        // Frente
+        else if( bulletPosition.z < 21 && bulletPosition.x > 99 && bulletPosition.x <103.5){
+            collisionPlane = new THREE.Vector3(0,0,1);
+        }
 
-        // // Se houver colisão com uma parede, reflete a direção da bala
+        // Retangulo Direita
+        else if(bulletPosition.x > 133.5 && bulletPosition.x < 138.5 && bulletPosition.z > 26.0 && bulletPosition.z < 45) {
+            collisionPlane = new THREE.Vector3(-1, 0, 0);
+        }
+        // Frente
+        else if( bulletPosition.z > 25.0 && bulletPosition.x > 133.6 && bulletPosition.x < 138.4){
+            collisionPlane = new THREE.Vector3(0,0,1);
+        }
+
+        // Se houver colisão com uma parede, reflete a direção da bala
         if(collisionPlane != null){
             Bullet.direction.reflect(collisionPlane).normalize();
             Bullet.WallCollision++;
@@ -243,11 +251,19 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){                  // Acertou o Inimigo
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
             else if(Inimigo2Collision){             // Acertou o Inimigo
                 Bullet.inimigo2.setLife(Bullet.inimigo2.getLife() - 100);
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
+                return 1;
+            }
+            else if(Inimigo3Collision){             // Acertou o Inimigo
+                Bullet.inimigo3.setLife(Bullet.inimigo3.getLife() - 100);
+                Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
         }
@@ -256,16 +272,23 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){                  // Acertou o Player
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
+                PlayAudio(3), 0.5;
                 return 1;
             }
             else if( Inimigo2Collision){            // Acertou o outro Inimigo
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
+                return 1;
+            }
+            else if( Inimigo3Collision){            // Acertou o outro Inimigo
+                Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
         }
 
         // Cima
-        else if(bulletPosition.z < -4.0){
+        if(bulletPosition.z < -4.0){
             collisionPlane = new THREE.Vector3(0,0,1);
         }
         // Baixo
@@ -273,16 +296,25 @@ function checkCollisions(Bullet){
             collisionPlane = new THREE.Vector3(0, 0, 1);
         }
         // Esquerda
-        else if(bulletPosition.x < 166.0) {
+        else if(bulletPosition.x < 174.0) {
             collisionPlane = new THREE.Vector3(1, 0, 0);
         }
         //Direita
-        else if(bulletPosition.x > 246.0) {
+        else if(bulletPosition.x > 254.0) {
             collisionPlane = new THREE.Vector3(1, 0, 0);
         }
 
-        // Falta os Piruzinho
 
+        // Falta os Piruzinho
+        
+        // Retangulo de Baixo
+        else if(bulletPosition.x > 194 && bulletPosition.x < 198 && bulletPosition.z > 34){
+            collisionPlane = new THREE.Vector3(1,0,0);
+        }
+        else if(bulletPosition.z > 30 && bulletPosition.x > 195 && bulletPosition.x < 197){
+            collisionPlane - new THREE.Vector3(0,0,1);
+        }
+        
         // // Se houver colisão com uma parede, reflete a direção da bala
         if(collisionPlane != null){
             Bullet.direction.reflect(collisionPlane).normalize();

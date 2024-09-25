@@ -10,6 +10,18 @@ import { CheckCollisionsWithWall } from './Collisions.js';
 // Importação da movimentação dos tanques inimigos.
 import { UpdateTankPositionLevel1, UpdateTankPositionLevel2, UpdateTankPositionLevel3 } from './Enemies.js';
 
+let IsGodMode = false;
+
+// export function GodMode(){
+//     IsGodMode = !IsGodMode;
+//     if(IsGodMode){
+//         this.setLife(Infinity);
+//     }
+//     else{
+//         this.setLife(100);
+//     }
+// }
+
 // Criação da classe Tank para montar e exportar o tanque.
 export class Tank {
     constructor(type, isPlayer) {

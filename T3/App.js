@@ -10,6 +10,10 @@ import { Camera } from './src/Camera.js';
 import { Light } from './src/Light.js';
 import { UpdateEnemies } from './src/Enemies.js';
 
+import { CriaBala, BalaAnda } from './src/Bullet.js';
+import { PlayAudio } from './src/Audio.js';
+// import { GodMode } from './src/Tank.js';
+
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
 var renderer = initRenderer("rgb(30, 30, 42)");     // Iniciando o renderer básico.
@@ -30,6 +34,8 @@ var levelType = 1;                                  // Armazena o tipo do nível
 // scene.add(level2);
 scene.add(level3);
 level3.visible = true;
+
+var Bullet = [];                                        // Vetor Balas.
 
 var player;                                         // Criando o player.
 player = new Tank(1, true);
@@ -211,8 +217,26 @@ function keyboardPress() {
     if(keyboard.down("N")) {
         moveGates[3] = 1;
     }
+    // if(keyboard.down("G")){
+    //     GodMode();
+    // }
     if(keyboard.down("space")) {
         console.log(player.object.position);
+        if( levelType == 1){
+            Bullet.push(CriaBala(player.object, enemy1, enemy2, enemy3, 1, 0));
+            scene.add(Bullet[Bullet.length-1].obj);
+            PlayAudio(1);
+        }
+        else if(levelType == 3){
+            Bullet.push(CriaBala(player.object, enemy2, enemy3, enemy4, 2, 0));
+            scene.add(Bullet[Bullet.length-1].obj);
+            PlayAudio(1);
+        }
+        else if(levelType == 5){
+            Bullet.push(CriaBala(player.object, enemy4, enemy5, enemy6, 3, 0));
+            scene.add(Bullet[Bullet.length-1].obj);
+            PlayAudio(1, 0.5);
+        }
     }
 };
 
@@ -232,15 +256,17 @@ function updateLevels() {
     }
 };
 
-// Função de atualização dos portões.
+
 var moveGates = [0, 0, 0, 0];
 function updateGates() {
     // Portão 1, do mapa 1 para o 2.
     if(moveGates[0] === 1) {
         level1.children[2].position.y -= 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[0] === 2 && levelType === 2) {
         level1.children[2].position.y += 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
     }
     if(level1.children[2].position.y < -3.5) moveGates[0] = 2;
     if(level1.children[2].position.y > 0) moveGates[0] = 0;
@@ -248,9 +274,11 @@ function updateGates() {
     // Portão 2, do mapa 1 para o 2.
     if(moveGates[1] === 1) {
         level2.children[2].position.y -= 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[1] === 2 && levelType === 3) {
         level2.children[2].position.y += 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
     }
     if(level2.children[2].position.y < -3.5) moveGates[1] = 2;
     if(level2.children[2].position.y > 0) moveGates[1] = 0;
@@ -258,23 +286,28 @@ function updateGates() {
     // Portão 1, do mapa 2 para o 3.
     if(moveGates[2] === 1) {
         level2.children[3].position.y -= 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[2] === 2 && levelType === 4) {
         level2.children[3].position.y += 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
     }
     if(level2.children[3].position.y < -3.5) moveGates[2] = 2;
     if(level2.children[3].position.y > 0) moveGates[2] = 0;
-    
+
     // Portão 3, do mapa 2 para o 3.
     if(moveGates[3] === 1) {
         level3.children[3].position.y -= 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[3] === 2 && levelType === 5) {
         level3.children[3].position.y += 0.02;
+        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
     }
     if(level3.children[3].position.y < -3.5) moveGates[3] = 2;
     if(level3.children[3].position.y > 0) moveGates[3] = 0;
 };
+
     
 // Função de atualização das paredes móveis.
 var wallsDirections = [0, 0, 0];
@@ -324,21 +357,54 @@ function updateMovingWalls() {
     }
 };
 
+function BulletControl(Bullet) {
+    if(levelType == 1) {
+        if (Bullet.length === 0){
+            return 0;
+        }
+        else{
+            Bullet.forEach((bullet, index) => {
+                let remove = BalaAnda(bullet);
+                if(remove) { 
+                    scene.remove(bullet.obj);
+                    Bullet.splice(index, 1);
+                };
+            });
+        }
+    } else {
+        if (Bullet.length === 0){
+            return 0;
+        }
+        else{
+            Bullet.forEach((bullet, index) => {
+                let remove = BalaAnda(bullet);
+                if(remove) { 
+                    scene.remove(bullet.obj);
+                    Bullet.splice(index, 1);
+                };
+            });
+        }
+    }
+};
+
 // Função play chamada na render atualiza a lógica do jogo.
 function play() {
     keyboardPress();
     player.movePlayer(0, [level1, level2, level3]);
-    // enemy1.movePlayer(1, [level1, level2, level3], player);
-    // enemy2.movePlayer(2, [level1, level2, level3], player);
-    // enemy3.movePlayer(3, [level1, level2, level3], player);
-    // enemy4.movePlayer(4, [level1, level2, level3], player);
-    // enemy5.movePlayer(5, [level1, level2, level3], player);
-    // enemy6.movePlayer(6, [level1, level2, level3], player);
+    // enemy1.movePlayer(1, [level1, level2, level3], player, Bullet, scene);
+    // enemy2.movePlayer(2, [level1, level2, level3], player, Bullet, scene, enemy3);
+    // enemy3.movePlayer(3, [level1, level2, level3], player, Bullet, scene, enemy2);
+    enemy4.movePlayer(4, [level1, level2, level3], player, Bullet, scene, enemy5, enemy6);
+    enemy5.movePlayer(5, [level1, level2, level3], player, Bullet, scene, enemy4, enemy6);
+    enemy6.movePlayer(6, [level1, level2, level3], player, Bullet, scene, enemy4, enemy5);
     camera.update(player.object.getWorldPosition(new THREE.Vector3));
     updateMovingWalls();
     updateGates();
     updateLevels();
+
+    BulletControl(Bullet);
 };
+
 
 render();
 function render() {
