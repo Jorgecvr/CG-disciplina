@@ -1,7 +1,6 @@
 // Importações básicas.
 import * as THREE from 'three';
-import { initRenderer } from '../../libs/util/util.js';
-import KeyboardState from '../libs/util/KeyboardState.js';
+import { initRenderer, onOrientationChange, onWindowResize } from '../../libs/util/util.js';
 
 // Importações de arquivos criados para o trabalho.
 import { Tank } from './src/Tank.js';
@@ -14,6 +13,8 @@ import { CannonControl } from './src/CannonControl.js';
 
 import { CriaBala, BalaAnda } from './src/Bullet.js';
 import { PlayAudio } from './src/Audio.js';
+
+import { Buttons } from "../libs/other/buttons.js";
 
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
@@ -95,6 +96,58 @@ var level3 = CreateLevel(3);     // Criando o nível 3.
 // Armazena os blocos a serem revelados ou retirados gradualmente.
 var blocksToReveal = [];
 var blocksToRemove = [];
+
+// Adicionando as lógicas dos botões.
+var buttons = new Buttons(onButtonDown, onButtonUp);
+
+var pressedA = false;        
+var pressedB = false;
+
+function onButtonDown(event) {
+    switch(event.target.id) {
+        case "A":
+            pressedA = true;
+            break;
+        case "B":
+            pressedB = true;
+            break;    
+        case "full":
+            buttons.setFullScreen();
+            break;    
+    }
+};
+
+function onButtonUp(event) {
+    pressedA = pressedB = false;
+};
+
+document.getElementById('game-container').appendChild(renderer.domElement);
+
+function executeIfKeyPressed() {
+    if(pressedA)
+    {
+        if( levelType == 1){
+            Bullet.push(CriaBala(player.object, enemy1, enemy1, enemy1, 1, 0));
+            scene.add(Bullet[Bullet.length-1].obj);
+            PlayAudio(1);
+        }
+        else if(levelType == 3){
+            Bullet.push(CriaBala(player.object, enemy2, enemy3, enemy3, 2, 0));
+            scene.add(Bullet[Bullet.length-1].obj);
+            PlayAudio(1);
+        }
+        else if(levelType == 5){
+            Bullet.push(CriaBala(player.object, enemy4, enemy5, enemy6, 3, 0));
+            scene.add(Bullet[Bullet.length-1].obj);
+            PlayAudio(1, 0.5);
+        }
+    }
+    if(pressedB)
+    {
+        console.lob("B");
+    }
+    pressedA = pressedB = false;
+};
 
 // Função que carrega os níveis.
 function loadLevels(level, resetPlayer) {
@@ -386,60 +439,9 @@ function unloadLevels(level, loadLevel, resetPlayer, resetLevel) {
     }
 };
 
-// Redimensionamento da câmera utilizando zoom.
-var zoom = 1;
-var lastWidth = window.innerWidth;
-window.addEventListener('resize', function() {
-    let aspect = window.innerWidth / window.innerHeight;
-    camera.camera.aspect = aspect;
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    
-    if(lastWidth < window.innerWidth) {
-        zoom += (window.innerWidth - lastWidth)*0.0007;
-    } else if(lastWidth > window.innerWidth) {
-        zoom -= (lastWidth - window.innerWidth)*0.0007;
-    }
-    camera.camera.zoom = zoom;
-    camera.camera.updateProjectionMatrix();
-    lastWidth = window.innerWidth;
-});
-
-// Adicionando evento que detecta o scrool do mouse.
-window.addEventListener('wheel', function(event) {
-    camera.handleUpdate(event);
-});
-
-// Função para verificar o pressionamento de teclas.
-function keyboardPress() {
-    let keyboard = new KeyboardState();
-    keyboard.update();
-
-    // Mudaça do OrbitControls da Câmera.
-    if(keyboard.down("O")) {
-        camera.swapOrbitControls();
-    }
-    if(keyboard.down("G")){
-        player.godMode();
-    }
-    if(keyboard.down("space")) {
-        // console.log(player.object.position);
-        if( levelType == 1){
-            Bullet.push(CriaBala(player.object, enemy1, enemy1, enemy1, 1, 0));
-            scene.add(Bullet[Bullet.length-1].obj);
-            PlayAudio(1);
-        }
-        else if(levelType == 3){
-            Bullet.push(CriaBala(player.object, enemy2, enemy3, enemy3, 2, 0));
-            scene.add(Bullet[Bullet.length-1].obj);
-            PlayAudio(1);
-        }
-        else if(levelType == 5){
-            Bullet.push(CriaBala(player.object, enemy4, enemy5, enemy6, 3, 0));
-            scene.add(Bullet[Bullet.length-1].obj);
-            PlayAudio(1, 0.5);
-        }
-    }
-};
+// Redimensionamento.
+window.addEventListener('resize', function(){onWindowResize(camera.camera, renderer)}, false );
+window.addEventListener('orientationchange', onOrientationChange );
 
 // Função de atualização dos níveis.
 function updateLevels() {
@@ -600,9 +602,9 @@ function BulletControl(Bullet) {
 };
 
 // Função play chamada na render atualiza a lógica do jogo.
-function play() {
-    keyboardPress();
-    player.movePlayer(0, [level1, level2, level3]);
+function play() { 
+    executeIfKeyPressed();
+    player.movePlayerMobile(0, [level1, level2, level3]);
     player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
     if(player.lifeBar.scale.x > 0) player.lifeBar.scale.set(player.life / 1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
 

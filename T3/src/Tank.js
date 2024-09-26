@@ -202,6 +202,22 @@ export class Tank {
         }
     };
 
+    // Método que move o player no celular.
+    movePlayerMobile(type, levels) {
+        window.addEventListener('deviceorientation', handleOrientation, true);
+
+        const handleOrientation = (event) => {
+            // Aqui você pode implementar a lógica do joystick
+            const tiltLR = event.beta; // Movimentação para frente/trás
+            const tiltFB = event.gamma; // Movimentação para esquerda/direita
+    
+            // Mova o tanque baseado na orientação
+            this.object.rotation.y = THREE.MathUtils.degToRad(tiltFB);
+            this.object.position.z += Math.sin(this.object.rotation.y) * 0.1;
+            this.object.position.x += Math.cos(this.object.rotation.y) * 0.1;
+        }
+    };
+
     // Função que atualiza os limites de movimento baseado na colisão.
     updateLimits(collisionBlock, levelLimits) {
         // Posição do bloco que está colidindo.
