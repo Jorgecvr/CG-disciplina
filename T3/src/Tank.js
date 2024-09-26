@@ -203,19 +203,104 @@ export class Tank {
     };
 
     // Método que move o player no celular.
-    movePlayerMobile(type, levels) {
-        window.addEventListener('deviceorientation', handleOrientation, true);
+    movePlayerMobile(levels, joystickL) {
+        const move = (direction) => {
+            const movementSpeed = 0.5;
+            const rotationSpeed = 0.1;
 
-        const handleOrientation = (event) => {
-            // Aqui você pode implementar a lógica do joystick
-            const tiltLR = event.beta; // Movimentação para frente/trás
-            const tiltFB = event.gamma; // Movimentação para esquerda/direita
+            // Calcule a direção e rotacione o tanque.
+            if (direction.length() > 0) {
+                direction.normalize();
     
-            // Mova o tanque baseado na orientação
-            this.object.rotation.y = THREE.MathUtils.degToRad(tiltFB);
-            this.object.position.z += Math.sin(this.object.rotation.y) * 0.1;
-            this.object.position.x += Math.cos(this.object.rotation.y) * 0.1;
-        }
+                // Calcula a rotação alvo com base na direção do joystick.
+                const targetRotation = Math.atan2(direction.x, direction.z);
+    
+                // Corrige a rotação atual (converte para o intervalo de -PI a PI).
+                let currentRotation = this.object.rotation.y % (2 * Math.PI);
+                if (currentRotation < -Math.PI) currentRotation += 2 * Math.PI;
+                if (currentRotation > Math.PI) currentRotation -= 2 * Math.PI;
+    
+                // Calcula a diferença de ângulo entre a rotação atual e a rotação alvo.
+                let angleDiff = targetRotation - currentRotation;
+                if (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+                if (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+    
+                // Gira o tanque na direção do joystick usando o menor ângulo.
+                if (Math.abs(angleDiff) > rotationSpeed) {
+                    this.object.rotation.y += Math.sign(angleDiff) * rotationSpeed;
+                } else {
+                    this.object.rotation.y = targetRotation; // Alinha diretamente se próximo.
+                }
+    
+                // Move o tanque para frente na direção atual.
+                this.object.translateZ(movementSpeed);
+            }
+
+             // Pega as coordenadas x e z do tanque em relação ao mundo.
+            let x = this.object.getWorldPosition(new THREE.Vector3()).x;
+            let z = this.object.getWorldPosition(new THREE.Vector3()).z;
+
+            // Verificando colisão.
+            let collisions = CheckCollisionsWithWall(this, levels);
+            // console.log(collisions[0]);
+
+            // Definição dos limites inicias do primeiro nível.
+            const levelLimits = {
+                minX: -400,
+                maxX: 400,
+                minZ: -400,
+                maxZ: 400,
+            };
+
+            // Tratamento de colisões.
+            if(collisions.length > 0) {
+                // console.log(collisions[0].position);
+                // Atualiza levelLimits com base na posição do bloco e direção do tanque.
+                collisions.forEach((collisionBlock) => {
+                    this.updateLimits(collisionBlock, levelLimits);
+                });
+
+                // Verifica se o tanque está de ré.
+                if(this.lastDirection == 1) {
+                    levelLimits.minX -= 0.5;
+                    levelLimits.maxX += 0.5;
+                    levelLimits.minZ -= 0.7;
+                    levelLimits.maxZ += 0.5;
+                }
+            }
+
+            // Aplica a restrição com base nos limites do nível (método clamp restrige o valor da posição).
+            this.object.position.x = THREE.MathUtils.clamp(x, levelLimits.minX, levelLimits.maxX);
+            this.object.position.z = THREE.MathUtils.clamp(z, levelLimits.minZ, levelLimits.maxZ);
+            
+            // Desliza o tanque se colide com as paredes que mexem.
+            if(this.object.position.z > 31 || this.object.position.z < 9) {
+                if(this.object.position.x >= 192 && this.object.position.x <= 196
+                || this.object.position.x >= 212 && this.object.position.x <= 216
+                || this.object.position.x >= 232 && this.object.position.x <= 236) {
+                    this.object.position.x -= 0.6;
+                }
+                else if(this.object.position.x > 196 && this.object.position.x <= 200
+                    || this.object.position.x > 216 && this.object.position.x <= 220
+                    || this.object.position.x > 236 && this.object.position.x <= 240) {
+                    this.object.position.x += 0.6;
+                }
+            }
+        };
+
+        let lastMovement = { x: 0, y: 0 };  // Variável para armazenar o último movimento.
+
+        joystickL.on('move', function (evt, data) {
+            // Passa a direção para a função de movimento do tanque.
+            const direction = new THREE.Vector3(data.vector.x, 0, data.vector.y);
+
+            move(direction);
+        });
+
+        joystickL.on('end', function () {
+            // Para a movimentação quando o joystick é solto.
+            move(new THREE.Vector3(0, 0, 0));
+        });
     };
 
     // Função que atualiza os limites de movimento baseado na colisão.

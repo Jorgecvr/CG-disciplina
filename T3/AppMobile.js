@@ -32,6 +32,8 @@ function startGame() {
     gameStarted = true;
     document.getElementById('start-screen').style.display = 'none';
     document.getElementById('webgl-output').style.display = 'block';
+    addJoysticks();
+    player.movePlayerMobile([level1, level2, level3], joystickL);
 };
 function endGame() {
     gameEnded = true;
@@ -99,6 +101,7 @@ var blocksToRemove = [];
 
 // Adicionando as lógicas dos botões.
 var buttons = new Buttons(onButtonDown, onButtonUp);
+var joystickL;
 
 var pressedA = false;        
 var pressedB = false;
@@ -122,6 +125,15 @@ function onButtonUp(event) {
 };
 
 document.getElementById('game-container').appendChild(renderer.domElement);
+
+// Adiciona os joysticks na cena.
+function addJoysticks() {
+    joystickL = nipplejs.create({
+      zone: document.getElementById('joystickWrapper1'),
+      mode: 'static',
+      position: { top: '-80px', left: '80px' }
+    });
+};
 
 function executeIfKeyPressed() {
     if(pressedA)
@@ -604,7 +616,6 @@ function BulletControl(Bullet) {
 // Função play chamada na render atualiza a lógica do jogo.
 function play() { 
     executeIfKeyPressed();
-    player.movePlayerMobile(0, [level1, level2, level3]);
     player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
     if(player.lifeBar.scale.x > 0) player.lifeBar.scale.set(player.life / 1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
 
