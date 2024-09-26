@@ -5,6 +5,29 @@ html, body {
     height: 100%;
 }
 
+@media only screen and (orientation: portrait) {
+    html, body {
+      height: 100vw;
+      width: 100vh;
+      overflow: hidden;
+      transform: rotate(-90deg);  /* Rotaciona o conteúdo para paisagem */
+      transform-origin: center;
+      position: absolute;
+      top: 100%;  /* Alinha para a parte inferior */
+      left: 0;
+    }
+  }
+  
+  /* Estilos para modo paisagem (celular na horizontal) */
+  @media only screen and (orientation: landscape) {
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      transform: none;  /* Sem rotação quando o dispositivo está na horizontal */
+    }
+}
+
 #start-screen, #end-screen {
     position: absolute;
     top: 0;
