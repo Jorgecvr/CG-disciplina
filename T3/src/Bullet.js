@@ -16,18 +16,18 @@ export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identific
     var p = new THREE.Vector3(); 
     let speed = 0.5;
     Atirador.getWorldPosition(p);
-    bullet.position.copy(p);
+    bullet.position.copy(p.clone());
     bullet.position.y = 2.15;
 
     // Cálculo da direção inicial da bala com base na rotação do Atirador
     var direction = new THREE.Vector3(); 
     var AtiradorRotationMatrix = new THREE.Matrix4();
-    Atirador.matrixWorld.decompose(new THREE.Vector3(), Atirador.quaternion, new THREE.Vector3());
-    AtiradorRotationMatrix.makeRotationFromQuaternion(Atirador.quaternion);
+    Atirador.matrixWorld.clone().decompose(new THREE.Vector3(), Atirador.quaternion.clone(), new THREE.Vector3());
+    AtiradorRotationMatrix.makeRotationFromQuaternion(Atirador.quaternion.clone());
     // Define a direção inicial da bala no espaço local do Atirador (direção para frente)
     var localDirection = new THREE.Vector3(0, 0, 1);
     // Transforma a direção local da bala em uma direção global usando a rotação do Atirador
-    var globalDirection = localDirection.applyMatrix4(AtiradorRotationMatrix).normalize();
+    var globalDirection = localDirection.applyMatrix4(AtiradorRotationMatrix.clone()).normalize();
     // Define a direção da bala como a direção global
     direction.copy(globalDirection);
 

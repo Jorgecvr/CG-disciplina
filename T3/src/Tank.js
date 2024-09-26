@@ -205,8 +205,6 @@ export class Tank {
     // Método que move o player no celular.
     movePlayerMobile(levels, joystickL) {
         const move = (direction) => {
-            let originalRotationY = this.object.rotation.y;  // Armazena a rotação original do tanque.
-
             const movementSpeed = 0.6;
             const rotationSpeed = 0.1;
 
@@ -218,7 +216,7 @@ export class Tank {
                 const targetRotation = Math.atan2(direction.x, direction.z);
     
                 // Corrige a rotação atual (converte para o intervalo de -PI a PI).
-                let currentRotation = originalRotationY % (2 * Math.PI);
+                let currentRotation = this.object.rotation.y % (2 * Math.PI);
                 if (currentRotation < -Math.PI) currentRotation += 2 * Math.PI;
                 if (currentRotation > Math.PI) currentRotation -= 2 * Math.PI;
     
@@ -229,12 +227,10 @@ export class Tank {
     
                 // Gira o tanque na direção do joystick usando o menor ângulo.
                 if (Math.abs(angleDiff) > rotationSpeed) {
-                    originalRotationY += Math.sign(angleDiff) * rotationSpeed;
+                    this.object.rotation.y += Math.sign(angleDiff) * rotationSpeed;
                 } else {
-                    originalRotationY = targetRotation; // Alinha diretamente se próximo.
+                    this.object.rotation.y = targetRotation; // Alinha diretamente se próximo.
                 }
-
-                this.object.rotation.y = originalRotationY
     
                 // Move o tanque para frente na direção atual.
                 this.object.translateZ(movementSpeed);
