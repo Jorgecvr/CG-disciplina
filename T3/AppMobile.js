@@ -192,8 +192,8 @@ function loadLevels(level, resetPlayer) {
 
         // Definindo o mapa de sombras do primeiro nível.
         const shadow1 = directionalLight1.shadow;
-        shadow1.mapSize.width = 2048;
-        shadow1.mapSize.height = 2048;
+        shadow1.mapSize.width = 1024;
+        shadow1.mapSize.height = 1024;
         shadow1.camera.near = 1;
         shadow1.camera.far = 120;
         shadow1.camera.left = -100;
@@ -356,8 +356,8 @@ function loadLevels(level, resetPlayer) {
 
         // Definindo o mapa de sombras do primeiro nível.
         const shadow = directionalLight3.shadow;
-        shadow.mapSize.width = 2048;
-        shadow.mapSize.height = 2048;
+        shadow.mapSize.width = 1024;
+        shadow.mapSize.height = 1024;
         shadow.camera.near = 1;
         shadow.camera.far = 200;
         shadow.camera.left = -200;
