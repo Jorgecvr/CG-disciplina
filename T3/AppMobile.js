@@ -1,6 +1,6 @@
 // Importações básicas.
 import * as THREE from 'three';
-import { initRenderer, onOrientationChange, onWindowResize } from '../../libs/util/util.js';
+import { initRenderer, onOrientationChange, onWindowResize } from '/CG-disciplina/libs/util/util.js';
 
 // Importações de arquivos criados para o trabalho.
 import { Tank } from './src/Tank.js';
