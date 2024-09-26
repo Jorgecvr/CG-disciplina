@@ -10,23 +10,14 @@ import { CheckCollisionsWithWall } from './Collisions.js';
 // Importação da movimentação dos tanques inimigos.
 import { UpdateTankPositionLevel1, UpdateTankPositionLevel2, UpdateTankPositionLevel3 } from './Enemies.js';
 
-let IsGodMode = false;
-
-// export function GodMode(){
-//     IsGodMode = !IsGodMode;
-//     if(IsGodMode){
-//         this.setLife(Infinity);
-//     }
-//     else{
-//         this.setLife(100);
-//     }
-// }
-
 // Criação da classe Tank para montar e exportar o tanque.
 export class Tank {
     constructor(type, isPlayer) {
         this.object = new THREE.Object3D();
         this.loadModel(type, isPlayer);
+
+        this.isGodMode = false;
+        this.originalMaterials = [];
 
         // Objeto de apoio à colisão.
         this.box = new THREE.Mesh(new THREE.BoxGeometry(4.7, 3.2, 5.1));
@@ -87,6 +78,38 @@ export class Tank {
     };
     setLife(life){
         this.life = life;
+    };
+
+    // Método para habilitar o GodMode.
+    godMode() {
+        if(!this.isGodMode) {
+            this.lifeBar.visible = false;
+            this.setLife(1000000000000);
+            
+            this.object.traverse((child) => {
+                if(child instanceof THREE.Mesh) {
+                    this.originalMaterials.push(child.material);
+                    child.material = new THREE.MeshPhongMaterial({
+                        color: "rgb(255, 223, 0)",
+                        shininess: 200,
+                        specular: "rgb(255, 255, 255)"
+                    });
+                }
+            });
+        }
+        else {
+            this.lifeBar.visible = true;
+            this.setLife(1000);
+            
+            let materialIndex = 0;
+            this.object.traverse((child) => {
+                if(child instanceof THREE.Mesh && this.originalMaterials[materialIndex]) {
+                    child.material = this.originalMaterials[materialIndex];
+                    materialIndex++;
+                }
+            });
+        }
+        this.isGodMode = !this.isGodMode;
     };
 
     // Método para "matar" o tanque.

@@ -14,7 +14,6 @@ import { CannonControl } from './src/CannonControl.js';
 
 import { CriaBala, BalaAnda } from './src/Bullet.js';
 import { PlayAudio } from './src/Audio.js';
-// import { GodMode } from './src/Tank.js';
 
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
@@ -260,7 +259,7 @@ function loadLevels(level, resetPlayer) {
 
         UpdateEnemies();
 
-        // Luz direcional do nível 1.
+        // Luz direcional do nível 3.
         directionalLight3 = new THREE.DirectionalLight("white", 0.8);
         directionalLight3.position.set(160, 50, -16);
         scene.add(directionalLight3);
@@ -273,11 +272,11 @@ function loadLevels(level, resetPlayer) {
         shadow.mapSize.width = 2048;
         shadow.mapSize.height = 2048;
         shadow.camera.near = 1;
-        shadow.camera.far = 100;
-        shadow.camera.left = -100;
-        shadow.camera.right = 100;
-        shadow.camera.bottom = -100;
-        shadow.camera.top = 100;
+        shadow.camera.far = 200;
+        shadow.camera.left = -200;
+        shadow.camera.right = 200;
+        shadow.camera.bottom = -200;
+        shadow.camera.top = 200;
 
         if(resetPlayer) {
             scene.add(player.object);
@@ -397,22 +396,12 @@ function keyboardPress() {
     if(keyboard.down("O")) {
         camera.swapOrbitControls();
     }
-
-    if(keyboard.down("C")) {
-        moveGates[0] = 1;
+    if(keyboard.down("G")){
+        player.godMode();
     }
-    if(keyboard.down("V")) {
-        moveGates[1] = 1;
+    if(keyboard.down("K")){
+        player.setLife(0.0);
     }
-    if(keyboard.down("B")) {
-        moveGates[2] = 1;
-    }
-    if(keyboard.down("N")) {
-        moveGates[3] = 1;
-    }
-    // if(keyboard.down("G")){
-    //     GodMode();
-    // }
     if(keyboard.down("space")) {
         // console.log(player.object.position);
         if( levelType == 1){
@@ -431,10 +420,6 @@ function keyboardPress() {
             PlayAudio(1, 0.5);
         }
     }
-    if(keyboard.down("K")) {
-        // player.setLife(0.0);
-        unloadLevels(1, 2, false, true);
-    }
 };
 
 // Função de atualização dos níveis.
@@ -452,10 +437,16 @@ function updateLevels() {
         }
     }
     else if(player.object.position.x > 156.5 && player.object.position.x < 176.5) {
-        levelType = 4;
+        if(levelType === 3) {
+            levelType = 4;
+            moveGates[3] = 1; 
+        }
     }
     else if(player.object.position.x > 176.5) {
-        levelType = 5;
+        if(levelType === 4) {
+            levelType = 5;
+            unloadLevels(2, 0, false, false);
+        }
     }
 };
 
@@ -645,16 +636,50 @@ function play() {
         
         enemy3.lifeBar.position.set(enemy3.object.position.x, enemy3.object.position.y + 5, enemy3.object.position.z);
         if(enemy3.lifeBar.scale.x > 0) enemy3.lifeBar.scale.set(enemy3.life / 1000, enemy3.lifeBar.scale.y, enemy3.lifeBar.scale.z);
-        
-    
+
+        // Verifica se os inimigos 1 e 2 morreram.
+        if(enemy2.getLife() === 0) {
+            enemy2.kill(scene);
+        }
+        if(enemy3.getLife() === 0) {
+            enemy3.kill(scene);
+        }
+        if(enemy2.isDead && enemy3.isDead) {
+            moveGates[2] = 1;
+            loadLevels(3, false);
+            enemy2.isDead = enemy3.isDead = false;
+        }
+    }
+    else if(levelType === 5) {
+        // Movimentação dos tanques inimigos.
+        // enemy4.movePlayer(4, [level1, level2, level3], player, Bullet, scene, enemy5, enemy6);
+        // enemy5.movePlayer(5, [level1, level2, level3], player, Bullet, scene, enemy4, enemy6);
+        // enemy6.movePlayer(6, [level1, level2, level3], player, Bullet, scene, enemy4, enemy5);
+
+        enemy4.lifeBar.position.set(enemy4.object.position.x, enemy4.object.position.y + 5, enemy4.object.position.z);
+        if(enemy4.lifeBar.scale.x > 0) enemy4.lifeBar.scale.set(enemy4.life / 1000, enemy4.lifeBar.scale.y, enemy4.lifeBar.scale.z);
+        enemy5.lifeBar.position.set(enemy5.object.position.x, enemy5.object.position.y + 5, enemy5.object.position.z);
+        if(enemy5.lifeBar.scale.x > 0) enemy5.lifeBar.scale.set(enemy5.life / 1000, enemy5.lifeBar.scale.y, enemy5.lifeBar.scale.z);
+        enemy6.lifeBar.position.set(enemy6.object.position.x, enemy6.object.position.y + 5, enemy6.object.position.z);
+        if(enemy6.lifeBar.scale.x > 0) enemy6.lifeBar.scale.set(enemy6.life / 1000, enemy6.lifeBar.scale.y, enemy6.lifeBar.scale.z);
+
+        // Mexe as paredes móveis.
+        // updateMovingWalls();
+
+        // Verifica se os inimigos morreram.
+        if(enemy4.getLife() === 0) {
+            enemy4.kill(scene);
+        }
+        if(enemy5.getLife() === 0) {
+            enemy5.kill(scene);
+        }
+        if(enemy6.getLife() === 0) {
+            enemy6.kill(scene);
+        }
     }
 
-
-    // enemy4.movePlayer(4, [level1, level2, level3], player, Bullet, scene, enemy5, enemy6);
-    // enemy5.movePlayer(5, [level1, level2, level3], player, Bullet, scene, enemy4, enemy6);
-    // enemy6.movePlayer(6, [level1, level2, level3], player, Bullet, scene, enemy4, enemy5);
     camera.update(player.object.getWorldPosition(new THREE.Vector3));
-    // updateMovingWalls();
+    
     updateGates();
     updateLevels();
 
@@ -700,7 +725,7 @@ function removeBlocks() {
             break;
         }
     }
-}
+};
 
 loadLevels(1, true);
 render();
