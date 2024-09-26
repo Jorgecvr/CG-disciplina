@@ -49,26 +49,38 @@
   </div>
 
   <script>
-    // Quando a página estiver completamente carregada.
-    window.onload = function() {
+    // Função para habilitar o botão e esconder o loader.
+    function enableStartButton() {
       // Esconde o símbolo de carregamento.
       document.querySelector('.loader').style.display = 'none';
       
-      // Habilita o botão de start.
+      // Habilita o botão de start e torna visível.
       const startButton = document.getElementById('start-btn');
       startButton.disabled = false; // Habilita o botão.
-      startButton.style.backgroundColor = '#3498db'; // Muda a cor para indicar que está ativo.
-      startButton.style.cursor = 'pointer'; // Muda o cursor para indicar clicável.
+      startButton.style.backgroundColor = '#3498db'; // Muda a cor para azul.
+      startButton.style.cursor = 'pointer'; // Cursor clicável.
       startButton.style.opacity = '1'; // Torna o botão visível.
-    };
+    }
 
-    // Inicialmente, desabilite o botão.
+    // Verifica quando o HTML for carregado e os recursos também.
     document.addEventListener('DOMContentLoaded', function() {
       const startButton = document.getElementById('start-btn');
       startButton.disabled = true; // Desabilita o botão.
-      startButton.style.backgroundColor = 'gray'; // Muda a cor para indicar desabilitado.
-      startButton.style.cursor = 'not-allowed'; // Muda o cursor para indicar não clicável.
+      startButton.style.backgroundColor = 'gray'; // Mantém cinza enquanto carrega.
+      startButton.style.cursor = 'not-allowed'; // Cursor de não clicável.
+
+      // Garante que todos os recursos, incluindo imagens, sejam carregados.
+      window.onload = function() {
+        enableStartButton(); // Habilita o botão após o carregamento total.
+      };
     });
+
+    // Adiciona um fallback para garantir que funcione mesmo se 'onload' demorar.
+    setTimeout(() => {
+      if (!document.getElementById('start-btn').disabled) {
+        enableStartButton(); // Habilita o botão após um tempo se 'onload' falhar.
+      }
+    }, 5000); // Fallback após 5 segundos
   </script>
 </body>
 
