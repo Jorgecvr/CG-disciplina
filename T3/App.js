@@ -15,6 +15,8 @@ import { CannonControl } from './src/CannonControl.js';
 import { CriaBala, BalaAnda } from './src/Bullet.js';
 import { PlayAudio } from './src/Audio.js';
 
+import { spawnPowerUp, animatePowerUps, checkPlayerCollisionPower } from './src/PowerUp.js';
+
 
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
@@ -22,6 +24,8 @@ var renderer = initRenderer("rgb(30, 30, 42)");     // Iniciando o renderer bás
 var camera = new Camera(renderer);                  // Criando a câmera.
 camera.camera.position.set(10, 60, 70);
 camera.camera.lookAt(10, 0, 25);
+
+let spawnZone = null;
 
 // Adicionando a skybox.
 const textureLoader = new THREE.TextureLoader();
@@ -66,7 +70,7 @@ var lastTime = 0;
 var shoot = false;
 
 // Armazena o tipo do nível atual (começa em 1).
-var levelType = 3;                                  
+var levelType = 1;                                  
 var level1 = CreateLevel(1);     // Criando o nível 1.
     level1.visible = false;
     scene.add(level1);
@@ -391,6 +395,7 @@ function keyboardPress() {
         player.GodMode();
     }
     if(keyboard.down("space")) {
+        //spawnPowerUp(scene);
         // console.log(player.object.position);
         if( levelType == 1){
             Bullet.push(CriaBala(player.object, enemy1, enemy1, enemy1, 1, 0));
@@ -560,8 +565,21 @@ function BulletControl(Bullet) {
     }
 };
 
+
+
+setInterval(() => {
+    if(levelType == 1){
+        spawnPowerUp(scene, 1);
+    } else if(levelType == 3){
+        spawnPowerUp(scene, 2);
+    } else if(levelType == 5){
+        spawnPowerUp(scene, 3);
+    }
+}, 100); 
+
 // Função play chamada na render atualiza a lógica do jogo.
 function play() {
+    //requestAnimationFrame(play);
     keyboardPress();
     player.movePlayer(0, [level1, level2, level3]);
     player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
@@ -618,10 +636,19 @@ function play() {
     updateGates();
     updateLevels();
 
+
+    // Atualiza a animação dos power-ups
+    animatePowerUps();
+
+    // Verifica a colisão do jogador com power-ups
+    checkPlayerCollisionPower(player.object, scene);
+
+
+
     BulletControl(Bullet);
 };
 
-loadLevels(2, true);
+loadLevels(1, true);
 render();
 function render() {
     play();
