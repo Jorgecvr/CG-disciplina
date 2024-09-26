@@ -1,0 +1,61 @@
+html, body {
+    overflow: hidden;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#start-screen, #end-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(30, 30, 42);
+    background-image: url('../assets/textures/background.jpg'); /* Adiciona a imagem como fundo */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Centraliza os itens verticalmente */
+    z-index: 10;
+    color: white; /* Garante que o texto seja branco */
+}
+
+#start-screen h1, #end-screen h1 {
+    margin-top: 0;
+    font-size: 36px;
+    text-align: center;
+}
+
+#start-screen h1, #end-screen h1 {
+    margin-top: -100px; /* Move o título um pouco para cima */
+}
+
+.loader {
+    border: 8px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 8px solid #3498db;
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite;
+    margin-top: 40px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilo do botão */
+#start-btn, #restart-btn {
+    margin-top: 80px;
+    padding: 15px 40px; /* Botão mais largo */
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}

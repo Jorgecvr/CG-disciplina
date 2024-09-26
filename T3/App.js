@@ -22,6 +22,29 @@ var camera = new Camera(renderer);                  // Criando a câmera.
 camera.camera.position.set(10, 60, 70);
 camera.camera.lookAt(10, 0, 25);
 
+// Variáveis para controlar o estado do jogo.
+var gameStarted = false;
+var gameEnded = false;
+
+// Funções de ínicio e fim de jogo.
+function startGame() {
+    gameStarted = true;
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('webgl-output').style.display = 'block';
+};
+function endGame() {
+    gameEnded = true;
+    document.getElementById('webgl-output').style.display = 'none';
+    document.getElementById('end-screen').style.display = 'flex';
+};
+
+// Lógicas dos botões "START" e "RESTART".
+document.getElementById('start-btn').addEventListener('click', startGame);
+document.getElementById('restart-btn').addEventListener('click', () => {
+    location.reload();
+});
+
+ 
 // Adicionando a skybox.
 const textureLoader = new THREE.TextureLoader();
 let textureEquirec = textureLoader.load('./assets/textures/skybox.jpg');
@@ -664,7 +687,7 @@ function play() {
         if(enemy6.lifeBar.scale.x > 0) enemy6.lifeBar.scale.set(enemy6.life / 1000, enemy6.lifeBar.scale.y, enemy6.lifeBar.scale.z);
 
         // Mexe as paredes móveis.
-        // updateMovingWalls();
+        updateMovingWalls();
 
         // Verifica se os inimigos morreram.
         if(enemy4.getLife() === 0) {
@@ -675,6 +698,10 @@ function play() {
         }
         if(enemy6.getLife() === 0) {
             enemy6.kill(scene);
+        }
+
+        if(enemy4.isDead && enemy5.isDead && enemy6.isDead) {
+            endGame();
         }
     }
 
@@ -730,7 +757,7 @@ function removeBlocks() {
 loadLevels(1, true);
 render();
 function render() {
-    play();
+    if(gameStarted) play();
     requestAnimationFrame(render);
     renderer.render(scene, camera.camera);
 };
