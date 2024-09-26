@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>T3 - Mini Tanks Mobile</title>
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="T3/style/loadingScreen.css">  
+    <meta name="viewport" content="width=device-width, initial-scale=1">  
+
+    <link rel="stylesheet" href="libs/other/buttons.css">  
+  </head>
+
+<body>
+  <!-- Import maps polyfill -- Remove this when import maps will be widely supported-->
+  <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>  
+  <script type="importmap"> 
+    {"imports": {"three": "../../build/three.module.js"}} 
+  </script>
+  
+  <div id="game-container"></div>
+
+  <div id="start-screen">
+    <h1>Mini Tanks</h1>
+    <div class="loader"></div>
+    <button id="start-btn">START</button>
+  </div>
+
+  <div id="end-screen" style="display: none;">
+    <h1>Você terminou o jogo.</h1>
+    <button id="restart-btn">RESTART</button>
+  </div>
+
+  <button style="bottom:20px; right: 120px;" 
+          id="A" class="video-game-button">Shot</button>
+
+  <button style="bottom:20px; right: 20px;" 
+          id="B" class="video-game-button">Audio</button>        
+
+  <button style="top:10px; right: 10px; width: 1emp; line-height: 1.4em; font-size: 10pt; background-color: #cccccc; background-image:none"
+          id="full" class="video-game-button">[ ]</button> 
+
+  <div id="webgl-output" style="display: none;">
+    <script type="module" src="T3/AppMobile.js"></script>
+  </div>
+</body>
+
+</html>
