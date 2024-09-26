@@ -3,11 +3,13 @@ import * as THREE from 'three';
 // Função para criar os blocos do chão.
 function createFloor(larg, comp, level, textures) {
     let geometry = new THREE.BoxGeometry(4, 0.1, 4);
-    let material = new THREE.MeshLambertMaterial();
+    let material = new THREE.MeshStandardMaterial();
 
     if(level === 1) material.map = textures.ground1;
     else if(level === 2) material.map = textures.ground2;
     else if(level === 3) material.map = textures.ground3;
+
+    material.color = new THREE.Color(3, 3, 3);
 
     const floor = new THREE.Mesh(geometry, material);
 
@@ -22,11 +24,13 @@ function createFloor(larg, comp, level, textures) {
 // Função para criar os blocos da parede.
 function createWall(larg, comp, level, textures) {
     const geometry = new THREE.BoxGeometry(4, 4, 4);
-    const material = new THREE.MeshLambertMaterial();
+    const material = new THREE.MeshStandardMaterial();
 
     if(level === 1) material.map = textures.wall1;
     else if(level === 2) material.map = textures.wall2;
     else if(level === 3) material.map = textures.wall3;
+
+    material.color = new THREE.Color(3, 3, 3);
 
     const block = new THREE.Mesh(geometry, material);
 
@@ -40,9 +44,11 @@ function createWall(larg, comp, level, textures) {
 // Função para criar os blocos do portão.
 function createGate(larg, comp, level, textures) {
     const geometry = new THREE.BoxGeometry(4, 4, 4);
-    const material = new THREE.MeshLambertMaterial();
+    const material = new THREE.MeshStandardMaterial();
 
     material.map = textures.metal;
+
+    material.color = new THREE.Color(3, 3, 3);
 
     const block = new THREE.Mesh(geometry, material);
 
@@ -56,9 +62,11 @@ function createGate(larg, comp, level, textures) {
 // Função para criar os blocos do corredor.
 function createHall(larg, comp, level, textures) {
     const geometry = new THREE.BoxGeometry(4, 0.1, 4);
-    const material = new THREE.MeshLambertMaterial();
+    const material = new THREE.MeshStandardMaterial();
 
     material.map = textures.hall;
+
+    material.color = new THREE.Color(3, 3, 3);
 
     const block = new THREE.Mesh(geometry, material);
 
@@ -72,9 +80,11 @@ function createHall(larg, comp, level, textures) {
 // Função para criar os blocos das paredes móveis.
 function createMovingWalls(larg, comp, level, textures) {
     const geometry = new THREE.BoxGeometry(4, 4, 4);
-    const material = new THREE.MeshLambertMaterial();
+    const material = new THREE.MeshStandardMaterial();
 
     material.map = textures.wall4;
+
+    material.color = new THREE.Color(3, 3, 3);
 
     const block = new THREE.Mesh(geometry, material);
 

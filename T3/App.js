@@ -131,11 +131,11 @@ function loadLevels(level, resetPlayer) {
         shadow1.mapSize.width = 2048;
         shadow1.mapSize.height = 2048;
         shadow1.camera.near = 1;
-        shadow1.camera.far = 100;
-        shadow1.camera.left = -50;
-        shadow1.camera.right = 50;
-        shadow1.camera.bottom = -50;
-        shadow1.camera.top = 50;
+        shadow1.camera.far = 120;
+        shadow1.camera.left = -100;
+        shadow1.camera.right = 100;
+        shadow1.camera.bottom = -100;
+        shadow1.camera.top = 100;
         
         if(resetPlayer) {
             scene.add(player.object);
@@ -283,7 +283,7 @@ function loadLevels(level, resetPlayer) {
         UpdateEnemies();
 
         // Luz direcional do nível 3.
-        directionalLight3 = new THREE.DirectionalLight("white", 0.8);
+        directionalLight3 = new THREE.DirectionalLight("white", 0.6);
         directionalLight3.position.set(160, 50, -16);
         scene.add(directionalLight3);
         scene.add(directionalLight3.target);
@@ -421,9 +421,6 @@ function keyboardPress() {
     }
     if(keyboard.down("G")){
         player.godMode();
-    }
-    if(keyboard.down("K")){
-        player.setLife(0.0);
     }
     if(keyboard.down("space")) {
         // console.log(player.object.position);
