@@ -29,6 +29,29 @@
   <div id="webgl-output" style="display: none;">
     <script type="module" src="App.js"></script>
   </div>
+
+  <script>
+    // Quando a página estiver completamente carregada.
+    window.onload = function() {
+      // Esconde o símbolo de carregamento.
+      document.querySelector('.loader').style.display = 'none';
+      
+      // Habilita o botão de start.
+      const startButton = document.getElementById('start-btn');
+      startButton.disabled = false; // Habilita o botão.
+      startButton.style.backgroundColor = '#3498db'; // Muda a cor para indicar que está ativo.
+      startButton.style.cursor = 'pointer'; // Muda o cursor para indicar clicável.
+      startButton.style.opacity = '1'; // Torna o botão visível.
+    };
+
+    // Inicialmente, desabilite o botão.
+    document.addEventListener('DOMContentLoaded', function() {
+      const startButton = document.getElementById('start-btn');
+      startButton.disabled = true; // Desabilita o botão.
+      startButton.style.backgroundColor = 'gray'; // Muda a cor para indicar desabilitado.
+      startButton.style.cursor = 'not-allowed'; // Muda o cursor para indicar não clicável.
+    });
+  </script>
 </body>
 
 </html>
