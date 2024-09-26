@@ -205,7 +205,9 @@ export class Tank {
     // Método que move o player no celular.
     movePlayerMobile(levels, joystickL) {
         const move = (direction) => {
-            const movementSpeed = 0.5;
+            let originalRotationY = this.object.rotation.y;  // Armazena a rotação original do tanque.
+
+            const movementSpeed = 0.6;
             const rotationSpeed = 0.1;
 
             // Calcule a direção e rotacione o tanque.
@@ -216,7 +218,7 @@ export class Tank {
                 const targetRotation = Math.atan2(direction.x, direction.z);
     
                 // Corrige a rotação atual (converte para o intervalo de -PI a PI).
-                let currentRotation = this.object.rotation.y % (2 * Math.PI);
+                let currentRotation = originalRotationY % (2 * Math.PI);
                 if (currentRotation < -Math.PI) currentRotation += 2 * Math.PI;
                 if (currentRotation > Math.PI) currentRotation -= 2 * Math.PI;
     
@@ -227,10 +229,12 @@ export class Tank {
     
                 // Gira o tanque na direção do joystick usando o menor ângulo.
                 if (Math.abs(angleDiff) > rotationSpeed) {
-                    this.object.rotation.y += Math.sign(angleDiff) * rotationSpeed;
+                    originalRotationY += Math.sign(angleDiff) * rotationSpeed;
                 } else {
-                    this.object.rotation.y = targetRotation; // Alinha diretamente se próximo.
+                    originalRotationY = targetRotation; // Alinha diretamente se próximo.
                 }
+
+                this.object.rotation.y = originalRotationY
     
                 // Move o tanque para frente na direção atual.
                 this.object.translateZ(movementSpeed);
@@ -287,8 +291,6 @@ export class Tank {
                 }
             }
         };
-
-        let lastMovement = { x: 0, y: 0 };  // Variável para armazenar o último movimento.
 
         joystickL.on('move', function (evt, data) {
             // Passa a direção para a função de movimento do tanque.
