@@ -103,7 +103,7 @@ function checkCollisions(Bullet){
                 if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)}
                 else {Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100)};
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
         }
@@ -168,18 +168,18 @@ function checkCollisions(Bullet){
                 if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)}
                 else {Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100)};
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
             else if(Inimigo2Collision){             // Acertou o outro Inimigo
                 Bullet.inimigo2.setLife(Bullet.inimigo2.getLife() - 100);
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
             else if(Inimigo3Collision){             // Acertou o Cannon  
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
         }
@@ -193,12 +193,12 @@ function checkCollisions(Bullet){
             }
             else if(Inimigo2Collision){             // Acertou o outro inimigo
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
             else if(Inimigo3Collision){             // Acertou o Cannon
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
         }
@@ -213,13 +213,13 @@ function checkCollisions(Bullet){
             else if(Inimigo2Collision){             // Acertou o outro inimigo
                 Bullet.inimigo2.setLife(Bullet.inimigo2.getLife() - 100);
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
             else if(Inimigo3Collision){             // Acertou o outro inimigo
                 Bullet.inimigo3.setLife(Bullet.inimigo3.getLife() - 100);
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
         }
@@ -274,20 +274,20 @@ function checkCollisions(Bullet){
                 if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)}
                 else {Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100)};
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
             else if(Inimigo2Collision){             // Acertou o Inimigo
                 Bullet.inimigo2.setLife(Bullet.inimigo2.getLife() - 100);
                 console.log("Teste");
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
             else if(Inimigo3Collision){             // Acertou o Inimigo
                 Bullet.inimigo3.setLife(Bullet.inimigo3.getLife() - 100);
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
         }
@@ -301,12 +301,12 @@ function checkCollisions(Bullet){
             }
             else if( Inimigo2Collision){            // Acertou o outro Inimigo
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
             else if( Inimigo3Collision){            // Acertou o outro Inimigo
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(3, 0.3);
                 return 1;
             }
         }

@@ -439,18 +439,16 @@ function keyboardPress() {
         if( levelType == 1){
             Bullet.push(CriaBala(player.object, enemy1, enemy1, enemy1, 1, 0, null, Color));
             scene.add(Bullet[Bullet.length-1].obj);
-            PlayAudio(1);
         }
         else if(levelType == 3){
             Bullet.push(CriaBala(player.object, enemy2, enemy3, cannon, 2, 0, null, Color));
             scene.add(Bullet[Bullet.length-1].obj);
-            PlayAudio(1);
         }
         else if(levelType == 5){
             Bullet.push(CriaBala(player.object, enemy4, enemy5, enemy6, 3, 0, null, Color));
             scene.add(Bullet[Bullet.length-1].obj);
-            PlayAudio(1, 0.5);
         }
+        PlayAudio(1, 0.3);
     }
 };
 
@@ -487,11 +485,11 @@ function updateGates() {
     // Portão 1, do mapa 1 para o 2.
     if(moveGates[0] === 1) {
         level1.children[2].position.y -= 0.02;
-        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
+        PlayAudio(4, 0.005); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[0] === 2 && levelType === 2) {
         level1.children[2].position.y += 0.02;
-        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
+        PlayAudio(4, 0.005); // Toca o som quando o portão se move para cima
     }
     if(level1.children[2].position.y < -3.5) moveGates[0] = 2;
     if(level1.children[2].position.y > 0) moveGates[0] = 0;
@@ -499,11 +497,11 @@ function updateGates() {
     // Portão 2, do mapa 1 para o 2.
     if(moveGates[1] === 1) {
         level2.children[2].position.y -= 0.02;
-        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
+        PlayAudio(4, 0.005); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[1] === 2 && levelType === 3) {
         level2.children[2].position.y += 0.02;
-        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
+        PlayAudio(4, 0.005); // Toca o som quando o portão se move para cima
     }
     if(level2.children[2].position.y < -3.5) moveGates[1] = 2;
     if(level2.children[2].position.y > 0) moveGates[1] = 0;
@@ -511,11 +509,11 @@ function updateGates() {
     // Portão 1, do mapa 2 para o 3.
     if(moveGates[2] === 1) {
         level2.children[3].position.y -= 0.02;
-        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
+        PlayAudio(4, 0.005); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[2] === 2 && levelType === 4) {
         level2.children[3].position.y += 0.02;
-        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
+        PlayAudio(4, 0.005); // Toca o som quando o portão se move para cima
     }
     if(level2.children[3].position.y < -3.5) moveGates[2] = 2;
     if(level2.children[3].position.y > 0) moveGates[2] = 0;
@@ -523,11 +521,11 @@ function updateGates() {
     // Portão 3, do mapa 2 para o 3.
     if(moveGates[3] === 1) {
         level3.children[3].position.y -= 0.02;
-        PlayAudio(4, 0.02); // Toca o som quando o portão se move para baixo
+        PlayAudio(4, 0.005); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[3] === 2 && levelType === 5) {
         level3.children[3].position.y += 0.02;
-        PlayAudio(4, 0.02); // Toca o som quando o portão se move para cima
+        PlayAudio(4, 0.005); // Toca o som quando o portão se move para cima
     }
     if(level3.children[3].position.y < -3.5) moveGates[3] = 2;
     if(level3.children[3].position.y > 0) moveGates[3] = 0;
@@ -780,6 +778,7 @@ function removeBlocks() {
     }
 };
 
+PlayAudio(1, 0);
 loadLevels(1, true);
 render();
 function render() {
