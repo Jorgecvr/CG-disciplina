@@ -40,7 +40,7 @@ audioLoader.load('./audio/TiroTank.mp3', function (buffer) {
 });
 
 // Carregando o som do Dano no Player
-audioLoader.load('./audio/AtigiuPLayer.mp3', function (buffer) {
+audioLoader.load('./audio/AtingiuPlayer.mp3', function (buffer) {
     DamagePLayerBullet.setBuffer(buffer);
     DamagePLayerBullet.setLoop(false);
 });

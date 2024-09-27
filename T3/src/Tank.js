@@ -153,7 +153,7 @@ export class Tank {
         let keyboard = new KeyboardState();
         keyboard.update();
 
-        const movementSpeed = 0.7;
+        const movementSpeed = 0.3;
         const rotationSpeed = 0.05;
 
         // Define as condições de movimento.
@@ -232,7 +232,7 @@ export class Tank {
     // Método que move o player no celular.
     movePlayerMobile(levels, joystickL) {
         const move = (direction) => {
-            const movementSpeed = 0.6;
+            const movementSpeed = 0.3;
             const rotationSpeed = 0.1;
 
             // Calcule a direção e rotacione o tanque.

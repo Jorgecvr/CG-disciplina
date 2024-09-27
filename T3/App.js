@@ -627,7 +627,6 @@ setInterval(() => {
 
 // Função play chamada na render atualiza a lógica do jogo.
 function play() {
-    //requestAnimationFrame(play);
     keyboardPress();
     player.movePlayer(0, [level1, level2, level3]);
     player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
