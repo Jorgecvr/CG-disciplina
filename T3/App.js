@@ -369,6 +369,17 @@ window.addEventListener('wheel', function(event) {
     camera.handleUpdate(event);
 });
 
+// Função para setar cor do Projetil
+let Color = null;
+export function gotSecondPowerUp() {
+    Color = 0xFFFF00;
+    setTimeout(() => {
+        Color = 0xFFFFFF;
+    }, 10000); //  10 segundos 
+};
+
+
+
 // Função para verificar o pressionamento de teclas.
 function keyboardPress() {
     let keyboard = new KeyboardState();
@@ -395,20 +406,18 @@ function keyboardPress() {
         player.GodMode();
     }
     if(keyboard.down("space")) {
-        //spawnPowerUp(scene);
-        // console.log(player.object.position);
         if( levelType == 1){
-            Bullet.push(CriaBala(player.object, enemy1, enemy1, enemy1, 1, 0));
+            Bullet.push(CriaBala(player.object, enemy1, enemy1, enemy1, 1, 0, null, Color));
             scene.add(Bullet[Bullet.length-1].obj);
             PlayAudio(1);
         }
         else if(levelType == 3){
-            Bullet.push(CriaBala(player.object, enemy2, enemy3, cannon, 2, 0));
+            Bullet.push(CriaBala(player.object, enemy2, enemy3, cannon, 2, 0, null, Color));
             scene.add(Bullet[Bullet.length-1].obj);
             PlayAudio(1);
         }
         else if(levelType == 5){
-            Bullet.push(CriaBala(player.object, enemy4, enemy5, enemy6, 3, 0));
+            Bullet.push(CriaBala(player.object, enemy4, enemy5, enemy6, 3, 0, null, Color));
             scene.add(Bullet[Bullet.length-1].obj);
             PlayAudio(1, 0.5);
         }
@@ -575,7 +584,7 @@ setInterval(() => {
     } else if(levelType == 5){
         spawnPowerUp(scene, 3);
     }
-}, 100); 
+}, 10000); 
 
 // Função play chamada na render atualiza a lógica do jogo.
 function play() {
@@ -607,7 +616,7 @@ function play() {
         if(enemy1.lifeBar.scale.x > 0) enemy1.lifeBar.scale.set(enemy1.life / 1000, enemy1.lifeBar.scale.y, enemy1.lifeBar.scale.z);
 
         // Verifica se o inimigo 1 morreu.
-        if(enemy1.getLife() === 0) {
+        if(enemy1.getLife() <= 0) {
             enemy1.kill(scene);
             moveGates[0] = 1;
             loadLevels(2, false);
@@ -641,7 +650,7 @@ function play() {
     animatePowerUps();
 
     // Verifica a colisão do jogador com power-ups
-    checkPlayerCollisionPower(player.object, scene);
+    checkPlayerCollisionPower(player, scene);
 
 
 

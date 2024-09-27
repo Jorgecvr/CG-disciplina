@@ -1,16 +1,17 @@
 import * as THREE from 'three';
+import { gotSecondPowerUp } from '../App.js';
 
 // Níveis para a criação dos waypoints.
 let level1 = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 3, 3, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
-    [1, 1, 0, 3, 3, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
-    [1, 1, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 1, 1],
-    [1, 1, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 1, 1],
-    [1, 1, 0, 3, 3, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
-    [1, 1, 0, 3, 3, 0, 0, 1, 1, 1, 0, 0, 2, 2, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
     [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
@@ -65,7 +66,7 @@ function getRandomPowerUpPosition(position) {
             // Verificar se a posição é um 0 (área onde o power-up pode ser colocado)
             if (level[i][j] === 0) {
                 // Adicionar a posição (i, j) ao array de posições disponíveis
-                availablePositions.push({ x: i, y: j });
+                availablePositions.push({ x: j, y: i });
             }
         }
     }
@@ -107,14 +108,14 @@ let powerUpActive = false;
 export const powerUps = [];
 
 function createCapsulePowerUp(position) {
-    const geometry = new THREE.CapsuleGeometry(1, 2, 10, 20);
+    const geometry = new THREE.CapsuleGeometry(0.5, 1, 32, 32);
     const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
     const capsule = new THREE.Mesh(geometry, material);
     
-    capsule.rotation.x = Math.PI / 4; // Inclinado para evidenciar a rotação
+    capsule.rotation.z = Math.PI / 4; // Inclinado para evidenciar a rotação
 
     // Definindo a posição usando a posição passada como argumento
-    capsule.position.set(position.x, 0.5, position.y); // Usando 'position.x' e 'position.y'
+    capsule.position.set(position.x, 1.0, position.y); // Usando 'position.x' e 'position.y'
 
     capsule.userData = { type: 'energy', effect: 0.2 }; // Aumenta 20% de energia
     capsule.userData.rotationSpeed = 0.01;
@@ -144,14 +145,13 @@ export function spawnPowerUp(scene, spawnZone) {
 
     const powerUp = Math.random() > 0.5 ? createCapsulePowerUp(position) : createIcosahedronPowerUp(position);
     powerUps.push(powerUp);
-    //powerUp.positionY.set(10, 10, 10);
     scene.add(powerUp);
 
     powerUpActive = true;
     setTimeout(() => {
         scene.remove(powerUp);
         powerUpActive = false;
-    }, 100); // O power-up desaparece após 10 segundos se não for pego
+    }, 10000); // O power-up desaparece após 10 segundos se não for pego
 }
 
 // Animação de rotação do power-up
@@ -164,10 +164,14 @@ export function animatePowerUps() {
 // Verifica se o player pegou o power-up
 export function checkPlayerCollisionPower(player, scene) {
     powerUps.forEach((powerUp, index) => {
-        const distance = player.position.distanceTo(powerUp.position);
+        const distance = player.object.position.distanceTo(powerUp.position);
 
-        if (distance < 2) { // Distância para pegar o power-up
-            //applyPowerUpEffect(powerUp, player, scene);
+        if (distance < 4) { // Distância para pegar o power-up
+            if(powerUp.userData.type === 'energy'){
+                player.gotFirstPowerUp();
+            } else {
+                gotSecondPowerUp();
+            }
             scene.remove(powerUp);
             powerUps.splice(index, 1);
             powerUpActive = false;

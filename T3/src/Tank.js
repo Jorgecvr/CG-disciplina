@@ -82,11 +82,15 @@ export class Tank {
     GodMode(){
         this.IsGodMode = !this.IsGodMode;
         if(this.IsGodMode){
-            this.setLife(99999999999999999999);
+            this.setLife(9999999999999);
         }
         else{
             this.setLife(100);
         }
+    }
+
+    gotFirstPowerUp(){
+            if(this.getLife() < 900){this.setLife(this.getLife() + this.getLife()*0.2);}
     }
 
     // Método para "matar" o tanque.
