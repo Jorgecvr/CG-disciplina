@@ -52,7 +52,7 @@ audioLoader.load('./audio/AtingiuEnemy.mp3', function (buffer) {
 });
 
 // Carregando o som do Portão
-audioLoader.load('./audio/Portão.mp3', function (buffer) {
+audioLoader.load('./audio/PortãoCortado.mp3', function (buffer) {
     Gate.setBuffer(buffer);
     Gate.setLoop(false);
 })
@@ -91,9 +91,6 @@ export function PlayAudio(id, volume = 1) {
     
 }
 
-// Listener para a tecla 'P' para alternar mute/desmute
-window.addEventListener('keydown', function (event) {
-    if (event.key.toLowerCase() === 'p') {
-        toggleMute(); // Alterna entre mute e desmute ao pressionar 'P'
-    }
-});
+export function audioOff() {
+    toggleMute(); // Alterna audio.
+};
