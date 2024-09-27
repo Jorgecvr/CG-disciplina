@@ -13,6 +13,7 @@ export class CannonControl {
         if(shoot) {
             Bullet.push(CriaBala(this.cannon.object, tank1, tank2, tank3, 2, 2, 1));
             scene.add(Bullet[Bullet.length-1].obj);
+            PlayAudio(1, 0.3);
         }
 
         // Encontra o tanque mais próximo
