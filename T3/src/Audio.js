@@ -26,7 +26,7 @@ const DamageEnemy = new THREE.Audio(listener);
 const Gate = new THREE.Audio(listener);
 
 // Carregando a Música
-audioLoader.load('./audio/Music.mp3', function (buffer) {
+audioLoader.load('./audio/GameMusic.mp3', function (buffer) {
     Music.setBuffer(buffer);
     Music.setLoop(true); // Música de fundo em loop
     Music.setVolume(0.5); // Volume da música de fundo ajustado
