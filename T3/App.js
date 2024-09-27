@@ -45,8 +45,6 @@ document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('restart-btn').addEventListener('click', () => {
     location.reload();
 });
-
-let spawnZone = null;
  
 // Adicionando a skybox.
 const textureLoader = new THREE.TextureLoader();

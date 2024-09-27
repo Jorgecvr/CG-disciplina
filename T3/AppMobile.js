@@ -48,8 +48,6 @@ document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('restart-btn').addEventListener('click', () => {
     location.reload();
 });
-
-let spawnZone = null;
  
 // Adicionando a skybox.
 const textureLoader = new THREE.TextureLoader();
@@ -128,7 +126,7 @@ function onButtonUp(event) {
     pressedA = pressedB = false;
 };
 
-document.getElementById('game-container').appendChild(renderer.domElement);
+// document.getElementById('game-container').appendChild(renderer.domElement);
 
 // Adiciona os joysticks na cena.
 function addJoysticks() {
@@ -457,6 +455,15 @@ function unloadLevels(level, loadLevel, resetPlayer, resetLevel) {
 window.addEventListener('resize', function(){onWindowResize(camera.camera, renderer)}, false );
 window.addEventListener('orientationchange', onOrientationChange );
 
+// Função para setar cor do Projétil.
+let Color = null;
+export function gotSecondPowerUp() {
+    Color = 0xFFFF00;
+    setTimeout(() => {
+        Color = 0xFFFFFF;
+    }, 10000); //  10 segundos.
+};
+
 // Função de atualização dos níveis.
 function updateLevels() {
     if(player.object.position.x > 68.5 && player.object.position.x < 88) {
@@ -633,7 +640,7 @@ function play() {
     if(player.lifeBar.scale.x > 0) player.lifeBar.scale.set(player.life / 1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
 
     // Verifica se o player morreu.
-    if(player.getLife() === 0) {
+    if(player.getLife() <= 0) {
         if(levelType === 1) {
             unloadLevels(1, 1, true, true);
         }
@@ -654,7 +661,7 @@ function play() {
         if(enemy1.lifeBar.scale.x > 0) enemy1.lifeBar.scale.set(enemy1.life / 1000, enemy1.lifeBar.scale.y, enemy1.lifeBar.scale.z);
 
         // Verifica se o inimigo 1 morreu.
-        if(enemy1.getLife() === 0) {
+        if(enemy1.getLife() <= 0) {
             enemy1.kill(scene);
             moveGates[0] = 1;
             loadLevels(2, false);
@@ -683,10 +690,10 @@ function play() {
         if(enemy3.lifeBar.scale.x > 0) enemy3.lifeBar.scale.set(enemy3.life / 1000, enemy3.lifeBar.scale.y, enemy3.lifeBar.scale.z);
 
         // Verifica se os inimigos 1 e 2 morreram.
-        if(enemy2.getLife() === 0) {
+        if(enemy2.getLife() <= 0) {
             enemy2.kill(scene);
         }
-        if(enemy3.getLife() === 0) {
+        if(enemy3.getLife() <= 0) {
             enemy3.kill(scene);
         }
         if(enemy2.isDead && enemy3.isDead) {
@@ -712,13 +719,13 @@ function play() {
         updateMovingWalls();
 
         // Verifica se os inimigos morreram.
-        if(enemy4.getLife() === 0) {
+        if(enemy4.getLife() <= 0) {
             enemy4.kill(scene);
         }
-        if(enemy5.getLife() === 0) {
+        if(enemy5.getLife() <= 0) {
             enemy5.kill(scene);
         }
-        if(enemy6.getLife() === 0) {
+        if(enemy6.getLife() <= 0) {
             enemy6.kill(scene);
         }
 
