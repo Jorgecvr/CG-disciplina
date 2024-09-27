@@ -1,6 +1,6 @@
 // Importações básicas.
 import * as THREE from 'three';
-import { initRenderer } from '../../libs/util/util.js';
+import { initRenderer } from '../libs/util/util.js';
 import KeyboardState from '../libs/util/KeyboardState.js';
 
 // Importações de arquivos criados para o trabalho.
