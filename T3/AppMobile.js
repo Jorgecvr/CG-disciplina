@@ -16,6 +16,8 @@ import { PlayAudio } from './src/Audio.js';
 
 import { Buttons } from "../libs/other/buttons.js";
 
+import { spawnPowerUp, animatePowerUps, checkPlayerCollisionPower } from './src/PowerUp.js';
+
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
 var renderer = initRenderer("rgb(30, 30, 42)");     // Iniciando o renderer básico.
@@ -46,6 +48,8 @@ document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('restart-btn').addEventListener('click', () => {
     location.reload();
 });
+
+let spawnZone = null;
  
 // Adicionando a skybox.
 const textureLoader = new THREE.TextureLoader();
@@ -613,6 +617,17 @@ function BulletControl(Bullet) {
     }
 };
 
+// Spawn dos powerups.
+setInterval(() => {
+    if(levelType == 1){
+        spawnPowerUp(scene, 1);
+    } else if(levelType == 3){
+        spawnPowerUp(scene, 2);
+    } else if(levelType == 5){
+        spawnPowerUp(scene, 3);
+    }
+}, 11000); 
+
 // Função play chamada na render atualiza a lógica do jogo.
 function play() { 
     executeIfKeyPressed();
@@ -718,6 +733,12 @@ function play() {
     
     updateGates();
     updateLevels();
+
+    // Atualiza a animação dos power-ups.
+    animatePowerUps();
+
+    // Verifica a colisão do jogador com power-ups.
+    checkPlayerCollisionPower(player, scene);
 
     BulletControl(Bullet);
 

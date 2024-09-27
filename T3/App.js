@@ -17,7 +17,6 @@ import { PlayAudio } from './src/Audio.js';
 
 import { spawnPowerUp, animatePowerUps, checkPlayerCollisionPower } from './src/PowerUp.js';
 
-
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
 var renderer = initRenderer("rgb(30, 30, 42)");     // Iniciando o renderer básico.
@@ -615,6 +614,7 @@ function BulletControl(Bullet) {
     }
 };
 
+// Spawn dos powerups.
 setInterval(() => {
     if(levelType == 1){
         spawnPowerUp(scene, 1);
