@@ -13,7 +13,7 @@ import { Cannon } from './src/Cannon.js';
 import { CannonControl } from './src/CannonControl.js';
 
 import { CriaBala, BalaAnda } from './src/Bullet.js';
-import { PlayAudio } from './src/Audio.js';
+import { PlayAudio, audioOff } from './src/Audio.js';
 
 import { spawnPowerUp, animatePowerUps, checkPlayerCollisionPower } from './src/PowerUp.js';
 
@@ -434,6 +434,9 @@ function keyboardPress() {
     }
     if(keyboard.down("G")){
         player.godMode();
+    }
+    if(keyboard.down("P")) {
+        player.audioOff();
     }
     if(keyboard.down("space")) {
         if( levelType == 1){
