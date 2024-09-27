@@ -100,9 +100,10 @@ function checkCollisions(Bullet){
     if(Bullet.mapa == 1){                       // Mapa 1
         if(Bullet.identificador == 0){          // Player é o Atirador
             if(Inimigo1Collision){
-                if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)};
-                Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
+                if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)}
+                else {Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100)};
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
         }
@@ -110,6 +111,7 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
+                PlayAudio(2, 0.5);
                 return 1;
             }
         }
@@ -164,8 +166,8 @@ function checkCollisions(Bullet){
 
         if(Bullet.identificador == 0){              // Player é o Atirador
             if(Inimigo1Collision){                  // Acertou o inimigo
-                if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)};
-                Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
+                if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)}
+                else {Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100)};
                 Bullet.removed = true;
                 PlayAudio(3, 0.5);
                 return 1;
@@ -187,7 +189,7 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){                  // Acertou o player
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(2, 0.5);
                 return 1;
             }
             else if(Inimigo2Collision){             // Acertou o outro inimigo
@@ -197,6 +199,7 @@ function checkCollisions(Bullet){
             }
             else if(Inimigo3Collision){             // Acertou o Cannon
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
         }
@@ -205,7 +208,7 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){                  // Acertou o player
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(2, 0.5);
                 return 1;
             }
             else if(Inimigo2Collision){             // Acertou o outro inimigo
@@ -269,8 +272,8 @@ function checkCollisions(Bullet){
 
         if(Bullet.identificador == 0){              // Player é o atirador
             if(Inimigo1Collision){                  // Acertou o Inimigo
-                if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)};
-                Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
+                if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)}
+                else {Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100)};
                 Bullet.removed = true;
                 PlayAudio(3, 0.5);
                 return 1;
@@ -294,7 +297,7 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){                  // Acertou o Player
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
-                PlayAudio(3), 0.5;
+                PlayAudio(2, 0.5);
                 return 1;
             }
             else if( Inimigo2Collision){            // Acertou o outro Inimigo

@@ -16,6 +16,8 @@ export class Tank {
     constructor(type, isPlayer) {
         this.object = new THREE.Object3D();
         this.loadModel(type, isPlayer);
+        this.originalMaterials = [];
+        
 
         // Objeto de apoio à colisão.
         this.box = new THREE.Mesh(new THREE.BoxGeometry(4.7, 3.2, 5.1));
@@ -24,7 +26,7 @@ export class Tank {
             this.box.position.z += 0.3
             this.box.visible = false;
             this.IsGodMode = false;
-            this.isPW = false;
+            
 
         // Criando a vida de cada tanque.
         this.life = 1000;
@@ -91,30 +93,28 @@ export class Tank {
     }
 
     gotFirstPowerUp(){
-            if(!this.isPW) {
-                if(this.getLife() < 900){this.setLife(this.getLife() + this.getLife()*0.2)}
-                
-                this.object.traverse((child) => {
-                    if(child instanceof THREE.Mesh) {
-                        this.originalMaterials.push(child.material);
-                        child.material = new THREE.MeshPhongMaterial({
-                            color: "rgb(255, 223, 0)",
-                            shininess: 200,
-                            specular: "rgb(255, 255, 255)"
-                        });
-                    }
-                });
-            }
-            else {
+            if(this.getLife() < 900){this.setLife(this.getLife() + this.getLife()*0.2)}
+            
+            this.object.traverse((child) => {
+                if(child instanceof THREE.Mesh) {
+                    this.originalMaterials.push(child.material);
+                    child.material = new THREE.MeshPhongMaterial({
+                        color: "rgb(0, 255, 0)",  // Verde brilhante
+                        shininess: 200,           // Brilho
+                        specular: "rgb(0, 255, 0)" // Reflexo verde brilhante
+                    });
+                }
+            });
+
+            setTimeout(() => {
                 let materialIndex = 0;
                 this.object.traverse((child) => {
-                    if(child instanceof THREE.Mesh && this.originalMaterials[materialIndex]) {
-                        child.material = this.originalMaterials[materialIndex];
+                    if (child instanceof THREE.Mesh && this.originalMaterials[materialIndex]) {
+                        child.material = this.originalMaterials[materialIndex]; // Restaura a cor original
                         materialIndex++;
                     }
                 });
-            }
-            this.isPW = !this.isPW;
+            }, 500); // Tempo em milissegundos (0.5 segundos)
     }
 
     // Método para "matar" o tanque.

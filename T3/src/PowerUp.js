@@ -149,6 +149,7 @@ export function spawnPowerUp(scene, spawnZone) {
 
     powerUpActive = true;
     setTimeout(() => {
+        powerUp.position.set(10000, 10000, 10000); // Mover para uma coordenada extrema
         scene.remove(powerUp);
         powerUpActive = false;
     }, 10000); // O power-up desaparece após 10 segundos se não for pego
@@ -172,6 +173,7 @@ export function checkPlayerCollisionPower(player, scene) {
             } else {
                 gotSecondPowerUp();
             }
+            powerUp.position.set(10000, 10000, 10000); // Mover para uma coordenada extrema
             scene.remove(powerUp);
             powerUps.splice(index, 1);
             powerUpActive = false;

@@ -584,7 +584,7 @@ setInterval(() => {
     } else if(levelType == 5){
         spawnPowerUp(scene, 3);
     }
-}, 10000); 
+}, 11000); 
 
 // Função play chamada na render atualiza a lógica do jogo.
 function play() {
