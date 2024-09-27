@@ -15,6 +15,9 @@ import { CannonControl } from './src/CannonControl.js';
 import { CriaBala, BalaAnda } from './src/Bullet.js';
 import { PlayAudio } from './src/Audio.js';
 
+import { spawnPowerUp, animatePowerUps, checkPlayerCollisionPower } from './src/PowerUp.js';
+
+
 // Declaração de variáveis úteis.
 var scene = new THREE.Scene();                      // Criando a main scene.
 var renderer = initRenderer("rgb(30, 30, 42)");     // Iniciando o renderer básico.
@@ -43,6 +46,8 @@ document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('restart-btn').addEventListener('click', () => {
     location.reload();
 });
+
+let spawnZone = null;
  
 // Adicionando a skybox.
 const textureLoader = new THREE.TextureLoader();
@@ -87,6 +92,7 @@ var lastTime = 0;
 var shoot = false;
 
 // Armazena o tipo do nível atual (começa em 1).
+var levelType = 1;                                  
 var levelType = 1;                                  
 var level1 = CreateLevel(1);     // Criando o nível 1.
 var level2 = CreateLevel(2);     // Criando o nível 2.
@@ -409,6 +415,17 @@ window.addEventListener('wheel', function(event) {
     camera.handleUpdate(event);
 });
 
+// Função para setar cor do Projetil
+let Color = null;
+export function gotSecondPowerUp() {
+    Color = 0xFFFF00;
+    setTimeout(() => {
+        Color = 0xFFFFFF;
+    }, 10000); //  10 segundos 
+};
+
+
+
 // Função para verificar o pressionamento de teclas.
 function keyboardPress() {
     let keyboard = new KeyboardState();
@@ -422,19 +439,18 @@ function keyboardPress() {
         player.godMode();
     }
     if(keyboard.down("space")) {
-        // console.log(player.object.position);
         if( levelType == 1){
-            Bullet.push(CriaBala(player.object, enemy1, enemy1, enemy1, 1, 0));
+            Bullet.push(CriaBala(player.object, enemy1, enemy1, enemy1, 1, 0, null, Color));
             scene.add(Bullet[Bullet.length-1].obj);
             PlayAudio(1);
         }
         else if(levelType == 3){
-            Bullet.push(CriaBala(player.object, enemy2, enemy3, enemy3, 2, 0));
+            Bullet.push(CriaBala(player.object, enemy2, enemy3, cannon, 2, 0, null, Color));
             scene.add(Bullet[Bullet.length-1].obj);
             PlayAudio(1);
         }
         else if(levelType == 5){
-            Bullet.push(CriaBala(player.object, enemy4, enemy5, enemy6, 3, 0));
+            Bullet.push(CriaBala(player.object, enemy4, enemy5, enemy6, 3, 0, null, Color));
             scene.add(Bullet[Bullet.length-1].obj);
             PlayAudio(1, 0.5);
         }
@@ -599,8 +615,19 @@ function BulletControl(Bullet) {
     }
 };
 
+setInterval(() => {
+    if(levelType == 1){
+        spawnPowerUp(scene, 1);
+    } else if(levelType == 3){
+        spawnPowerUp(scene, 2);
+    } else if(levelType == 5){
+        spawnPowerUp(scene, 3);
+    }
+}, 11000); 
+
 // Função play chamada na render atualiza a lógica do jogo.
 function play() {
+    //requestAnimationFrame(play);
     keyboardPress();
     player.movePlayer(0, [level1, level2, level3]);
     player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
@@ -628,7 +655,7 @@ function play() {
         if(enemy1.lifeBar.scale.x > 0) enemy1.lifeBar.scale.set(enemy1.life / 1000, enemy1.lifeBar.scale.y, enemy1.lifeBar.scale.z);
 
         // Verifica se o inimigo 1 morreu.
-        if(enemy1.getLife() === 0) {
+        if(enemy1.getLife() <= 0) {
             enemy1.kill(scene);
             moveGates[0] = 1;
             loadLevels(2, false);
@@ -705,6 +732,12 @@ function play() {
     
     updateGates();
     updateLevels();
+
+    // Atualiza a animação dos power-ups.
+    animatePowerUps();
+
+    // Verifica a colisão do jogador com power-ups.
+    checkPlayerCollisionPower(player, scene);
 
     BulletControl(Bullet);
 

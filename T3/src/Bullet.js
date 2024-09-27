@@ -1,29 +1,45 @@
 import * as THREE from 'three';
 import { PlayAudio } from './Audio.js';
 
-export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identificador){
+export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identificador, cannon = null, Color){
+    let MoreDamage = 0;
+    if(Color == null){
+        Color = 0xFFFFFF;
+    } else{
+        MoreDamage = 1;
+    }
+    
 
     let WallCollision = 0;
     let AcertouInimigo = 0;
     const materialBullet = new THREE.MeshLambertMaterial({
         color: 0xFFFFFF,
-        emissive: 0xFFFFFF,
+        emissive: Color,
         emissiveIntensity: 0.2
     });
     const geometryBullet = new THREE.SphereGeometry( 0.3, 32, 32, 50 );  
     const bullet = new THREE.Mesh( geometryBullet, materialBullet );
+
     // Define a posição inicial da bala na posição do tanque
     var p = new THREE.Vector3(); 
     let speed = 0.5;
-    Atirador.getWorldPosition(p);
-    bullet.position.copy(p.clone());
+    if(cannon != null){
+        Atirador.children[0].getWorldPosition(p);
+    } else Atirador.getWorldPosition(p);
+    bullet.position.copy(p);
     bullet.position.y = 2.15;
 
     // Cálculo da direção inicial da bala com base na rotação do Atirador
     var direction = new THREE.Vector3(); 
     var AtiradorRotationMatrix = new THREE.Matrix4();
-    Atirador.matrixWorld.clone().decompose(new THREE.Vector3(), Atirador.quaternion.clone(), new THREE.Vector3());
-    AtiradorRotationMatrix.makeRotationFromQuaternion(Atirador.quaternion.clone());
+    if(cannon != null){
+        AtiradorRotationMatrix.makeRotationFromQuaternion(Atirador.children[0].quaternion);
+    }
+    else {
+        Atirador.matrixWorld.decompose(new THREE.Vector3(), Atirador.quaternion, new THREE.Vector3());
+        AtiradorRotationMatrix.makeRotationFromQuaternion(Atirador.quaternion);
+    }
+    
     // Define a direção inicial da bala no espaço local do Atirador (direção para frente)
     var localDirection = new THREE.Vector3(0, 0, 1);
     // Transforma a direção local da bala em uma direção global usando a rotação do Atirador
@@ -44,7 +60,8 @@ export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identific
         inimigo3: inimigo3,
         mapa: mapa,
         identificador: identificador,
-        p: p
+        p: p,
+        MoreDamage: MoreDamage
     }
     return Bullet;
 }
@@ -83,8 +100,10 @@ function checkCollisions(Bullet){
     if(Bullet.mapa == 1){                       // Mapa 1
         if(Bullet.identificador == 0){          // Player é o Atirador
             if(Inimigo1Collision){
-                Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
+                if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)}
+                else {Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100)};
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
         }
@@ -92,6 +111,7 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
+                PlayAudio(2, 0.5);
                 return 1;
             }
         }
@@ -145,7 +165,8 @@ function checkCollisions(Bullet){
 
         if(Bullet.identificador == 0){              // Player é o Atirador
             if(Inimigo1Collision){                  // Acertou o inimigo
-                Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
+                if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)}
+                else {Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100)};
                 Bullet.removed = true;
                 PlayAudio(3, 0.5);
                 return 1;
@@ -157,7 +178,8 @@ function checkCollisions(Bullet){
                 return 1;
             }
             else if(Inimigo3Collision){             // Acertou o Cannon  
-                WallCollision = 3;
+                Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
         }
@@ -166,7 +188,7 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){                  // Acertou o player
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(2, 0.5);
                 return 1;
             }
             else if(Inimigo2Collision){             // Acertou o outro inimigo
@@ -176,6 +198,7 @@ function checkCollisions(Bullet){
             }
             else if(Inimigo3Collision){             // Acertou o Cannon
                 Bullet.removed = true;
+                PlayAudio(3, 0.5);
                 return 1;
             }
         }
@@ -184,7 +207,7 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){                  // Acertou o player
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
-                PlayAudio(3, 0.5);
+                PlayAudio(2, 0.5);
                 return 1;
             }
             else if(Inimigo2Collision){             // Acertou o outro inimigo
@@ -248,13 +271,15 @@ function checkCollisions(Bullet){
 
         if(Bullet.identificador == 0){              // Player é o atirador
             if(Inimigo1Collision){                  // Acertou o Inimigo
-                Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
+                if(Bullet.MoreDamage == 1){Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 200)}
+                else {Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100)};
                 Bullet.removed = true;
                 PlayAudio(3, 0.5);
                 return 1;
             }
             else if(Inimigo2Collision){             // Acertou o Inimigo
                 Bullet.inimigo2.setLife(Bullet.inimigo2.getLife() - 100);
+                console.log("Teste");
                 Bullet.removed = true;
                 PlayAudio(3, 0.5);
                 return 1;
@@ -271,7 +296,7 @@ function checkCollisions(Bullet){
             if(Inimigo1Collision){                  // Acertou o Player
                 Bullet.inimigo1.setLife(Bullet.inimigo1.getLife() - 100);
                 Bullet.removed = true;
-                PlayAudio(3), 0.5;
+                PlayAudio(2, 0.5);
                 return 1;
             }
             else if( Inimigo2Collision){            // Acertou o outro Inimigo

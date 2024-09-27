@@ -14,15 +14,15 @@ function toggleMute() {
     const volume = isMuted ? 0 : 1; // 0 para mutado, 1 para desmutado (pode ser ajustado conforme necessário)
     Music.setVolume(volume * 0.5); // Multiplica pelo volume original
     PlayerBullet.setVolume(volume * 1);
-    EnemiesBullet.setVolume(volume * 1);
-    DamageBullet.setVolume(volume * 1);
+    DamagePLayerBullet.setVolume(volume * 1);
+    DamageEnemy.setVolume(volume * 1);
 }
 
 // Criação dos objetos de som
 const Music = new THREE.Audio(listener);
 const PlayerBullet = new THREE.Audio(listener);
-const EnemiesBullet = new THREE.Audio(listener);
-const DamageBullet = new THREE.Audio(listener);
+const DamagePLayerBullet = new THREE.Audio(listener);
+const DamageEnemy = new THREE.Audio(listener);
 const Gate = new THREE.Audio(listener);
 
 // Carregando a Música
@@ -33,22 +33,22 @@ audioLoader.load('./audio/Music.mp3', function (buffer) {
     Music.play(); // Tocar música de fundo automaticamente
 });
 
-// Carregando o som do Player
-audioLoader.load('./audio/Player.mp3', function (buffer) {
+// Carregando o som do Tiro do Canhão
+audioLoader.load('./audio/TiroTank.mp3', function (buffer) {
     PlayerBullet.setBuffer(buffer);
     PlayerBullet.setLoop(false);
 });
 
-// Carregando o som do Inimigo
-audioLoader.load('./audio/Inimigo.mp3', function (buffer) {
-    EnemiesBullet.setBuffer(buffer);
-    EnemiesBullet.setLoop(false);
+// Carregando o som do Dano no Player
+audioLoader.load('./audio/AtigiuPLayer.mp3', function (buffer) {
+    DamagePLayerBullet.setBuffer(buffer);
+    DamagePLayerBullet.setLoop(false);
 });
 
-// Carregando o som do Dano
-audioLoader.load('./audio/TomouTiro.mp3', function (buffer) {
-    DamageBullet.setBuffer(buffer);
-    DamageBullet.setLoop(false);
+// Carregando o som do Dano no Inimigo
+audioLoader.load('./audio/AtingiuEnemy.mp3', function (buffer) {
+    DamageEnemy.setBuffer(buffer);
+    DamageEnemy.setLoop(false);
 });
 
 // Carregando o som do Portão
@@ -71,13 +71,13 @@ export function PlayAudio(id, volume = 1) {
         newBulletSound.play();
     } else if (id === 2) {
         const newBulletSound = new THREE.Audio(listener);
-        newBulletSound.setBuffer(EnemiesBullet.buffer);
+        newBulletSound.setBuffer(DamagePLayerBullet.buffer);
         newBulletSound.setLoop(false);
         newBulletSound.setVolume(isMuted ? 0 : volume); // Verifica se está mutado
         newBulletSound.play();
     } else if (id === 3) {
         const newBulletSound = new THREE.Audio(listener);
-        newBulletSound.setBuffer(DamageBullet.buffer);
+        newBulletSound.setBuffer(DamageEnemy.buffer);
         newBulletSound.setLoop(false);
         newBulletSound.setVolume(isMuted ? 0 : volume); // Verifica se está mutado
         newBulletSound.play();

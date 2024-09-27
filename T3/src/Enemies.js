@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { CheckCollisionsWithWall } from './Collisions.js';
 import { CriaBala } from './Bullet.js';
 import { PlayAudio } from './Audio.js';
+import { Cannon } from './Cannon.js';
 
 // Níveis para a criação dos waypoints.
 let level1 = [
@@ -219,6 +220,7 @@ export function UpdateTankPositionLevel1(player, tank, type, level, Bullet = nul
         if(shoot2) {
             Bullet.push(CriaBala(tank.object, player, tank, tank, 1, 1));
             scene.add(Bullet[Bullet.length-1].obj);
+            PlayAudio(1, 0.5);
 
             // Após atirar faz um intervalo.
             shoot2 = false;
@@ -458,9 +460,9 @@ export function UpdateTankPositionLevel2(player, tank, type, levels, Bullet = nu
 
             // Verifica se o tanque atira.
             if(shoot2) {
-                Bullet.push(CriaBala(tank.object, player, oTank, oTank /*Cannon*/, 2, 1));
+                Bullet.push(CriaBala(tank.object, player, oTank, Cannon , 2, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
-                PlayAudio(2, 0.5);
+                PlayAudio(1, 0.5);
 
                 // Após atirar faz um intervalo.
                 shoot2 = false;
@@ -603,9 +605,9 @@ export function UpdateTankPositionLevel2(player, tank, type, levels, Bullet = nu
 
             // Verifica se o tanque atira.
             if(shoot3) {
-                Bullet.push(CriaBala(tank.object, player, oTank, oTank /*Cannon*/, 2, 1));
+                Bullet.push(CriaBala(tank.object, player, oTank, Cannon , 2, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
-                PlayAudio(2, 0.5);
+                PlayAudio(1, 0.5);
 
                 // Após atirar faz um intervalo.
                 shoot3 = false;
@@ -875,7 +877,7 @@ export function UpdateTankPositionLevel3(player, tank, type, levels, Bullet = nu
             if(shoot2) {
                 Bullet.push(CriaBala(tank.object, player, oTank, oTank2, 3, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
-                PlayAudio(2, 0.5);
+                PlayAudio(1, 0.5);
 
                 // Após atirar faz um intervalo.
                 shoot2 = false;
@@ -1025,7 +1027,7 @@ export function UpdateTankPositionLevel3(player, tank, type, levels, Bullet = nu
             if(shoot3) {
                 Bullet.push(CriaBala(tank.object, player, oTank, oTank2, 3, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
-                PlayAudio(2, 0.5);
+                PlayAudio(1, 0.5);
 
                 // Após atirar faz um intervalo.
                 shoot3 = false;
@@ -1175,7 +1177,7 @@ export function UpdateTankPositionLevel3(player, tank, type, levels, Bullet = nu
             if(shoot4) {
                 Bullet.push(CriaBala(tank.object, player, oTank, oTank2, 3, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
-                PlayAudio(2, 0.5);
+                PlayAudio(1, 0.5);
 
                 // Após atirar faz um intervalo.
                 shoot4 = false;
