@@ -155,7 +155,7 @@ export function spawnPowerUp(scene, spawnZone) {
     }, 10000); // O power-up desaparece após 10 segundos se não for pego
 }
 
-// Animação de rotação do power-up
+/// Animação de rotação do power-up
 export function animatePowerUps() {
     powerUps.forEach(powerUp => {
         powerUp.rotation.y += powerUp.userData.rotationSpeed;
