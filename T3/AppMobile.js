@@ -126,7 +126,7 @@ function onButtonUp(event) {
     pressedA = pressedB = false;
 };
 
-// document.getElementById('game-container').appendChild(renderer.domElement);
+document.getElementById('game-container').appendChild(renderer.domElement);
 
 // Adiciona os joysticks na cena.
 function addJoysticks() {
