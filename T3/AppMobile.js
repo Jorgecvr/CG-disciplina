@@ -465,6 +465,7 @@ function resetLevel(level) {
         player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
         player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
 
+        addJoysticks();
         player.movePlayerMobile([level1, level2, level3], joystickL);
 
         enemy1 = new Tank(2, false);
@@ -498,7 +499,7 @@ function resetLevel(level) {
         player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
         player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
 
-
+        addJoysticks();
         player.movePlayerMobile([level1, level2, level3], joystickL);
 
         enemy2 = new Tank(1, false);
@@ -550,6 +551,7 @@ function resetLevel(level) {
         player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
         player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
 
+        addJoysticks();
         player.movePlayerMobile([level1, level2, level3], joystickL);
 
         enemy4 = new Tank(3, false);
