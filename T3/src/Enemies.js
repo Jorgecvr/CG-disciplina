@@ -460,7 +460,7 @@ export function UpdateTankPositionLevel2(player, tank, type, levels, Bullet = nu
 
             // Verifica se o tanque atira.
             if(shoot2) {
-                Bullet.push(CriaBala(tank.object, player, oTank, Cannon , 2, 1));
+                Bullet.push(CriaBala(tank.object, player, oTank, oTank, 2, 1, cannon));
                 scene.add(Bullet[Bullet.length-1].obj);
                 PlayAudio(1, 0.15);
 
@@ -605,7 +605,7 @@ export function UpdateTankPositionLevel2(player, tank, type, levels, Bullet = nu
 
             // Verifica se o tanque atira.
             if(shoot3) {
-                Bullet.push(CriaBala(tank.object, player, oTank, Cannon , 2, 1));
+                Bullet.push(CriaBala(tank.object, player, oTank, oTank, 2, 1, cannon));
                 scene.add(Bullet[Bullet.length-1].obj);
                 PlayAudio(1, 0.15);
 
