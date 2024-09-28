@@ -465,6 +465,8 @@ function resetLevel(level) {
         player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
         player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
 
+        player.movePlayerMobile([level1, level2, level3], joystickL);
+
         enemy1 = new Tank(2, false);
         enemy1.object.position.set(54, 0, 34);
         enemy1.object.rotateY(THREE.MathUtils.degToRad(180));
@@ -472,6 +474,10 @@ function resetLevel(level) {
         enemy1.lifeBar.scale.set(enemy1.life/1000, enemy1.lifeBar.scale.y, enemy1.lifeBar.scale.z);
 
         UpdateEnemies();
+        
+        Bullet.forEach((bullet) => {
+            scene.remove(bullet.obj);
+        });
 
         scene.add(player.object);
         scene.add(player.lifeBar);
@@ -491,6 +497,9 @@ function resetLevel(level) {
         player.object.position.set(92, 0, 8);
         player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
         player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
+
+
+        player.movePlayerMobile([level1, level2, level3], joystickL);
 
         enemy2 = new Tank(1, false);
         enemy2.object.position.set(144, 0, 34);
@@ -512,6 +521,10 @@ function resetLevel(level) {
         
         // Inicializando o controle do canhão após a definição do canhão.
         cannonControl = new CannonControl(cannon, [player, enemy2, enemy3]);
+
+        Bullet.forEach((bullet) => {
+            scene.remove(bullet.obj);
+        });
 
         scene.add(player.object);
         scene.add(player.lifeBar);
@@ -537,6 +550,8 @@ function resetLevel(level) {
         player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
         player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
 
+        player.movePlayerMobile([level1, level2, level3], joystickL);
+
         enemy4 = new Tank(3, false);
         enemy4.object.position.set(208, 0, 0);
         enemy4.lifeBar.position.set(enemy4.object.position.x, enemy4.object.position.y + 5, enemy4.object.position.z);
@@ -554,6 +569,10 @@ function resetLevel(level) {
         enemy6.lifeBar.scale.set(enemy6.life/1000, enemy6.lifeBar.scale.y, enemy6.lifeBar.scale.z);
 
         UpdateEnemies();
+
+        Bullet.forEach((bullet) => {
+            scene.remove(bullet.obj);
+        });
 
         scene.add(player.object);
         scene.add(player.lifeBar);

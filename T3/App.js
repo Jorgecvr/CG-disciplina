@@ -411,6 +411,10 @@ function resetLevel(level) {
 
         UpdateEnemies();
 
+        Bullet.forEach((bullet) => {
+            scene.remove(bullet.obj);
+        });
+
         scene.add(player.object);
         scene.add(player.lifeBar);
         scene.add(enemy1.object);
@@ -450,6 +454,10 @@ function resetLevel(level) {
         
         // Inicializando o controle do canhão após a definição do canhão.
         cannonControl = new CannonControl(cannon, [player, enemy2, enemy3]);
+
+        Bullet.forEach((bullet) => {
+            scene.remove(bullet.obj);
+        });
 
         scene.add(player.object);
         scene.add(player.lifeBar);
@@ -492,6 +500,10 @@ function resetLevel(level) {
         enemy6.lifeBar.scale.set(enemy6.life/1000, enemy6.lifeBar.scale.y, enemy6.lifeBar.scale.z);
 
         UpdateEnemies();
+
+        Bullet.forEach((bullet) => {
+            scene.remove(bullet.obj);
+        });
 
         scene.add(player.object);
         scene.add(player.lifeBar);
