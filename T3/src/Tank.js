@@ -25,7 +25,6 @@ export class Tank {
             this.box.position.y += 1.7;
             this.box.position.z += 0.3
             this.box.visible = false;
-            this.IsGodMode = false;
             
 
         // Criando a vida de cada tanque.

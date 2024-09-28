@@ -90,7 +90,7 @@ var shoot = false;
 
 // Armazena o tipo do nível atual (começa em 1).
 //var levelType = 1;                                  
-var levelType = 5;                                  
+var levelType = 1;                                  
 var level1 = CreateLevel(1);     // Criando o nível 1.
 var level2 = CreateLevel(2);     // Criando o nível 2.
 var level3 = CreateLevel(3);     // Criando o nível 3.
@@ -733,7 +733,9 @@ function play() {
     animatePowerUps();
 
     // Verifica a colisão do jogador com power-ups.
-    checkPlayerCollisionPower(player, scene);
+    if(!player.isGodMode) {
+        checkPlayerCollisionPower(player, scene);
+    }
 
     BulletControl(Bullet);
 
@@ -780,7 +782,7 @@ function removeBlocks() {
 };
 
 PlayAudio(1, 0);
-loadLevels(3, true);
+loadLevels(1, true);
 render();
 function render() {
     if(gameStarted) play();

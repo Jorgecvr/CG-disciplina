@@ -4,31 +4,31 @@ import { gotSecondPowerUp } from '../App.js';
 // Níveis para a criação dos waypoints.
 let level1 = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 
 let level2 = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 0, 1, 1, 1, 4, 0, 0, 0, 0, 6, 0, 0, 0, 2, 1, 1],
-    [1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1],
-    [1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 2, 1, 1],
-    [1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
-    [1, 1, 3, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
-    [1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1],
-    [1, 1, 3, 0, 0, 0, 5, 0, 0, 0, 0, 7, 1, 1, 1, 0, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 
@@ -54,7 +54,7 @@ function getRandomPowerUpPosition(position) {
     let level;
     if(position == 1){
         level = level1;
-    } else if( position == 2){
+    } else if(position == 2){
         level = level2
     } else level = level3;
     
@@ -66,37 +66,35 @@ function getRandomPowerUpPosition(position) {
             // Verificar se a posição é um 0 (área onde o power-up pode ser colocado)
             if (level[i][j] === 0) {
                 // Adicionar a posição (i, j) ao array de posições disponíveis
-                availablePositions.push({ x: j, y: i });
+                availablePositions.push({ x: j, z: i });
             }
         }
     }
 
     // Verificar se há posições disponíveis
     if (availablePositions.length === 0) {
-        console.log("Não há posições disponíveis para o power-up.");
-        return null; // Nenhuma posição disponível
+        return null;
     }
 
     // Selecionar uma posição aleatória
     const randomIndex = Math.floor(Math.random() * availablePositions.length);
     const selectedPosition = availablePositions[randomIndex];
 
-
     // Multiplicar as coordenadas por 4 para o tamanho do bloco
     selectedPosition.x = selectedPosition.x * 4;
-    selectedPosition.y = selectedPosition.y * 4;
+    selectedPosition.z = selectedPosition.z * 4;
 
     // Soma coordenada de acordo com o level
     if(position == 2){
-        selectedPosition.x = selectedPosition.x + 76 ;
+        selectedPosition.x = selectedPosition.x + 84;
     } else if(position == 3){
-        selectedPosition.x = selectedPosition.x + 164;
-        selectedPosition.y = selectedPosition.y -8 ;
+        selectedPosition.x = selectedPosition.x + 172;
+        selectedPosition.z = selectedPosition.z - 8;
     }
     
     const powerUpPosition = {
         x: selectedPosition.x, // Posição real em x
-        y: selectedPosition.y  // Posição real em y
+        z: selectedPosition.z  // Posição real em y
     };
 
     return powerUpPosition;
@@ -115,7 +113,7 @@ function createCapsulePowerUp(position) {
     capsule.rotation.z = Math.PI / 4; // Inclinado para evidenciar a rotação
 
     // Definindo a posição usando a posição passada como argumento
-    capsule.position.set(position.x, 1.0, position.y); // Usando 'position.x' e 'position.y'
+    capsule.position.set(position.x, 1.0, position.z); // Usando 'position.x' e 'position.z'
 
     capsule.userData = { type: 'energy', effect: 0.2 }; // Aumenta 20% de energia
     capsule.userData.rotationSpeed = 0.01;
@@ -129,7 +127,7 @@ function createIcosahedronPowerUp(position) {
     const icosahedron = new THREE.Mesh(geometry, material);
 
     // Definindo a posição usando a posição passada como argumento
-    icosahedron.position.set(position.x, 0.5, position.y); // Usando 'position.x' e 'position.y'
+    icosahedron.position.set(position.x, 0.5, position.z); // Usando 'position.x' e 'position.y'
 
     icosahedron.userData = { type: 'damage', effect: 2, duration: 10000 }; // Dobra o dano por 10 segundos
     icosahedron.userData.rotationSpeed = 0.01;
