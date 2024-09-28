@@ -461,12 +461,12 @@ function resetLevel(level) {
 
         player = new Tank(1, true);
         player.object.position.set(10, 0, 34);
-        player.object.rotateY(THREE.MathUtils.degToRad(180));
         player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
         player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
 
         addJoysticks();
         player.movePlayerMobile([level1, level2, level3], joystickL);
+        player.object.rotateY(THREE.MathUtils.degToRad(180));
 
         enemy1 = new Tank(2, false);
         enemy1.object.position.set(54, 0, 34);
@@ -547,12 +547,12 @@ function resetLevel(level) {
 
         player = new Tank(1, true);
         player.object.position.set(182, 0, 20);
-        player.object.rotateY(THREE.MathUtils.degToRad(90));
         player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
         player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
 
         addJoysticks();
         player.movePlayerMobile([level1, level2, level3], joystickL);
+        player.object.rotateY(THREE.MathUtils.degToRad(90));
 
         enemy4 = new Tank(3, false);
         enemy4.object.position.set(208, 0, 0);
