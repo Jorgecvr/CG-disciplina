@@ -389,6 +389,121 @@ function unloadLevels(level, loadLevel, resetPlayer, resetLevel) {
     }
 };
 
+// Reinicia o nível quando player morrer.
+function resetLevel(level) {
+    if(level === 1) {
+        scene.remove(player.object);
+        scene.remove(player.lifeBar);
+        scene.remove(enemy1.object);
+        scene.remove(enemy1.lifeBar);
+
+        player = new Tank(1, true);
+        player.object.position.set(10, 0, 34);
+        player.object.rotateY(THREE.MathUtils.degToRad(180));
+        player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
+        player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
+
+        enemy1 = new Tank(2, false);
+        enemy1.object.position.set(54, 0, 34);
+        enemy1.object.rotateY(THREE.MathUtils.degToRad(180));
+        enemy1.lifeBar.position.set(enemy1.object.position.x, enemy1.object.position.y + 5, enemy1.object.position.z);
+        enemy1.lifeBar.scale.set(enemy1.life/1000, enemy1.lifeBar.scale.y, enemy1.lifeBar.scale.z);
+
+        UpdateEnemies();
+
+        scene.add(player.object);
+        scene.add(player.lifeBar);
+        scene.add(enemy1.object);
+        scene.add(enemy1.lifeBar);
+    }
+    else if(level === 2) {
+        scene.remove(player.object);
+        scene.remove(player.lifeBar);
+        scene.remove(enemy2.object);
+        scene.remove(enemy2.lifeBar);
+        scene.remove(enemy3.object);
+        scene.remove(enemy3.lifeBar);
+        scene.remove(cannon.object);
+
+        player = new Tank(1, true);
+        player.object.position.set(92, 0, 8);
+        player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
+        player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
+
+        enemy2 = new Tank(1, false);
+        enemy2.object.position.set(144, 0, 34);
+        enemy2.object.rotateY(THREE.MathUtils.degToRad(180));
+        enemy2.lifeBar.position.set(enemy2.object.position.x, enemy2.object.position.y + 5, enemy2.object.position.z);
+        enemy2.lifeBar.scale.set(enemy2.life/1000, enemy2.lifeBar.scale.y, enemy2.lifeBar.scale.z);
+
+        enemy3 = new Tank(2, false);
+        enemy3.object.position.set(144, 0, 10);
+        enemy3.object.rotateY(THREE.MathUtils.degToRad(-90));
+        enemy3.lifeBar.position.set(enemy3.object.position.x, enemy3.object.position.y + 5, enemy3.object.position.z);
+        enemy3.lifeBar.scale.set(enemy3.life/1000, enemy3.lifeBar.scale.y, enemy3.lifeBar.scale.z);
+
+        UpdateEnemies();
+
+        cannon = new Cannon();
+        cannon.object.scale.multiplyScalar(1.5);
+        cannon.object.position.set(118, 3, 22);
+        
+        // Inicializando o controle do canhão após a definição do canhão.
+        cannonControl = new CannonControl(cannon, [player, enemy2, enemy3]);
+
+        scene.add(player.object);
+        scene.add(player.lifeBar);
+        scene.add(enemy2.object);
+        scene.add(enemy2.lifeBar);
+        scene.add(enemy3.object);
+        scene.add(enemy3.lifeBar);
+        scene.add(cannon.object);
+
+    } else if(level === 3) {
+        scene.remove(player.object);
+        scene.remove(player.lifeBar);
+        scene.remove(enemy4.object);
+        scene.remove(enemy4.lifeBar);
+        scene.remove(enemy5.object);
+        scene.remove(enemy5.lifeBar);
+        scene.remove(enemy6.object);
+        scene.remove(enemy6.lifeBar);
+
+        player = new Tank(1, true);
+        player.object.position.set(182, 0, 20);
+        player.object.rotateY(THREE.MathUtils.degToRad(90));
+        player.lifeBar.position.set(player.object.position.x, player.object.position.y + 5, player.object.position.z);
+        player.lifeBar.scale.set(player.life/1000, player.lifeBar.scale.y, player.lifeBar.scale.z);
+
+        enemy4 = new Tank(3, false);
+        enemy4.object.position.set(208, 0, 0);
+        enemy4.lifeBar.position.set(enemy4.object.position.x, enemy4.object.position.y + 5, enemy4.object.position.z);
+        enemy4.lifeBar.scale.set(enemy4.life/1000, enemy4.lifeBar.scale.y, enemy4.lifeBar.scale.z);
+
+        enemy5 = new Tank(4, false);
+        enemy5.object.position.set(228, 0, 38);
+        enemy5.object.rotateY(THREE.MathUtils.degToRad(180));
+        enemy5.lifeBar.position.set(enemy5.object.position.x, enemy5.object.position.y + 5, enemy5.object.position.z);
+        enemy5.lifeBar.scale.set(enemy5.life/1000, enemy5.lifeBar.scale.y, enemy5.lifeBar.scale.z);
+        
+        enemy6 = new Tank(2, false);
+        enemy6.object.position.set(248, 0, 0);
+        enemy6.lifeBar.position.set(enemy6.object.position.x, enemy6.object.position.y + 5, enemy6.object.position.z);
+        enemy6.lifeBar.scale.set(enemy6.life/1000, enemy6.lifeBar.scale.y, enemy6.lifeBar.scale.z);
+
+        UpdateEnemies();
+
+        scene.add(player.object);
+        scene.add(player.lifeBar);
+        scene.add(enemy4.object);
+        scene.add(enemy4.lifeBar);
+        scene.add(enemy5.object);
+        scene.add(enemy5.lifeBar);
+        scene.add(enemy6.object);
+        scene.add(enemy6.lifeBar);
+    }
+};
+
 // Redimensionamento da câmera utilizando zoom.
 var zoom = 1;
 var lastWidth = window.innerWidth;
@@ -449,7 +564,7 @@ function keyboardPress() {
             Bullet.push(CriaBala(player.object, enemy4, enemy5, enemy6, 3, 0, null, Color));
             scene.add(Bullet[Bullet.length-1].obj);
         }
-        PlayAudio(1, 0.3);
+        PlayAudio(1, 0.15);
     }
 };
 
@@ -486,11 +601,11 @@ function updateGates() {
     // Portão 1, do mapa 1 para o 2.
     if(moveGates[0] === 1) {
         level1.children[2].position.y -= 0.02;
-        PlayAudio(4, 0.005); // Toca o som quando o portão se move para baixo
+        PlayAudio(4, 0.0005); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[0] === 2 && levelType === 2) {
         level1.children[2].position.y += 0.02;
-        PlayAudio(4, 0.005); // Toca o som quando o portão se move para cima
+        PlayAudio(4, 0.0005); // Toca o som quando o portão se move para cima
     }
     if(level1.children[2].position.y < -3.5) moveGates[0] = 2;
     if(level1.children[2].position.y > 0) moveGates[0] = 0;
@@ -498,11 +613,11 @@ function updateGates() {
     // Portão 2, do mapa 1 para o 2.
     if(moveGates[1] === 1) {
         level2.children[2].position.y -= 0.02;
-        PlayAudio(4, 0.005); // Toca o som quando o portão se move para baixo
+        PlayAudio(4, 0.0005); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[1] === 2 && levelType === 3) {
         level2.children[2].position.y += 0.02;
-        PlayAudio(4, 0.005); // Toca o som quando o portão se move para cima
+        PlayAudio(4, 0.0005); // Toca o som quando o portão se move para cima
     }
     if(level2.children[2].position.y < -3.5) moveGates[1] = 2;
     if(level2.children[2].position.y > 0) moveGates[1] = 0;
@@ -510,11 +625,11 @@ function updateGates() {
     // Portão 1, do mapa 2 para o 3.
     if(moveGates[2] === 1) {
         level2.children[3].position.y -= 0.02;
-        PlayAudio(4, 0.005); // Toca o som quando o portão se move para baixo
+        PlayAudio(4, 0.0005); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[2] === 2 && levelType === 4) {
         level2.children[3].position.y += 0.02;
-        PlayAudio(4, 0.005); // Toca o som quando o portão se move para cima
+        PlayAudio(4, 0.0005); // Toca o som quando o portão se move para cima
     }
     if(level2.children[3].position.y < -3.5) moveGates[2] = 2;
     if(level2.children[3].position.y > 0) moveGates[2] = 0;
@@ -522,11 +637,11 @@ function updateGates() {
     // Portão 3, do mapa 2 para o 3.
     if(moveGates[3] === 1) {
         level3.children[3].position.y -= 0.02;
-        PlayAudio(4, 0.005); // Toca o som quando o portão se move para baixo
+        PlayAudio(4, 0.0005); // Toca o som quando o portão se move para baixo
     }
     if(moveGates[3] === 2 && levelType === 5) {
         level3.children[3].position.y += 0.02;
-        PlayAudio(4, 0.005); // Toca o som quando o portão se move para cima
+        PlayAudio(4, 0.0005); // Toca o som quando o portão se move para cima
     }
     if(level3.children[3].position.y < -3.5) moveGates[3] = 2;
     if(level3.children[3].position.y > 0) moveGates[3] = 0;
@@ -582,32 +697,16 @@ function updateMovingWalls() {
 };
 
 function BulletControl(Bullet) {
-    if(levelType == 1) {
-        if (Bullet.length === 0){
-            return 0;
-        }
-        else{
-            Bullet.forEach((bullet, index) => {
-                let remove = BalaAnda(bullet);
-                if(remove) { 
-                    scene.remove(bullet.obj);
-                    Bullet.splice(index, 1);
-                };
-            });
-        }
+    if(Bullet.length === 0) {
+        return 0;
     } else {
-        if (Bullet.length === 0){
-            return 0;
-        }
-        else{
-            Bullet.forEach((bullet, index) => {
-                let remove = BalaAnda(bullet);
-                if(remove) { 
-                    scene.remove(bullet.obj);
-                    Bullet.splice(index, 1);
-                };
-            });
-        }
+        Bullet.forEach((bullet, index) => {
+            let remove = BalaAnda(bullet, level3);
+            if(remove) {
+                scene.remove(bullet.obj);
+                Bullet.splice(index, 1);
+            }
+        })
     }
 };
 
@@ -632,19 +731,19 @@ function play() {
     // Verifica se o player morreu.
     if(player.getLife() <= 0) {
         if(levelType === 1) {
-            unloadLevels(1, 1, true, true);
+            resetLevel(1);
         }
         else if(levelType === 3) {
-            unloadLevels(2, 2, true, true);
+            resetLevel(2);
         }
         else if(levelType === 5) {
-            unloadLevels(3, 3, true, true);
+            resetLevel(3);
         }
     }
 
     if(levelType === 1) {
         // Movimento do inimigo 1.
-        // enemy1.movePlayer(1, [level1, level2, level3], player, Bullet, scene);
+        enemy1.movePlayer(1, [level1, level2, level3], player, Bullet, scene);
 
         // Atualiza as vidas dos tanques.
         enemy1.lifeBar.position.set(enemy1.object.position.x, enemy1.object.position.y + 5, enemy1.object.position.z);
@@ -670,8 +769,8 @@ function play() {
         cannonControl.updateCannonRotation(Bullet, shoot, player, enemy2, enemy3, scene);
 
         // Movimentações dos inimigos.
-        // enemy2.movePlayer(2, [level1, level2, level3], player, Bullet, scene, enemy3);
-        // enemy3.movePlayer(3, [level1, level2, level3], player, Bullet, scene, enemy2);
+        enemy2.movePlayer(2, [level1, level2, level3], player, Bullet, scene, enemy3);
+        enemy3.movePlayer(3, [level1, level2, level3], player, Bullet, scene, enemy2);
 
         enemy2.lifeBar.position.set(enemy2.object.position.x, enemy2.object.position.y + 5, enemy2.object.position.z);
         if(enemy2.lifeBar.scale.x > 0) enemy2.lifeBar.scale.set(enemy2.life / 1000, enemy2.lifeBar.scale.y, enemy2.lifeBar.scale.z);
@@ -694,9 +793,9 @@ function play() {
     }
     else if(levelType === 5) {
         // Movimentação dos tanques inimigos.
-        // enemy4.movePlayer(4, [level1, level2, level3], player, Bullet, scene, enemy5, enemy6);
-        // enemy5.movePlayer(5, [level1, level2, level3], player, Bullet, scene, enemy4, enemy6);
-        // enemy6.movePlayer(6, [level1, level2, level3], player, Bullet, scene, enemy4, enemy5);
+        enemy4.movePlayer(4, [level1, level2, level3], player, Bullet, scene, enemy5, enemy6);
+        enemy5.movePlayer(5, [level1, level2, level3], player, Bullet, scene, enemy4, enemy6);
+        enemy6.movePlayer(6, [level1, level2, level3], player, Bullet, scene, enemy4, enemy5);
 
         enemy4.lifeBar.position.set(enemy4.object.position.x, enemy4.object.position.y + 5, enemy4.object.position.z);
         if(enemy4.lifeBar.scale.x > 0) enemy4.lifeBar.scale.set(enemy4.life / 1000, enemy4.lifeBar.scale.y, enemy4.lifeBar.scale.z);

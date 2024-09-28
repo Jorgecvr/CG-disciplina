@@ -74,3 +74,38 @@ export function CheckCollisionsWithWall(tank, levels) {
 
     return colisions;
 };
+
+// Método que verifica a colisão da bala com as paredes que movem.
+export function checkCollisionsWithMovingWalls(bullet, level) {
+    // Blocos móveis;
+    const movingBlocks1 = level.children[5].children;
+    const movingBlocks2 = level.children[6].children;
+    const movingBlocks3 = level.children[7].children;
+    const movingBlocks = [movingBlocks1, movingBlocks2, movingBlocks3];
+    const bulletPosition = new THREE.Vector3().setFromMatrixPosition(bullet.matrixWorld);
+
+    let collisionPlane = null;  // Plano de colisão.
+
+    movingBlocks.forEach((wall) => {
+        wall.forEach((block) => {
+            // Posição e dimensões do bloco.
+            const blockBox = new THREE.Box3().setFromObject(block);
+
+            // Verifica se a posição da bala está dentro dos limites do bloco.
+            if (blockBox.containsPoint(bulletPosition)) {
+                const blockPosition = new THREE.Vector3().setFromMatrixPosition(block.matrixWorld);
+
+                // Verifica de que lado do bloco ocorreu a colisão
+                if (Math.abs(bulletPosition.x - blockPosition.x) > Math.abs(bulletPosition.z - blockPosition.z)) {
+                    // Se a colisão foi principalmente no eixo X, refletir no plano X.
+                    collisionPlane = new THREE.Vector3(1, 0, 0);
+                } else {
+                    // Se a colisão foi principalmente no eixo Z, refletir no plano Z.
+                    collisionPlane = new THREE.Vector3(0, 0, 1);
+                }
+            }
+        });
+    });
+
+    return collisionPlane;
+}

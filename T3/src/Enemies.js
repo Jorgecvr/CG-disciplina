@@ -220,7 +220,7 @@ export function UpdateTankPositionLevel1(player, tank, type, level, Bullet = nul
         if(shoot2) {
             Bullet.push(CriaBala(tank.object, player, tank, tank, 1, 1));
             scene.add(Bullet[Bullet.length-1].obj);
-            PlayAudio(1, 0.3);
+            PlayAudio(1, 0.15);
 
             // Após atirar faz um intervalo.
             shoot2 = false;
@@ -462,7 +462,7 @@ export function UpdateTankPositionLevel2(player, tank, type, levels, Bullet = nu
             if(shoot2) {
                 Bullet.push(CriaBala(tank.object, player, oTank, Cannon , 2, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
-                PlayAudio(1, 0.3);
+                PlayAudio(1, 0.15);
 
                 // Após atirar faz um intervalo.
                 shoot2 = false;
@@ -607,7 +607,7 @@ export function UpdateTankPositionLevel2(player, tank, type, levels, Bullet = nu
             if(shoot3) {
                 Bullet.push(CriaBala(tank.object, player, oTank, Cannon , 2, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
-                PlayAudio(1, 0.3);
+                PlayAudio(1, 0.15);
 
                 // Após atirar faz um intervalo.
                 shoot3 = false;
@@ -877,7 +877,7 @@ export function UpdateTankPositionLevel3(player, tank, type, levels, Bullet = nu
             if(shoot2) {
                 Bullet.push(CriaBala(tank.object, player, oTank, oTank2, 3, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
-                PlayAudio(1, 0.3);
+                PlayAudio(1, 0.15);
 
                 // Após atirar faz um intervalo.
                 shoot2 = false;
@@ -1027,7 +1027,7 @@ export function UpdateTankPositionLevel3(player, tank, type, levels, Bullet = nu
             if(shoot3) {
                 Bullet.push(CriaBala(tank.object, player, oTank, oTank2, 3, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
-                PlayAudio(1, 0.3);
+                PlayAudio(1, 0.15);
 
                 // Após atirar faz um intervalo.
                 shoot3 = false;
@@ -1177,7 +1177,7 @@ export function UpdateTankPositionLevel3(player, tank, type, levels, Bullet = nu
             if(shoot4) {
                 Bullet.push(CriaBala(tank.object, player, oTank, oTank2, 3, 1));
                 scene.add(Bullet[Bullet.length-1].obj);
-                PlayAudio(1, 0.3);
+                PlayAudio(1, 0.15);
 
                 // Após atirar faz um intervalo.
                 shoot4 = false;

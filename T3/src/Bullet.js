@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { PlayAudio } from './Audio.js';
+import { checkCollisionsWithMovingWalls } from './Collisions.js';
 
 export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identificador, cannon = null, Color){
     let MoreDamage = 0;
@@ -9,7 +10,6 @@ export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identific
         MoreDamage = 1;
     }
     
-
     let WallCollision = 0;
     let AcertouInimigo = 0;
     const materialBullet = new THREE.MeshLambertMaterial({
@@ -66,13 +66,13 @@ export function CriaBala(Atirador, inimigo1, inimigo2, inimigo3, mapa, identific
     return Bullet;
 }
 
-export function BalaAnda(Bullet){
+export function BalaAnda(Bullet, level){
     if (Bullet.removed) return 1;
 
     // Move a bala na direção definida pela sua velocidade
     let step = Bullet.direction.clone().multiplyScalar(Bullet.speed);   
     Bullet.obj.position.add(step);
-    checkCollisions(Bullet);
+    checkCollisions(Bullet, level);
     
     // Verifica se a bala colidiu com uma parede e remove-a se necessário
         if (Bullet.WallCollision === 3) { 
@@ -83,7 +83,7 @@ export function BalaAnda(Bullet){
         }
 }
 
-function checkCollisions(Bullet){
+function checkCollisions(Bullet, level){
     var bulletPosition = Bullet.obj.getWorldPosition(Bullet.p);
     var collisionPlane = null;
     // Calculando Colisão Tank
@@ -279,7 +279,7 @@ function checkCollisions(Bullet){
             }
             else if(Inimigo2Collision){             // Acertou o Inimigo
                 Bullet.inimigo2.setLife(Bullet.inimigo2.getLife() - 100);
-                console.log("Teste");
+
                 Bullet.removed = true;
                 PlayAudio(3, 0.3);
                 return 1;
@@ -357,12 +357,15 @@ function checkCollisions(Bullet){
         collisionPlane = new THREE.Vector3(0, 0, 1);
         }
 
+        // Verifica por último se teve colisão com paredes móveis.
+        if(collisionPlane == null) {
+            collisionPlane = checkCollisionsWithMovingWalls(Bullet.obj, level);
+        }
         
         // Se houver colisão com uma parede, reflete a direção da bala
         if(collisionPlane != null){
             Bullet.direction.reflect(collisionPlane).normalize();
             Bullet.WallCollision++;
         }
-
     }
 }

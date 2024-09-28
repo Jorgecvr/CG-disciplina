@@ -182,7 +182,6 @@ export class Tank {
 
         // Verificando colisão.
         let collisions = CheckCollisionsWithWall(this, levels);
-        // console.log(collisions[0]);
 
         // Definição dos limites inicias do primeiro nível.
         const levelLimits = {
@@ -194,7 +193,6 @@ export class Tank {
 
         // Tratamento de colisões.
         if(collisions.length > 0) {
-            // console.log(collisions[0].position);
             // Atualiza levelLimits com base na posição do bloco e direção do tanque.
             collisions.forEach((collisionBlock) => {
                 this.updateLimits(collisionBlock, levelLimits);
@@ -268,7 +266,6 @@ export class Tank {
 
             // Verificando colisão.
             let collisions = CheckCollisionsWithWall(this, levels);
-            // console.log(collisions[0]);
 
             // Definição dos limites inicias do primeiro nível.
             const levelLimits = {
@@ -280,7 +277,6 @@ export class Tank {
 
             // Tratamento de colisões.
             if(collisions.length > 0) {
-                // console.log(collisions[0].position);
                 // Atualiza levelLimits com base na posição do bloco e direção do tanque.
                 collisions.forEach((collisionBlock) => {
                     this.updateLimits(collisionBlock, levelLimits);
