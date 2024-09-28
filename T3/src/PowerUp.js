@@ -107,7 +107,12 @@ export const powerUps = [];
 
 function createCapsulePowerUp(position) {
     const geometry = new THREE.CapsuleGeometry(0.5, 1, 32, 32);
-    const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+    //const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+    const material = new THREE.MeshLambertMaterial({
+        color: 0x00ff00,
+        emissive: 0x00ff00,
+        emissiveIntensity: 0.2
+    });
     const capsule = new THREE.Mesh(geometry, material);
     
     capsule.rotation.z = Math.PI / 4; // Inclinado para evidenciar a rotação
@@ -123,7 +128,12 @@ function createCapsulePowerUp(position) {
 
 function createIcosahedronPowerUp(position) {
     const geometry = new THREE.IcosahedronGeometry(1, 0);
-    const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+    // const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+    const material = new THREE.MeshLambertMaterial({
+        color: 0xff0000,
+        emissive: 0xff0000,
+        emissiveIntensity: 0.2
+    });
     const icosahedron = new THREE.Mesh(geometry, material);
 
     // Definindo a posição usando a posição passada como argumento
