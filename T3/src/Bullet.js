@@ -329,17 +329,36 @@ function checkCollisions(Bullet){
         }
 
 
-        // Falta os Piruzinho
-        
-        // Retangulo de Baixo
-        else if(bulletPosition.x > 194 && bulletPosition.x < 198 && bulletPosition.z > 34){
-            collisionPlane = new THREE.Vector3(1,0,0);
+        // Retângulos de cima
+        if ((bulletPosition.x > 194 && bulletPosition.x < 198 && bulletPosition.z < 7) ||
+        (bulletPosition.x > 214 && bulletPosition.x < 218 && bulletPosition.z < 7) ||
+        (bulletPosition.x > 234 && bulletPosition.x < 238 && bulletPosition.z < 7)) {
+
+        collisionPlane = new THREE.Vector3(1, 0, 0);
+        } 
+        else if ((bulletPosition.x > 194.5 && bulletPosition.x < 198 && bulletPosition.z < 7.5) ||
+            (bulletPosition.x > 214.5 && bulletPosition.x < 218 && bulletPosition.z < 7.5) ||
+            (bulletPosition.x > 234.5 && bulletPosition.x < 238 && bulletPosition.z < 7.5)) {
+
+        collisionPlane = new THREE.Vector3(0, 0, 1);
         }
-        else if(bulletPosition.z > 30 && bulletPosition.x > 195 && bulletPosition.x < 197){
-            collisionPlane - new THREE.Vector3(0,0,1);
+
+        // Retângulos de baixo
+        else if ((bulletPosition.x > 194 && bulletPosition.x < 198 && bulletPosition.z > 35) ||
+            (bulletPosition.x > 214 && bulletPosition.x < 218 && bulletPosition.z > 35) ||
+            (bulletPosition.x > 234 && bulletPosition.x < 238 && bulletPosition.z > 35)) {
+
+        collisionPlane = new THREE.Vector3(1, 0, 0);
+        } 
+        else if ((bulletPosition.x > 194.5 && bulletPosition.x < 198 && bulletPosition.z > 34.5) ||
+            (bulletPosition.x > 214.5 && bulletPosition.x < 218 && bulletPosition.z > 34.5) ||
+            (bulletPosition.x > 234.5 && bulletPosition.x < 238 && bulletPosition.z > 34.5)) {
+
+        collisionPlane = new THREE.Vector3(0, 0, 1);
         }
+
         
-        // // Se houver colisão com uma parede, reflete a direção da bala
+        // Se houver colisão com uma parede, reflete a direção da bala
         if(collisionPlane != null){
             Bullet.direction.reflect(collisionPlane).normalize();
             Bullet.WallCollision++;

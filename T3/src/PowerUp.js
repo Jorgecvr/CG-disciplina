@@ -36,15 +36,15 @@ let level3 = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
-    [1, 1, 0, 5, 0, 1, 1, 1, 0, 4, 1, 1, 1, 0, 3, 1, 1, 1, 0, 2, 1, 1],
-    [1, 1, 0, 5, 0, 1, 1, 1, 0, 4, 1, 1, 1, 0, 3, 1, 1, 1, 0, 2, 1, 1],
-    [1, 1, 0, 5, 0, 1, 1, 1, 0, 4, 0, 0, 0, 0, 3, 1, 1, 1, 0, 2, 1, 1],
-    [1, 1, 0, 5, 0, 1, 1, 1, 0, 4, 0, 0, 0, 0, 3, 1, 1, 1, 0, 2, 1, 1],
-    [1, 1, 0, 5, 0, 1, 1, 1, 0, 4, 1, 1, 1, 0, 3, 1, 1, 1, 0, 2, 1, 1],
-    [1, 1, 0, 5, 0, 0, 0, 0, 0, 4, 1, 1, 1, 0, 3, 0, 0, 0, 0, 2, 1, 1],
-    [1, 1, 0, 5, 0, 0, 0, 0, 0, 4, 1, 1, 1, 0, 3, 0, 0, 0, 0, 2, 1, 1],
-    [1, 1, 0, 5, 0, 1, 1, 1, 0, 4, 1, 1, 1, 0, 3, 1, 1, 1, 0, 2, 1, 1],
-    [1, 1, 0, 5, 0, 1, 1, 1, 0, 4, 1, 1, 1, 0, 3, 1, 1, 1, 0, 2, 1, 1],
+    [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
     [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -103,7 +103,7 @@ function getRandomPowerUpPosition(position) {
 }
 
 
-let powerUpActive = false;
+// let powerUpActive = false;
 
 export const powerUps = [];
 
@@ -139,7 +139,7 @@ function createIcosahedronPowerUp(position) {
 
 // Adiciona o power-up no ambiente de forma randômica
 export function spawnPowerUp(scene, spawnZone) {
-    if (powerUpActive) return;
+    //if (powerUpActive) return;
 
     let position = getRandomPowerUpPosition(spawnZone);
 
@@ -147,11 +147,11 @@ export function spawnPowerUp(scene, spawnZone) {
     powerUps.push(powerUp);
     scene.add(powerUp);
 
-    powerUpActive = true;
+    //powerUpActive = true;
     setTimeout(() => {
         powerUp.position.set(10000, 10000, 10000); // Mover para uma coordenada extrema
         scene.remove(powerUp);
-        powerUpActive = false;
+        //powerUpActive = false;
     }, 10000); // O power-up desaparece após 10 segundos se não for pego
 }
 
@@ -176,7 +176,7 @@ export function checkPlayerCollisionPower(player, scene) {
             powerUp.position.set(10000, 10000, 10000); // Mover para uma coordenada extrema
             scene.remove(powerUp);
             powerUps.splice(index, 1);
-            powerUpActive = false;
+            //powerUpActive = false;
         }
     })
 }

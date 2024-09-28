@@ -89,8 +89,8 @@ var lastTime = 0;
 var shoot = false;
 
 // Armazena o tipo do nível atual (começa em 1).
-var levelType = 1;                                  
-var levelType = 1;                                  
+//var levelType = 1;                                  
+var levelType = 5;                                  
 var level1 = CreateLevel(1);     // Criando o nível 1.
 var level2 = CreateLevel(2);     // Criando o nível 2.
 var level3 = CreateLevel(3);     // Criando o nível 3.
@@ -780,7 +780,7 @@ function removeBlocks() {
 };
 
 PlayAudio(1, 0);
-loadLevels(1, true);
+loadLevels(3, true);
 render();
 function render() {
     if(gameStarted) play();
